@@ -1,8 +1,8 @@
 import logging
-from datetime import datetime
+import time
 from typing import Optional
 
-from pandas import DataFrame, to_datetime
+from pandas import DataFrame
 
 from .schema import Field, ShmessySchema, InferredField
 from .validators.base import BaseValidator
@@ -24,13 +24,19 @@ class Shmessy:
         return df.sample(n=self.__sample_size)
 
     def infer_schema(self, df: DataFrame) -> ShmessySchema:
+        start_time = time.time()
         df = self._get_sampled_df(df)
-
-        return ShmessySchema(
-            columns=[self.__validators_handler.infer_field(
+        columns = [
+            self.__validators_handler.infer_field(
                 field_name=column,
                 data=df[column].values
-            ) for column in df]
+            ) for column in df
+        ]
+        infer_duration_ms = int((time.time() - start_time) * 1000)
+
+        return ShmessySchema(
+            columns=columns,
+            infer_duration_ms=infer_duration_ms
         )
 
     def fix_schema(self, df: DataFrame) -> DataFrame:
