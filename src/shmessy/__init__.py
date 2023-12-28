@@ -4,7 +4,7 @@ from typing import Optional
 
 from pandas import DataFrame, to_datetime
 
-from .schema import Field, ShmessyMetadata, InferredField
+from .schema import Field, ShmessySchema, InferredField
 from .validators.base import BaseValidator
 from .validators_handler import ValidatorsHandler
 
@@ -23,11 +23,11 @@ class Shmessy:
             self.__sample_size = number_of_rows
         return df.sample(n=self.__sample_size)
 
-    def infer_schema(self, df: DataFrame) -> ShmessyMetadata:
+    def infer_schema(self, df: DataFrame) -> ShmessySchema:
         df = self._get_sampled_df(df)
 
-        return ShmessyMetadata(
-            metadata=[self.__validators_handler.infer_field(
+        return ShmessySchema(
+            columns=[self.__validators_handler.infer_field(
                 field_name=column,
                 data=df[column].values
             ) for column in df]

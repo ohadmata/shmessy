@@ -25,5 +25,5 @@ class Field(InferredField, BaseField):
     pass
 
 
-class ShmessyMetadata(BaseModel):
-    metadata: List[Field]
+class ShmessySchema(BaseModel):
+    columns: List[Field]
