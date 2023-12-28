@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "shmessy"
-version = "0.0.1"
-description = ""
+version = "0.0.2"
+description = "Got messy data? Use shmessy to fix it!"
+readme = "README.md"
 authors = ["Ohad Mata <ohadmata@gmail.com>"]
+homepage = "https://github.com/ohadmata/shmessy"
+repository = "https://github.com/ohadmata/shmessy"
 packages = [
     { include = "shmessy", from = "src" },
 ]
