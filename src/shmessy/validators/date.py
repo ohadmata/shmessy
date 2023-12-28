@@ -17,6 +17,7 @@ class Validator(BaseValidator):
         "%Y/%m/%d", "%Y-%m-%d", "%Y.%m.%d",
         "%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y",
         "%d/%b/%Y", "%d-%b-%Y",
+        "%Y-%m"
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
