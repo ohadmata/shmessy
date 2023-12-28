@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "shmessy"
+version = "0.0.1"
+description = ""
+authors = ["Ohad Mata <ohadmata@gmail.com>"]
+packages = [
+    { include = "shmessy", from = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">= 3.9, < 4.0"
+pandas = ">= 2.0"
+tabulate = ">= 0.9"
+pydantic = {extras=["email"], version = "^1.10"}
+
+[tool.poetry.dev-dependencies]
+pre-commit = "^2.20.0"
+pytest = "^7.1.2"
+pytest-cov = "^4.0.0"
+pytest-mock = "^3.10.0"
+pylint = "^2.14.5"
+mypy = "^0.991"
+pylint-junit = "^0.3.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

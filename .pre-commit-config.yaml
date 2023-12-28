@@ -1,0 +1,52 @@
+files: src
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.0.1
+  hooks:
+  - id: debug-statements
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+  - id: check-merge-conflict
+  - id: no-commit-to-branch
+- repo: https://github.com/psf/black
+  rev: 22.3.0
+  hooks:
+  - id: black
+- repo: https://github.com/PyCQA/flake8
+  rev: 5.0.4
+  hooks:
+  - id: flake8
+    args:
+    - "--config=.flake8"
+- repo: local
+  hooks:
+  - id: pylint
+    name: pylint
+    entry: pylint
+    language: system
+    types: [python]
+    args: ["-rn", "-sn", "--rcfile=.pylintrc", "--fail-on=I"]
+    exclude: tests(/\w*)*/functional/|tests/input|tests(/\w*)*data/|doc/
+#  - id: mypy
+#    name: mypy
+#    entry: mypy
+#    language: system
+#    types: [python]
+#    args: ["--no-strict-optional", "--ignore-missing-imports"]
+#    exclude: tests(/\w*)*/functional/|tests/input|tests(/\w*)*data/|doc/
+  - id: isort
+    name: isort
+    entry: isort
+    require_serial: true
+    language: python
+    types_or: [cython, pyi, python]
+    args: ['--filter-files']
+#    minimum_pre_commit_version: '2.9.2'
+
+- repo: https://github.com/avilaton/add-msg-issue-prefix-hook
+  rev: v0.0.5
+  hooks:
+  - id: add-msg-issue-prefix
+    args:
+    - ".git/COMMIT_EDITMSG"
