@@ -1,14 +1,14 @@
 import logging
-from datetime import datetime
-from typing import Optional
 import math
+from datetime import datetime
+from enum import Enum
+from typing import Optional
 
 from numpy import ndarray
 from pandas import Series, to_datetime
-from enum import Enum
 
-from .base import BaseValidator
 from ..schema import InferredField, ValidatorTypes
+from .base import BaseValidator
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,9 @@ class Validator(BaseValidator):
             return TimestampResolution.NANOSECONDS
 
     @staticmethod
-    def _fix_input_resolution(value: float, selected_resolution: TimestampResolution) -> float:
+    def _fix_input_resolution(
+        value: float, selected_resolution: TimestampResolution
+    ) -> float:
         if selected_resolution == TimestampResolution.SECONDS:
             return value
         if selected_resolution == TimestampResolution.MILLISECONDS:
@@ -51,13 +53,17 @@ class Validator(BaseValidator):
                 return None
             for value in data:
                 if not math.isnan(value):
-                    parsed_value = datetime.utcfromtimestamp(self._fix_input_resolution(value, selected_resolution))
-                    if parsed_value.year < self.min_valid_year or parsed_value.year > self.max_valid_year:
+                    parsed_value = datetime.utcfromtimestamp(
+                        self._fix_input_resolution(value, selected_resolution)
+                    )
+                    if (
+                        parsed_value.year < self.min_valid_year
+                        or parsed_value.year > self.max_valid_year
+                    ):
                         return None
 
             return InferredField(
-                inferred_type=datetime,
-                inferred_pattern=selected_resolution
+                inferred_type=datetime, inferred_pattern=selected_resolution
             )
         except ValueError:
             return None

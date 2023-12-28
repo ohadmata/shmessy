@@ -2,7 +2,7 @@ import logging
 import os
 from importlib import import_module
 from types import ModuleType
-from typing import List, Optional, Any
+from typing import Any, List, Optional
 
 from numpy import ndarray
 
@@ -21,7 +21,7 @@ class ValidatorsHandler:
 
     @classmethod
     def _discover_validators(cls) -> List[BaseValidator]:
-        validators: List[BaseValidator] = list()
+        validators: List[BaseValidator] = []
         root_directory = os.path.join(os.path.dirname(__file__))
         validators_directory = os.path.join(root_directory, cls.VALIDATORS_DIR)
 
@@ -65,7 +65,4 @@ class ValidatorsHandler:
                     inferred_pattern=inferred.inferred_pattern,
                 )
 
-        return Field(
-            field_name=field_name,
-            source_type=data.dtype.type
-        )
+        return Field(field_name=field_name, source_type=data.dtype.type)

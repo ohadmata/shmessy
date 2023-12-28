@@ -5,8 +5,8 @@ from pandas import Series
 from pydantic import BaseModel
 from pydantic.networks import IPv4Address  # noqa
 
-from .base import BaseValidator
 from ..schema import InferredField, ValidatorTypes
+from .base import BaseValidator
 
 
 class Model(BaseModel):
@@ -27,10 +27,7 @@ class Validator(BaseValidator):
                 Model(ip=value)
             except ValueError:
                 return None
-        return InferredField(
-            inferred_type=str,
-            inferred_virtual_type=IPv4Address
-        )
+        return InferredField(inferred_type=str, inferred_virtual_type=IPv4Address)
 
     def fix(self, column: Series, sample_size: int) -> Series:
         sample_data = column[:sample_size]

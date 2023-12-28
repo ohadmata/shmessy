@@ -2,6 +2,7 @@
 [![PyPI version](https://badge.fury.io/py/shmessy.svg)](https://badge.fury.io/py/shmessy)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/shmessy)](https://pypi.org/project/shmessy/)
 [![License](https://img.shields.io/:license-MIT-blue.svg)](https://opensource.org/license/mit/)
+![Coverage report](./coverage.svg)
 ### If your data is messy - Use Shmessy!
 
 Shmessy designed to deal with messy pandas dataframes.

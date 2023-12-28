@@ -24,6 +24,8 @@ pytest-mock = "^3.10.0"
 pylint = "^2.14.5"
 mypy = "^0.991"
 pylint-junit = "^0.3.2"
+pytest-parametrization = "^2022.2"
+coverage-badge = "^1.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
