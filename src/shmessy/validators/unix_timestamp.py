@@ -24,6 +24,5 @@ class Validator(BaseValidator):
             except ValueError as e:
                 break
         return InferredField(
-            inferred_type=str(data.dtype),
-            inferred_virtual_type="unix_timestamp"
+            inferred_type=datetime
         )

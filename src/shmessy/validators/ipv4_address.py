@@ -23,6 +23,6 @@ class Validator(BaseValidator):
             except ValueError:
                 return None
         return InferredField(
-            inferred_type="string",
-            inferred_virtual_type="IPv4_address"
+            inferred_type=str,
+            inferred_virtual_type=IPv4Address
         )

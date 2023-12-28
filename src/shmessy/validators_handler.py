@@ -52,7 +52,7 @@ class ValidatorsHandler:
                 if inferred:
                     return Field(
                         field_name=field_name,
-                        source_type=str(data.dtype),
+                        source_type=data.dtype.type,
                         inferred_type=inferred.inferred_type,
                         inferred_virtual_type=inferred.inferred_virtual_type,
                         inferred_pattern=inferred.inferred_pattern,
@@ -64,7 +64,7 @@ class ValidatorsHandler:
                 if inferred:
                     return Field(
                         field_name=field_name,
-                        source_type=str(data.dtype),
+                        source_type=data.dtype.type,
                         inferred_type=inferred.inferred_type,
                         inferred_virtual_type=inferred.inferred_virtual_type,
                         inferred_pattern=inferred.inferred_pattern,
@@ -72,5 +72,5 @@ class ValidatorsHandler:
 
         return Field(
             field_name=field_name,
-            source_type=str(data.dtype)
+            source_type=data.dtype.type
         )

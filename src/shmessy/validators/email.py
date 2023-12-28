@@ -22,6 +22,6 @@ class Validator(BaseValidator):
             except ValueError:
                 return None
         return InferredField(
-            inferred_type="string",
+            inferred_type=str,
             inferred_virtual_type=EmailStr
         )

@@ -1,6 +1,8 @@
-from pydantic import BaseModel
-from typing import Optional, List, Any
 from enum import Enum
+from typing import Optional, List
+from typing import Type
+
+from pydantic import BaseModel
 
 
 class ValidatorTypes(str, Enum):
@@ -10,12 +12,12 @@ class ValidatorTypes(str, Enum):
 
 class BaseField(BaseModel):
     field_name: str
-    source_type: str
+    source_type: Type
 
 
 class InferredField(BaseModel):
-    inferred_type: Optional[str] = None
-    inferred_virtual_type: Optional[Any] = None
+    inferred_type: Optional[Type] = None
+    inferred_virtual_type: Optional[Type] = None
     inferred_pattern: Optional[str] = None
 
 
