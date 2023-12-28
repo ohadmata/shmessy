@@ -2,12 +2,12 @@ import logging
 import os
 from importlib import import_module
 from types import ModuleType
+from typing import List, Optional, Any
+
+from numpy import ndarray
+
+from .schema import Field
 from .validators.base import BaseValidator
-from typing import List, Optional
-
-from numpy import ndarray, issubdtype, number, object_, str_
-
-from .schema import ValidatorTypes, Field
 
 logger = logging.getLogger(__name__)
 
@@ -44,31 +44,26 @@ class ValidatorsHandler:
             return False
         return True
 
+    def fix_field(self, column: Any, sample_size: int) -> Any:
+        for validator in self.__validators:
+            fixed_field = validator.fix(column=column, sample_size=sample_size)
+            if fixed_field is not None:
+                return fixed_field
+
+        return column
+
     def infer_field(self, field_name: str, data: ndarray) -> Field:
 
         for validator in self.__validators:
-            if validator.validator_type == ValidatorTypes.NUMERIC and issubdtype(data.dtype, number):
-                inferred = validator.validate(data)
-                if inferred:
-                    return Field(
-                        field_name=field_name,
-                        source_type=data.dtype.type,
-                        inferred_type=inferred.inferred_type,
-                        inferred_virtual_type=inferred.inferred_virtual_type,
-                        inferred_pattern=inferred.inferred_pattern,
-                    )
-
-            if (validator.validator_type == ValidatorTypes.STRING and
-                    (issubdtype(data.dtype, object_) or issubdtype(data.dtype, str_))):
-                inferred = validator.validate(data)
-                if inferred:
-                    return Field(
-                        field_name=field_name,
-                        source_type=data.dtype.type,
-                        inferred_type=inferred.inferred_type,
-                        inferred_virtual_type=inferred.inferred_virtual_type,
-                        inferred_pattern=inferred.inferred_pattern,
-                    )
+            inferred = validator.validate(data)
+            if inferred:
+                return Field(
+                    field_name=field_name,
+                    source_type=data.dtype.type,
+                    inferred_type=inferred.inferred_type,
+                    inferred_virtual_type=inferred.inferred_virtual_type,
+                    inferred_pattern=inferred.inferred_pattern,
+                )
 
         return Field(
             field_name=field_name,

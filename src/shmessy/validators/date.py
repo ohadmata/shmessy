@@ -2,6 +2,7 @@ from datetime import datetime, date
 from typing import Optional
 
 from numpy import ndarray
+from pandas import to_datetime, Series
 
 from .base import BaseValidator
 from ..schema import InferredField, ValidatorTypes
@@ -19,6 +20,11 @@ class Validator(BaseValidator):
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
+        try:
+            self.check_validation_type(dtype=data.dtype)
+        except ValueError:
+            return None
+
         for pattern in self.patterns:
             valid: bool = True
             for value in data:
@@ -35,3 +41,9 @@ class Validator(BaseValidator):
                     inferred_type=date,
                     inferred_pattern=pattern
                 )
+
+    def fix(self, column: Series, sample_size: int) -> Series:
+        sample_data = column[:sample_size]
+        inferred = self.validate(sample_data)
+        if inferred:
+            return to_datetime(column, format=inferred.inferred_pattern)

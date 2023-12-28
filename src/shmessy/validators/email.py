@@ -1,6 +1,7 @@
 from typing import Optional
 
 from numpy import ndarray
+from pandas import Series
 from pydantic import EmailStr, BaseModel
 
 from .base import BaseValidator
@@ -14,8 +15,12 @@ class Model(BaseModel):
 class Validator(BaseValidator):
     validator_type = ValidatorTypes.STRING
 
-    @classmethod
-    def validate(cls, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray) -> Optional[InferredField]:
+        try:
+            self.check_validation_type(dtype=data.dtype)
+        except ValueError:
+            return None
+
         for value in data:
             try:
                 Model(email=value)
@@ -25,3 +30,9 @@ class Validator(BaseValidator):
             inferred_type=str,
             inferred_virtual_type=EmailStr
         )
+
+    def fix(self, column: Series, sample_size: int) -> Series:
+        sample_data = column[:sample_size]
+        inferred = self.validate(sample_data)
+        if inferred:
+            return column
