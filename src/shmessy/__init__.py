@@ -4,15 +4,13 @@ from typing import Optional
 
 from pandas import DataFrame
 
-from .schema import Field, ShmessySchema, InferredField
-from .validators.base import BaseValidator
+from .schema import ShmessySchema
 from .validators_handler import ValidatorsHandler
 
 logger = logging.getLogger(__name__)
 
 
 class Shmessy:
-
     def __init__(self, sample_size: Optional[int] = 1000) -> None:
         self.__validators_handler = ValidatorsHandler()
         self.__sample_size = sample_size
@@ -28,22 +26,18 @@ class Shmessy:
         df = self._get_sampled_df(df)
         columns = [
             self.__validators_handler.infer_field(
-                field_name=column,
-                data=df[column].values
-            ) for column in df
+                field_name=column, data=df[column].values
+            )
+            for column in df
         ]
         infer_duration_ms = int((time.time() - start_time) * 1000)
 
-        return ShmessySchema(
-            columns=columns,
-            infer_duration_ms=infer_duration_ms
-        )
+        return ShmessySchema(columns=columns, infer_duration_ms=infer_duration_ms)
 
     def fix_schema(self, df: DataFrame) -> DataFrame:
         for column in df:
             df[column] = self.__validators_handler.fix_field(
-                column=df[column],
-                sample_size=self.__sample_size
+                column=df[column], sample_size=self.__sample_size
             )
 
         return df

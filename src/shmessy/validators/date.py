@@ -1,23 +1,32 @@
-from datetime import datetime, date
+from datetime import date, datetime
 from typing import Optional
 
 from numpy import ndarray
-from pandas import to_datetime, Series
+from pandas import Series, to_datetime
 
-from .base import BaseValidator
 from ..schema import InferredField, ValidatorTypes
+from .base import BaseValidator
 
 
 class Validator(BaseValidator):
     validator_type = ValidatorTypes.STRING
     ignore_nan: bool = True
     patterns: list[str] = [
-        "%m/%d/%Y", "%m-%d-%Y", "%m.%d.%Y",
-        "%m/%d/%y", "%m-%d-%y", "%m.%d.%y",
-        "%Y/%m/%d", "%Y-%m-%d", "%Y.%m.%d",
-        "%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y",
-        "%d/%b/%Y", "%d-%b-%Y",
-        "%Y-%m"
+        "%m/%d/%Y",
+        "%m-%d-%Y",
+        "%m.%d.%Y",
+        "%m/%d/%y",
+        "%m-%d-%y",
+        "%m.%d.%y",
+        "%Y/%m/%d",
+        "%Y-%m-%d",
+        "%Y.%m.%d",
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%d.%m.%Y",
+        "%d/%b/%Y",
+        "%d-%b-%Y",
+        "%Y-%m",
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
@@ -38,10 +47,7 @@ class Validator(BaseValidator):
                     if not self.ignore_nan:
                         valid = False
             if valid:
-                return InferredField(
-                    inferred_type=date,
-                    inferred_pattern=pattern
-                )
+                return InferredField(inferred_type=date, inferred_pattern=pattern)
 
     def fix(self, column: Series, sample_size: int) -> Series:
         sample_data = column[:sample_size]

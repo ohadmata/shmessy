@@ -4,19 +4,25 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from .base import BaseValidator
 from ..schema import InferredField, ValidatorTypes
+from .base import BaseValidator
 
 
 class Validator(BaseValidator):
     validator_type = ValidatorTypes.STRING
     ignore_nan: bool = True
     patterns: list[str] = [
-        "%m/%d/%y %H:%M:%S", "%m-%d-%y %H:%M:%S",
-        "%m/%d/%Y %H:%M:%S", "%m-%d-%Y %H:%M:%S",
-        "%Y/%m/%d %H:%M:%S", "%Y-%m-%d %H:%M:%S",
-        "%Y-%m-%d %H:%M:%SZ", "%Y-%m-%dT%H:%M:%SZ",
-        "%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%d %H:%M:%S.%fZ", "%Y-%m-%d %H:%M:%S.%f",
+        "%m/%d/%y %H:%M:%S",
+        "%m-%d-%y %H:%M:%S",
+        "%m/%d/%Y %H:%M:%S",
+        "%m-%d-%Y %H:%M:%S",
+        "%Y/%m/%d %H:%M:%S",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %H:%M:%SZ",
+        "%Y-%m-%dT%H:%M:%SZ",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%d %H:%M:%S.%fZ",
+        "%Y-%m-%d %H:%M:%S.%f",
         "%Y-%m-%dT%H:%M:%S.%fZ",
     ]
 
@@ -38,10 +44,7 @@ class Validator(BaseValidator):
                     if not self.ignore_nan:
                         valid = False
             if valid:
-                return InferredField(
-                    inferred_type=datetime,
-                    inferred_pattern=pattern
-                )
+                return InferredField(inferred_type=datetime, inferred_pattern=pattern)
 
     def fix(self, column: Series, sample_size: int) -> Series:
         sample_data = column[:sample_size]

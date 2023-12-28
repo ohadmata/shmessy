@@ -1,6 +1,13 @@
 files: src
 
 repos:
+- repo: local
+  hooks:
+  - id: custom-script-sh
+    name: custom-script-sh
+    entry: pre-commit.sh
+    language: script
+    pass_filenames: false
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.0.1
   hooks:
@@ -28,13 +35,6 @@ repos:
     types: [python]
     args: ["-rn", "-sn", "--rcfile=.pylintrc", "--fail-on=I"]
     exclude: tests(/\w*)*/functional/|tests/input|tests(/\w*)*data/|doc/
-#  - id: mypy
-#    name: mypy
-#    entry: mypy
-#    language: system
-#    types: [python]
-#    args: ["--no-strict-optional", "--ignore-missing-imports"]
-#    exclude: tests(/\w*)*/functional/|tests/input|tests(/\w*)*data/|doc/
   - id: isort
     name: isort
     entry: isort
