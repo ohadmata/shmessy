@@ -1,7 +1,8 @@
 import logging
+from datetime import datetime
 from typing import Optional
 
-from pandas import DataFrame
+from pandas import DataFrame, to_datetime
 
 from .schema import Field, ShmessyMetadata, InferredField
 from .validators.base import BaseValidator
@@ -31,3 +32,12 @@ class Shmessy:
                 data=df[column].values
             ) for column in df]
         )
+
+    def fix_schema(self, df: DataFrame) -> DataFrame:
+        for column in df:
+            df[column] = self.__validators_handler.fix_field(
+                column=df[column],
+                sample_size=self.__sample_size
+            )
+
+        return df
