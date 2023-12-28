@@ -1,9 +1,8 @@
 # Shmessy
-### If your data is messy - Use Shmessy!
-
 [![PyPI version](https://badge.fury.io/py/shmessy.svg)](https://badge.fury.io/py/shmessy)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/shmessy)](https://pypi.org/project/shmessy/)
 [![License](https://img.shields.io/:license-MIT-blue.svg)](https://opensource.org/license/mit/)
+### If your data is messy - Use Shmessy!
 
 Shmessy designed to deal with messy pandas dataframes.
 We all knows the frustrating times when we as analysts or data-engineers should handle messy dataframe and analyze them by ourselves.
@@ -77,6 +76,7 @@ Output (inferred_schema dump):
 ```
 
 ### Identify and fix Pandas Dataframe
+This piece of code will change the column types of the input Dataframe according to Messy infer.
 ```python
 import pandas as pd
 from shmessy import Shmessy
