@@ -1,5 +1,5 @@
 # Shmessy
-### Got messy data? Use shmessy to fix it!
+### If your data is messy - Use Shmessy!
 
 Shmessy designed to deal with messy pandas dataframes.
 We all knows the frustrating times when we as analysts or data-engineers should handle messy dataframe and analyze them by ourselves.

@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "shmessy"
-version = "0.0.2"
-description = "Got messy data? Use shmessy to fix it!"
+version = "0.0.3"
+description = "If your data is messy - Use Shmessy!"
 readme = "README.md"
 authors = ["Ohad Mata <ohadmata@gmail.com>"]
 homepage = "https://github.com/ohadmata/shmessy"
