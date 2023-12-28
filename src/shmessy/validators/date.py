@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 
 from numpy import ndarray
@@ -32,6 +32,6 @@ class Validator(BaseValidator):
                         valid = False
             if valid:
                 return InferredField(
-                    inferred_type="date",
+                    inferred_type=date,
                     inferred_pattern=pattern
                 )

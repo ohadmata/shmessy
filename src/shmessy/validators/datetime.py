@@ -32,6 +32,6 @@ class Validator(BaseValidator):
                         valid = False
             if valid:
                 return InferredField(
-                    inferred_type="datetime",
+                    inferred_type=datetime,
                     inferred_pattern=pattern
                 )
