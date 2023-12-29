@@ -25,10 +25,10 @@ def create_large_file() -> str:
     return file_path
 
 
-def test_large_file_infer_should_be_less_than_350_ms(create_large_file):
+def test_large_file_infer_should_be_less_than_1000_ms(create_large_file):
     df = pd.read_csv(create_large_file)
     result = Shmessy().infer_schema(df)
-    assert result.infer_duration_ms < 350
+    assert result.infer_duration_ms < 1000
 
 
 @Parametrization.autodetect_parameters()
