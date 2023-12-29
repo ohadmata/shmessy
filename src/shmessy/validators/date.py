@@ -11,21 +11,22 @@ from .base import BaseValidator
 class Validator(BaseValidator):
     validator_type = ValidatorTypes.STRING
     patterns: list[str] = [
-        "%m/%d/%Y",
-        "%m-%d-%Y",
-        "%m.%d.%Y",
-        "%m/%d/%y",
-        "%m-%d-%y",
-        "%m.%d.%y",
-        "%Y/%m/%d",
-        "%Y-%m-%d",
-        "%Y.%m.%d",
-        "%d/%m/%Y",
-        "%d-%m-%Y",
-        "%d.%m.%Y",
-        "%d/%b/%Y",
-        "%d-%b-%Y",
-        "%Y-%m",
+        "%m/%d/%Y",  # 12/01/2022
+        "%m-%d-%Y",  # 12-01-2022
+        "%m.%d.%Y",  # 12.01.2022
+        "%m/%d/%y",  # 12/01/22
+        "%m-%d-%y",  # 12.01.2022
+        "%m.%d.%y",  # 12.01.22
+        "%Y/%m/%d",  # 2022/12/01
+        "%Y-%m-%d",  # 2022-12-01
+        "%Y.%m.%d",  # 2022.12.01
+        "%d/%m/%Y",  # 01/12/2022
+        "%d-%m-%Y",  # 01-12-2022
+        "%d.%m.%Y",  # 01.12.2022
+        "%d/%b/%Y",  # 01/Mar/2022
+        "%d-%b-%Y",  # 01-Mar-2022
+        "%-d-%b-%y",  # 1-Mar-22
+        "%Y-%m",  # 2022-07
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
