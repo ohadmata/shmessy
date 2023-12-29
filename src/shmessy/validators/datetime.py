@@ -10,7 +10,6 @@ from .base import BaseValidator
 
 class Validator(BaseValidator):
     validator_type = ValidatorTypes.STRING
-    ignore_nan: bool = True
     patterns: list[str] = [
         "%m/%d/%y %H:%M:%S",
         "%m-%d-%y %H:%M:%S",
@@ -36,13 +35,11 @@ class Validator(BaseValidator):
             valid: bool = True
             for value in data:
                 try:
-                    datetime.strptime(value, pattern)
+                    if isinstance(value, str):
+                        datetime.strptime(value, pattern)
                 except ValueError:
                     valid = False
                     break
-                except TypeError:
-                    if not self.ignore_nan:
-                        valid = False
             if valid:
                 return InferredField(inferred_type=datetime, inferred_pattern=pattern)
 
