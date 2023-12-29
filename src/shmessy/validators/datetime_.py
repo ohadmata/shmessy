@@ -5,6 +5,7 @@ from numpy import ndarray
 from pandas import Series, to_datetime
 
 from ..schema import InferredField, ValidatorTypes
+from . import validate_strptime_pattern
 from .base import BaseValidator
 
 
@@ -30,21 +31,11 @@ class Validator(BaseValidator):
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
-        try:
-            self.check_validation_type(dtype=data.dtype)
-        except ValueError:
+        if not self.is_validator_type_valid(dtype=data.dtype):
             return None
 
         for pattern in self.patterns:
-            valid: bool = True
-            for value in data:
-                try:
-                    if isinstance(value, str):
-                        datetime.strptime(value, pattern)
-                except ValueError:
-                    valid = False
-                    break
-            if valid:
+            if validate_strptime_pattern(data, pattern):
                 return InferredField(inferred_type=datetime, inferred_pattern=pattern)
 
     def fix(self, column: Series, sample_size: int) -> Series:

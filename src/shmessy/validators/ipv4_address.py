@@ -17,9 +17,7 @@ class Validator(BaseValidator):
     validator_type = ValidatorTypes.STRING
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
-        try:
-            self.check_validation_type(dtype=data.dtype)
-        except ValueError:
+        if not self.is_validator_type_valid(dtype=data.dtype):
             return None
 
         for value in data:
