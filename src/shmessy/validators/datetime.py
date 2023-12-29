@@ -11,18 +11,22 @@ from .base import BaseValidator
 class Validator(BaseValidator):
     validator_type = ValidatorTypes.STRING
     patterns: list[str] = [
-        "%m/%d/%y %H:%M:%S",
-        "%m-%d-%y %H:%M:%S",
-        "%m/%d/%Y %H:%M:%S",
-        "%m-%d-%Y %H:%M:%S",
-        "%Y/%m/%d %H:%M:%S",
-        "%Y-%m-%d %H:%M:%S",
-        "%Y-%m-%d %H:%M:%SZ",
-        "%Y-%m-%dT%H:%M:%SZ",
-        "%Y-%m-%dT%H:%M:%S.%f",
-        "%Y-%m-%d %H:%M:%S.%fZ",
-        "%Y-%m-%d %H:%M:%S.%f",
-        "%Y-%m-%dT%H:%M:%S.%fZ",
+        "%m/%d/%Y %-H:%M",  # 11/14/2003 0:00
+        "%d-%m-%Y %H:%M",  # 11-14-2003 00:00
+        "%d-%m-%Y %-H:%M",  # 11-14-2003 0:00
+        "%m/%d/%y %H:%M:%S",  # 12/15/22 00:00:00
+        "%m-%d-%y %H:%M:%S",  # 12-30-2022 00:00:00
+        "%m/%d/%Y %H:%M:%S",  # 12/30/2022 00:00:00
+        "%m-%d-%Y %H:%M:%S",  # 12-30-2022 00:00:00
+        "%Y/%m/%d %H:%M:%S",  # 2022/12/30 00:00:00
+        "%Y-%m-%d %H:%M:%S",  # 2022-12-30 00:00:00
+        "%Y-%m-%d %H:%M:%SZ",  # 2022-12-30 00:00:00Z
+        "%Y-%m-%dT%H:%M:%SZ",  # 2022-12-30T00:00:00Z
+        "%Y-%m-%dT%H:%M:%S.%f",  # 2022-12-30T00:00:00.000
+        "%Y-%m-%d %H:%M:%S.%fZ",  # 2022-12-30 00:00:00.000Z
+        "%Y-%m-%d %H:%M:%S.%f",  # 2022-12-30 00:00:00.000
+        "%Y-%m-%dT%H:%M:%S.%fZ",  # 2022-12-30T00:00:00.000Z
+        "%b %-d, %Y %H:%M %p",  # Jul 3, 2023 12:10 PM
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
