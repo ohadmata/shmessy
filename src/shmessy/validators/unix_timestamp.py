@@ -46,8 +46,10 @@ class Validator(BaseValidator):
             return value / 1000 / 1000
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
+        if not self.is_validator_type_valid(dtype=data.dtype):
+            return None
+
         try:
-            self.check_validation_type(dtype=data.dtype)
             selected_resolution = self._unix_timestamp_resolution(float(data[1]))
             if not selected_resolution:
                 return None

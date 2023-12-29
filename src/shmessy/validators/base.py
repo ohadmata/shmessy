@@ -18,13 +18,14 @@ class BaseValidator(ABC):
     def fix(self, column: Series, sample_size: int) -> Series:
         pass
 
-    def check_validation_type(self, dtype: Type) -> None:
+    def is_validator_type_valid(self, dtype: Type) -> bool:
         if self.validator_type == ValidatorTypes.NUMERIC and not issubdtype(
             dtype, number
         ):
-            raise ValueError(f"NUMERIC validation is not supported for {dtype}")
+            return False
 
         if self.validator_type == ValidatorTypes.STRING and not (
             issubdtype(dtype, object_) or issubdtype(dtype, str_)
         ):
-            raise ValueError(f"STRING validation is not supported for {dtype}")
+            return False
+        return True
