@@ -36,6 +36,8 @@ jobs:
         key: venv-${{ hashFiles('poetry.lock') }}
     - name: Install the project dependencies
       run: poetry install
+    - name: stamp version
+      run: poetry version ${{ github.ref_name }}
     - name: Build package
       run: poetry build
     - name: set secret
