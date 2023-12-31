@@ -90,4 +90,4 @@ fixed_df = Shmessy().fix_schema(df)
 ![Original Dataframe](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_1.png)
 
 ### After fix
-![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/screenshot_2.png)
+![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_2.png)
