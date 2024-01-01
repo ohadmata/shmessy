@@ -1,4 +1,5 @@
 import logging
+import re
 import time
 from typing import Optional
 
@@ -34,10 +35,22 @@ class Shmessy:
 
         return ShmessySchema(columns=columns, infer_duration_ms=infer_duration_ms)
 
-    def fix_schema(self, df: DataFrame) -> DataFrame:
+    def fix_schema(
+        self, df: DataFrame, fix_column_names: Optional[bool] = False
+    ) -> DataFrame:
         for column in df:
             df[column] = self.__validators_handler.fix_field(
                 column=df[column], sample_size=self.__sample_size
             )
 
+        if fix_column_names:
+            df = self._fix_column_names(df)
+
         return df
+
+    @staticmethod
+    def _fix_column_names(df: DataFrame) -> DataFrame:
+        fixed_column_names = {}
+        for column in df.columns:
+            fixed_column_names[column] = re.sub("[^0-9a-zA-Z]+", "_", column)
+        return df.rename(columns=fixed_column_names)
