@@ -1,6 +1,7 @@
-from src.shmessy import Shmessy
 import pandas as pd
 from parametrization import Parametrization
+
+from shmessy import Shmessy
 
 
 @Parametrization.autodetect_parameters()
