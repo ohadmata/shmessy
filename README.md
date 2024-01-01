@@ -89,5 +89,30 @@ fixed_df = Shmessy().fix_schema(df)
 ### Original Dataframe
 ![Original Dataframe](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_1.png)
 
-### After fix
+### Fixed Dataframe
 ![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_2.png)
+
+
+## API
+
+### Constructor
+```python
+shmessy = Shmessy(
+    sample_size: Optional[int] = 1000
+)
+```
+
+### infer_schema
+```python
+shmessy.infer_schema(
+    df: Dataframe  # Input dataframe
+) -> ShmessySchema
+```
+
+### fix_schema
+```python
+shmessy.fix_schema(
+    df: Dataframe,
+    fix_column_names: Optional[bool] = False  # Replace non-alphabetic/numeric chars with underscore
+) -> DataFrame
+```

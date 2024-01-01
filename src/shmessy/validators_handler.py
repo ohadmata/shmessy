@@ -44,7 +44,7 @@ class ValidatorsHandler:
             return False
         return True
 
-    def fix_field(self, column: Any, sample_size: int) -> Any:
+    def fix_field(self, column: Any, sample_size: Optional[int] = 1000) -> Any:
         for validator in self.__validators:
             fixed_field = validator.fix(column=column, sample_size=sample_size)
             if fixed_field is not None:
