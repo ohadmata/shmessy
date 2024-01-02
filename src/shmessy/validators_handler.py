@@ -46,9 +46,12 @@ class ValidatorsHandler:
 
     def fix_field(self, column: Any, sample_size: Optional[int] = 1000) -> Any:
         for validator in self.__validators:
-            fixed_field = validator.fix(column=column, sample_size=sample_size)
-            if fixed_field is not None:
-                return fixed_field
+            try:
+                fixed_field = validator.fix(column=column, sample_size=sample_size)
+                if fixed_field is not None:
+                    return fixed_field
+            except NotImplementedError:
+                pass
 
         return column
 
