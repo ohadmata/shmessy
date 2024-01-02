@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Type
+from typing import Any, List, Optional, Type
 
 from pydantic import BaseModel
 
@@ -17,7 +17,7 @@ class BaseField(BaseModel):
 class InferredField(BaseModel):
     inferred_type: Optional[Type] = None
     inferred_virtual_type: Optional[Type] = None
-    inferred_pattern: Optional[str] = None
+    inferred_pattern: Optional[Any] = None
 
 
 class Field(InferredField, BaseField):
