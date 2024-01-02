@@ -13,7 +13,7 @@ class Model(BaseModel):
 
 
 class Validator(BaseValidator):
-    validator_type = ValidatorTypes.STRING
+    validator_types = (ValidatorTypes.STRING,)
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         if not self.is_validator_type_valid(dtype=data.dtype):

@@ -10,7 +10,7 @@ from .base import BaseValidator
 
 
 class Validator(BaseValidator):
-    validator_type = ValidatorTypes.STRING
+    validator_types = (ValidatorTypes.STRING,)
     patterns: list[str] = [
         "%m/%d/%Y",  # 12/01/2022
         "%m-%d-%Y",  # 12-01-2022

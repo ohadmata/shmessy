@@ -20,7 +20,7 @@ class TimestampResolution(str, Enum):
 
 
 class Validator(BaseValidator):
-    validator_type = ValidatorTypes.NUMERIC
+    validator_types = (ValidatorTypes.NUMERIC,)
     min_valid_year: int = 1980
     max_valid_year: int = 2100
 
@@ -74,4 +74,4 @@ class Validator(BaseValidator):
         sample_data = column[:sample_size]
         inferred = self.validate(sample_data)
         if inferred:
-            return to_datetime(column, unit=inferred.inferred_pattern)
+            return to_datetime(column, unit=inferred.inferred_pattern.value)
