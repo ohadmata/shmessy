@@ -27,7 +27,5 @@ class Validator(BaseValidator):
         return InferredField(inferred_type=str, inferred_virtual_type=EmailStr)
 
     def fix(self, column: Series, sample_size: int) -> Series:
-        sample_data = column[:sample_size]
-        inferred = self.validate(sample_data)
-        if inferred:
-            return column
+        # Email defined as a virtual data-type. Fix is not relevant.
+        raise NotImplementedError()
