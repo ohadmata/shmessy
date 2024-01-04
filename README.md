@@ -86,11 +86,24 @@ df = pd.read_csv('/tmp/file.csv')
 fixed_df = Shmessy().fix_schema(df)
 ```
 
-### Original Dataframe
+#### Original Dataframe
 ![Original Dataframe](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_1.png)
 
-### Fixed Dataframe
+#### Fixed Dataframe
 ![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_2.png)
+
+
+### Read Messy CSV file
+```python
+from shmessy import Shmessy
+df = Shmessy().read_csv('/tmp/file.csv')
+```
+
+#### Original file
+![Original Dataframe](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_3.png)
+
+#### Fixed Dataframe
+![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_4.png)
 
 
 ## API
@@ -114,5 +127,13 @@ shmessy.infer_schema(
 shmessy.fix_schema(
     df: Dataframe,
     fix_column_names: Optional[bool] = False  # Replace non-alphabetic/numeric chars with underscore
+) -> DataFrame
+```
+
+### read_csv
+```python
+shmessy.read_csv(
+    filepath_or_buffer: str | TextIO | BinaryIO,
+    use_sniffer: Optional[bool] = True  # Use python sniffer to identify the dialect (seperator / quote-char / etc...)
 ) -> DataFrame
 ```

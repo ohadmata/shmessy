@@ -50,7 +50,7 @@ class Validator(BaseValidator):
             return None
 
         try:
-            selected_resolution = self._unix_timestamp_resolution(float(data[1]))
+            selected_resolution = self._unix_timestamp_resolution(float(data[0]))
             if not selected_resolution:
                 return None
             for value in data:
