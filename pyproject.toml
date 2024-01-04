@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shmessy"
-version = "0.0.6"
+version = "1.0.0"
 description = "If your data is messy - Use Shmessy!"
 readme = "README.md"
 authors = ["Ohad Mata <ohadmata@gmail.com>"]
