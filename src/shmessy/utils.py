@@ -1,6 +1,6 @@
 import codecs
 import re
-from io import BufferedReader
+from io import TextIOWrapper
 from typing import BinaryIO, Optional, TextIO, Union
 
 from pandas import DataFrame
@@ -29,10 +29,11 @@ def _get_sample_from_csv(
         with open(file=filepath_or_buffer, mode="rt", encoding=encoding) as input_file:
             return "".join(input_file.readlines(sample_size))
 
-    if isinstance(filepath_or_buffer, BufferedReader):
-        text_stream = codecs.getreader(encoding)(filepath_or_buffer)
-    else:
+    elif isinstance(filepath_or_buffer, (TextIO, TextIOWrapper)):
         text_stream = filepath_or_buffer
+
+    else:
+        text_stream = codecs.getreader(encoding)(filepath_or_buffer)
 
     sample = "".join(text_stream.readlines(sample_size))
     filepath_or_buffer.seek(0)
