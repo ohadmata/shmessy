@@ -8,6 +8,7 @@ from .base import BaseType
 
 
 class BooleanType(BaseType):
+    weight = 1
     validator_types = (ValidatorTypes.STRING, ValidatorTypes.NUMERIC)
     patterns: list[Tuple] = [  # The first member should be the true value
         ("YES", "NO"),
