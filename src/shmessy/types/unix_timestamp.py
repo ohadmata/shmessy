@@ -20,6 +20,7 @@ class TimestampResolution(str, Enum):
 
 
 class UnixTimestampType(BaseType):
+    weight = 4
     validator_types = (ValidatorTypes.NUMERIC,)
     min_valid_year: int = 1980
     max_valid_year: int = 2100

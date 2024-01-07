@@ -8,6 +8,7 @@ from ..schema import InferredField, ValidatorTypes
 
 
 class BaseType(ABC):
+    weight: int = 0
     validator_types: Tuple[ValidatorTypes]
 
     @abstractmethod

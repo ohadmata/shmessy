@@ -54,8 +54,8 @@ class TypesHandler:
         return column
 
     def infer_field(self, field_name: str, data: ndarray) -> Field:
-
-        for type_ in self.__types:
+        sorted_types = sorted(self.__types, key=lambda x: x.weight)
+        for type_ in sorted_types:
             inferred = type_.validate(data)
             if inferred:
                 return Field(

@@ -13,6 +13,7 @@ class Model(BaseModel):
 
 
 class EmailType(BaseType):
+    weight = 5
     validator_types = (ValidatorTypes.STRING,)
 
     def validate(self, data: ndarray) -> Optional[InferredField]:

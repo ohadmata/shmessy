@@ -9,6 +9,7 @@ from .base import BaseType
 
 
 class DatetimeType(BaseType):
+    weight = 3
     validator_types = (ValidatorTypes.STRING,)
     patterns: list[str] = [
         "%m/%d/%Y %-H:%M",  # 11/14/2003 0:00
