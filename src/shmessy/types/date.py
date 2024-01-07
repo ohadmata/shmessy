@@ -1,4 +1,3 @@
-from datetime import date
 from typing import Optional
 
 from numpy import ndarray
@@ -6,10 +5,10 @@ from pandas import Series, to_datetime
 
 from ..schema import InferredField, ValidatorTypes
 from . import validate_strptime_pattern
-from .base import BaseValidator
+from .base import BaseType
 
 
-class Validator(BaseValidator):
+class DateType(BaseType):
     validator_types = (ValidatorTypes.STRING,)
     patterns: list[str] = [
         "%m/%d/%Y",  # 12/01/2022
@@ -37,10 +36,14 @@ class Validator(BaseValidator):
 
         for pattern in self.patterns:
             if validate_strptime_pattern(data, pattern):
-                return InferredField(inferred_type=date, inferred_pattern=pattern)
+                return InferredField(inferred_type=self.name, inferred_pattern=pattern)
 
     def fix(self, column: Series, sample_size: int) -> Series:
         sample_data = column[:sample_size]
         inferred = self.validate(sample_data)
         if inferred:
             return to_datetime(column, format=inferred.inferred_pattern)
+
+
+def get_type() -> DateType:
+    return DateType()

@@ -7,7 +7,7 @@ from pandas import Series
 from ..schema import InferredField, ValidatorTypes
 
 
-class BaseValidator(ABC):
+class BaseType(ABC):
     validator_types: Tuple[ValidatorTypes]
 
     @abstractmethod
@@ -38,3 +38,7 @@ class BaseValidator(ABC):
         ):
             return False
         return True
+
+    @property
+    def name(self) -> str:
+        return str(self.__class__.__name__.replace("Type", ""))

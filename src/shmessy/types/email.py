@@ -5,14 +5,14 @@ from pandas import Series
 from pydantic import BaseModel, EmailStr
 
 from ..schema import InferredField, ValidatorTypes
-from .base import BaseValidator
+from .base import BaseType
 
 
 class Model(BaseModel):
     email: EmailStr
 
 
-class Validator(BaseValidator):
+class EmailType(BaseType):
     validator_types = (ValidatorTypes.STRING,)
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
@@ -24,8 +24,12 @@ class Validator(BaseValidator):
                 Model(email=value)
             except ValueError:
                 return None
-        return InferredField(inferred_type=str, inferred_virtual_type=EmailStr)
+        return InferredField(inferred_type=self.name)
 
     def fix(self, column: Series, sample_size: int) -> Series:
         # Email defined as a virtual data-type. Fix is not relevant.
         raise NotImplementedError()
+
+
+def get_type() -> EmailType:
+    return EmailType()

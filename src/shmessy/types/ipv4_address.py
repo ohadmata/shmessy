@@ -6,14 +6,14 @@ from pydantic import BaseModel
 from pydantic.networks import IPv4Address  # noqa
 
 from ..schema import InferredField, ValidatorTypes
-from .base import BaseValidator
+from .base import BaseType
 
 
 class Model(BaseModel):
     ip: IPv4Address
 
 
-class Validator(BaseValidator):
+class IPv4Type(BaseType):
     validator_types = (ValidatorTypes.STRING,)
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
@@ -25,8 +25,12 @@ class Validator(BaseValidator):
                 Model(ip=value)
             except ValueError:
                 return None
-        return InferredField(inferred_type=str, inferred_virtual_type=IPv4Address)
+        return InferredField(inferred_type=self.name)
 
     def fix(self, column: Series, sample_size: int) -> Series:
         # IP defined as a virtual data-type. Fix is not relevant.
         raise NotImplementedError()
+
+
+def get_type() -> IPv4Type:
+    return IPv4Type()

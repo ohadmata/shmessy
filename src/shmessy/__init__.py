@@ -7,15 +7,15 @@ import pandas as pd
 from pandas import DataFrame
 
 from .schema import ShmessySchema
+from .types_handler import TypesHandler
 from .utils import _fix_column_names, _get_sample_from_csv, _get_sampled_df
-from .validators_handler import ValidatorsHandler
 
 logger = logging.getLogger(__name__)
 
 
 class Shmessy:
     def __init__(self, sample_size: Optional[int] = 1000) -> None:
-        self.__validators_handler = ValidatorsHandler()
+        self.__validators_handler = TypesHandler()
         self.__sample_size = sample_size
         self.__csv_reader_encoding: str = "UTF-8"
 

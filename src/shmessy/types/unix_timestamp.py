@@ -8,7 +8,7 @@ from numpy import ndarray
 from pandas import Series, to_datetime
 
 from ..schema import InferredField, ValidatorTypes
-from .base import BaseValidator
+from .base import BaseType
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class TimestampResolution(str, Enum):
     NANOSECONDS = "ns"
 
 
-class Validator(BaseValidator):
+class UnixTimestampType(BaseType):
     validator_types = (ValidatorTypes.NUMERIC,)
     min_valid_year: int = 1980
     max_valid_year: int = 2100
@@ -65,7 +65,7 @@ class Validator(BaseValidator):
                         return None
 
             return InferredField(
-                inferred_type=datetime, inferred_pattern=selected_resolution
+                inferred_type=self.name, inferred_pattern=selected_resolution
             )
         except ValueError:
             return None
@@ -75,3 +75,7 @@ class Validator(BaseValidator):
         inferred = self.validate(sample_data)
         if inferred:
             return to_datetime(column, unit=inferred.inferred_pattern.value)
+
+
+def get_type() -> UnixTimestampType:
+    return UnixTimestampType()
