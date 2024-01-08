@@ -16,7 +16,7 @@ class BaseType(ABC):
         pass
 
     @abstractmethod
-    def fix(self, column: Series, sample_size: int) -> Series:
+    def fix(self, column: Series, inferred_field: InferredField) -> Series:
         pass
 
     def is_validator_type_valid(self, dtype: Type) -> bool:

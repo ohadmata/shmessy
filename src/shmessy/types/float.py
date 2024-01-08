@@ -19,7 +19,7 @@ class FloatType(BaseType):
                 return None
         return InferredField(inferred_type=self.name)
 
-    def fix(self, column: Series, sample_size: int) -> Series:
+    def fix(self, column: Series, inferred_field: InferredField) -> Series:
         raise NotImplementedError()
 
 

@@ -5,7 +5,7 @@ from shmessy import Shmessy
 
 
 def test_read_csv():
-    df = Shmessy().read_csv("tests/data/data_1.csv")
+    df, inferred_schema = Shmessy().read_csv("tests/data/data_1.csv")
 
     assert isinstance(df["created_at"].dtype, dtypes.DateTime64DType)
     assert isinstance(df["modified_at"].dtype, dtypes.DateTime64DType)
@@ -23,7 +23,7 @@ def test_read_csv():
 
 
 def test_read_csv_colon_as_delimiter():
-    df = Shmessy().read_csv("tests/data/data_3.csv")
+    df, inferred_schema = Shmessy().read_csv("tests/data/data_3.csv")
 
     assert isinstance(df["id"].dtype, dtypes.Int64DType)
     assert isinstance(df["name"].dtype, dtypes.ObjectDType)
@@ -31,7 +31,7 @@ def test_read_csv_colon_as_delimiter():
 
 
 def test_read_csv_semicolon_as_delimiter():
-    df = Shmessy().read_csv("tests/data/data_4.csv")
+    df, inferred_schema = Shmessy().read_csv("tests/data/data_4.csv")
 
     assert isinstance(df["id"].dtype, dtypes.Int64DType)
     assert isinstance(df["name"].dtype, dtypes.ObjectDType)
@@ -40,7 +40,7 @@ def test_read_csv_semicolon_as_delimiter():
 
 def test_buffer_as_read_csv_input():
     with open("tests/data/data_4.csv", mode="rt") as file_input:
-        df = Shmessy().read_csv(file_input)
+        df, inferred_schema = Shmessy().read_csv(file_input)
 
     assert isinstance(df["id"].dtype, dtypes.Int64DType)
     assert isinstance(df["name"].dtype, dtypes.ObjectDType)
@@ -49,7 +49,7 @@ def test_buffer_as_read_csv_input():
 
 def test_binary_buffer_as_read_csv_input():
     with open("tests/data/data_4.csv", mode="rb") as file_input:
-        df = Shmessy().read_csv(file_input)
+        df, inferred_schema = Shmessy().read_csv(file_input)
 
     assert isinstance(df["id"].dtype, dtypes.Int64DType)
     assert isinstance(df["name"].dtype, dtypes.ObjectDType)

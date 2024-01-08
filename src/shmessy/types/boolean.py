@@ -37,20 +37,17 @@ class BooleanType(BaseType):
             if self._validate_value_pattern(data, pattern):
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)
 
-    def fix(self, column: Series, sample_size: int) -> Series:
-        sample_data = column[:sample_size]
-        inferred = self.validate(sample_data)
-        if inferred:
-            if isinstance(inferred.inferred_pattern[0], str):
-                return column.apply(
-                    lambda x: True
-                    if x.lower() == inferred.inferred_pattern[0].lower()
-                    else False
-                )
-
+    def fix(self, column: Series, inferred_field: InferredField) -> Series:
+        if isinstance(inferred_field.inferred_pattern[0], str):
             return column.apply(
-                lambda x: True if x == inferred.inferred_pattern[0] else False
+                lambda x: True
+                if x.lower() == inferred_field.inferred_pattern[0].lower()
+                else False
             )
+
+        return column.apply(
+            lambda x: True if x == inferred_field.inferred_pattern[0] else False
+        )
 
 
 def get_type() -> BooleanType:

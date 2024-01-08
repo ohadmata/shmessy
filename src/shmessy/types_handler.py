@@ -2,7 +2,7 @@ import logging
 import os
 from importlib import import_module
 from types import ModuleType
-from typing import Any, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type
 
 from numpy import ndarray
 from numpy.dtypes import (
@@ -19,6 +19,7 @@ from numpy.dtypes import (
     ObjectDType,
     StrDType,
 )
+from pandas import Series
 
 from .schema import Field
 from .types.base import BaseType
@@ -37,6 +38,14 @@ class TypesHandler:
 
     def __init__(self):
         self.__types = self._discover_types()
+        self.__types_as_dict: Dict[str, BaseType] = self._types_as_dict(self.__types)
+
+    @classmethod
+    def _types_as_dict(cls, __types: List[BaseType]) -> Dict[str, BaseType]:
+        res = {}
+        for type_ in __types:
+            res[type_.name] = type_
+        return res
 
     @classmethod
     def _discover_types(cls) -> List[BaseType]:
@@ -61,14 +70,15 @@ class TypesHandler:
         except (ImportError, ValueError, AttributeError) as e:
             logger.error(f"Couldn't import {module}: {e}")
 
-    def fix_field(self, column: Any, sample_size: Optional[int] = 1000) -> Any:
-        for type_ in self.__types:
-            try:
-                fixed_field = type_.fix(column=column, sample_size=sample_size)
-                if fixed_field is not None:
-                    return fixed_field
-            except NotImplementedError:
-                pass
+    def fix_field(self, column: Series, inferred_field: Field) -> Any:
+        try:
+            fixed_field = self.__types_as_dict[inferred_field.inferred_type].fix(
+                column=column, inferred_field=inferred_field
+            )
+            if fixed_field is not None:
+                return fixed_field
+        except NotImplementedError:
+            pass
 
         return column
 
