@@ -35,42 +35,49 @@ inferred_schema = Shmessy().infer_schema(df)
 Output (inferred_schema dump):
 ```json
 {
-    "infer_duration_ms": 91,
+    "infer_duration_ms": 12,
     "columns": [
         {
-            "field_name": "first_name",
-            "source_type": "<class 'numpy.object_'>",
-            "inferred_type": "None"
+            "field_name": "id",
+            "source_type": "Integer",
+            "inferred_type": "Integer"
         },
         {
-            "field_name": "email",
-            "source_type": "<class 'numpy.object_'>",
-            "inferred_type": "<class 'str'>",
-            "inferred_virtual_type": "<class 'pydantic.networks.EmailStr'>"
+            "field_name": "email_value",
+            "source_type": "String",
+            "inferred_type": "Email"
         },
         {
-            "field_name": "ip_address",
-            "source_type": "<class 'numpy.object_'>",
-            "inferred_type": "<class 'str'>",
-            "inferred_virtual_type": "<class 'ipaddress.IPv4Address'>"
+            "field_name": "date_value",
+            "source_type": "String",
+            "inferred_type": "Date",
+            "inferred_pattern": "%d-%m-%Y"
         },
         {
-            "field_name": "created_at",
-            "source_type": "<class 'numpy.object_'>",
-            "inferred_type": "<class 'datetime.date'>",
-            "inferred_pattern": "%m/%d/%Y"
+            "field_name": "datetime_value",
+            "source_type": "String",
+            "inferred_type": "Datetime",
+            "inferred_pattern": "%Y/%m/%d %H:%M:%S"
         },
         {
-            "field_name": "modified_at",
-            "source_type": "<class 'numpy.object_'>",
-            "inferred_type": "<class 'datetime.datetime'>",
-            "inferred_pattern": "%Y-%m-%d %H:%M:%S"
+            "field_name": "yes_no_data",
+            "source_type": "String",
+            "inferred_type": "Boolean",
+            "inferred_pattern": [
+                "YES",
+                "NO"
+            ]
         },
         {
-            "field_name": "unixed_at",
-            "source_type": "<class 'numpy.float64'>",
-            "inferred_type": "<class 'datetime.datetime'>",
+            "field_name": "unix_value",
+            "source_type": "Integer",
+            "inferred_type": "UnixTimestamp",
             "inferred_pattern": "ms"
+        },
+        {
+            "field_name": "ip_value",
+            "source_type": "String",
+            "inferred_type": "IPv4"
         }
     ]
 }

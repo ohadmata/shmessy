@@ -2,12 +2,31 @@ import logging
 import os
 from importlib import import_module
 from types import ModuleType
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Type
 
 from numpy import ndarray
+from numpy.dtypes import (
+    BoolDType,
+    DateTime64DType,
+    Float16DType,
+    Float32DType,
+    Float64DType,
+    Int8DType,
+    Int16DType,
+    Int32DType,
+    Int64DType,
+    IntDType,
+    ObjectDType,
+    StrDType,
+)
 
 from .schema import Field
 from .types.base import BaseType
+from .types.boolean import BooleanType
+from .types.datetime_ import DatetimeType
+from .types.float import FloatType
+from .types.integer import IntegerType
+from .types.string import StringType
 
 logger = logging.getLogger(__name__)
 
@@ -60,9 +79,34 @@ class TypesHandler:
             if inferred:
                 return Field(
                     field_name=field_name,
-                    source_type=str(data.dtype.type),
+                    source_type=_numpy_type_shmessy_type(data.dtype),
                     inferred_type=inferred.inferred_type,
                     inferred_pattern=inferred.inferred_pattern,
                 )
 
-        return Field(field_name=field_name, source_type=str(data.dtype.type))
+        return Field(
+            field_name=field_name, source_type=_numpy_type_shmessy_type(data.dtype)
+        )
+
+
+def _numpy_type_shmessy_type(numpy_type: Type) -> str:
+    if isinstance(
+        numpy_type,
+        (
+            IntDType,
+            Int64DType,
+            Int8DType,
+            Int16DType,
+            Int32DType,
+        ),
+    ):
+        return IntegerType().name
+    if isinstance(numpy_type, (ObjectDType, StrDType)):
+        return StringType().name
+    if isinstance(numpy_type, BoolDType):
+        return BooleanType().name
+    if isinstance(numpy_type, DateTime64DType):
+        return DatetimeType().name
+    if isinstance(numpy_type, (Float16DType, Float32DType, Float64DType)):
+        return FloatType().name
+    return str(numpy_type)
