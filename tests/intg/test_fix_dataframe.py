@@ -47,7 +47,7 @@ from shmessy import Shmessy
 )
 def test_fix_column_names(df_data, fix_column_names, expected_result):
     df = pd.DataFrame(df_data)
-    df, inferred_schema = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
+    df = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
     assert [column for column in df] == expected_result
 
 

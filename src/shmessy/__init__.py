@@ -18,6 +18,10 @@ class Shmessy:
         self.__types_handler = TypesHandler()
         self.__sample_size = sample_size
         self.__csv_reader_encoding: str = "UTF-8"
+        self.__inferred_schema: Optional[ShmessySchema] = None
+
+    def get_inferred_schema(self) -> ShmessySchema:
+        return self.__inferred_schema
 
     def infer_schema(self, df: DataFrame) -> ShmessySchema:
         start_time = time.time()
@@ -27,8 +31,11 @@ class Shmessy:
             for column in df
         ]
         infer_duration_ms = int((time.time() - start_time) * 1000)
-
-        return ShmessySchema(columns=columns, infer_duration_ms=infer_duration_ms)
+        inferred_schema = ShmessySchema(
+            columns=columns, infer_duration_ms=infer_duration_ms
+        )
+        self.__inferred_schema = inferred_schema
+        return inferred_schema
 
     def fix_schema(
         self,
@@ -36,7 +43,7 @@ class Shmessy:
         *,
         fix_column_names: Optional[bool] = False,
         fixed_schema: Optional[ShmessySchema] = None
-    ) -> (DataFrame, ShmessySchema):
+    ) -> DataFrame:
         if fixed_schema is None:
             fixed_schema = self.infer_schema(df)
 
@@ -48,7 +55,8 @@ class Shmessy:
         if fix_column_names:
             df = _fix_column_names(df)
 
-        return df, fixed_schema
+        self.__inferred_schema = fixed_schema
+        return df
 
     def read_csv(
         self,
@@ -56,7 +64,7 @@ class Shmessy:
         *,
         use_sniffer: Optional[bool] = True,
         fixed_schema: Optional[ShmessySchema] = None
-    ) -> (DataFrame, ShmessySchema):
+    ) -> DataFrame:
         if use_sniffer:
             dialect = csv.Sniffer().sniff(
                 sample=_get_sample_from_csv(
@@ -73,4 +81,5 @@ class Shmessy:
         if fixed_schema is None:
             fixed_schema = self.infer_schema(df)
 
-        return self.fix_schema(df=df, fixed_schema=fixed_schema)[0], fixed_schema
+        self.__inferred_schema = fixed_schema
+        return self.fix_schema(df=df, fixed_schema=fixed_schema)
