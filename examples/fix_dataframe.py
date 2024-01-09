@@ -11,8 +11,9 @@ if __name__ == "__main__":
 
     print("Fixed dataframe:")
     shmessy = Shmessy()
-    inferred_schema = shmessy.infer_schema(df)
+    df = shmessy.fix_schema(df)
+    inferred_schema = shmessy.get_inferred_schema()
     pretty_print_df(
-        df=shmessy.fix_schema(df),
+        df=df,
         inferred_schema=inferred_schema
     )

@@ -3,4 +3,7 @@ from utils import pretty_print_df
 
 
 if __name__ == "__main__":
-    pretty_print_df(Shmessy().read_csv('../tests/data/data_4.csv'))
+    shmessy = Shmessy()
+    df = shmessy.read_csv('../tests/data/data_4.csv')
+    inferred_schema = shmessy.get_inferred_schema()
+    pretty_print_df(df=df, inferred_schema=inferred_schema)

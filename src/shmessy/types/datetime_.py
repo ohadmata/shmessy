@@ -38,11 +38,8 @@ class DatetimeType(BaseType):
             if validate_strptime_pattern(data, pattern):
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)
 
-    def fix(self, column: Series, sample_size: int) -> Series:
-        sample_data = column[:sample_size]
-        inferred = self.validate(sample_data)
-        if inferred:
-            return to_datetime(column, format=inferred.inferred_pattern)
+    def fix(self, column: Series, inferred_field: InferredField) -> Series:
+        return to_datetime(column, format=inferred_field.inferred_pattern)
 
 
 def get_type() -> DatetimeType:

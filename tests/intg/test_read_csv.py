@@ -1,4 +1,3 @@
-import pandas as pd
 from numpy import dtypes
 
 from shmessy import Shmessy

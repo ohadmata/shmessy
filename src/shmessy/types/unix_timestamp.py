@@ -71,11 +71,8 @@ class UnixTimestampType(BaseType):
         except ValueError:
             return None
 
-    def fix(self, column: Series, sample_size: int) -> Series:
-        sample_data = column[:sample_size]
-        inferred = self.validate(sample_data)
-        if inferred:
-            return to_datetime(column, unit=inferred.inferred_pattern.value)
+    def fix(self, column: Series, inferred_field: InferredField) -> Series:
+        return to_datetime(column, unit=inferred_field.inferred_pattern.value)
 
 
 def get_type() -> UnixTimestampType:

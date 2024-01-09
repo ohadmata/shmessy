@@ -27,7 +27,7 @@ class EmailType(BaseType):
                 return None
         return InferredField(inferred_type=self.name)
 
-    def fix(self, column: Series, sample_size: int) -> Series:
+    def fix(self, column: Series, inferred_field: InferredField) -> Series:
         # Email defined as a virtual data-type. Fix is not relevant.
         raise NotImplementedError()
 
