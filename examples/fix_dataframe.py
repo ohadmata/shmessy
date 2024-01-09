@@ -10,7 +10,9 @@ if __name__ == "__main__":
     pretty_print_df(df)
 
     print("Fixed dataframe:")
-    df, inferred_schema = Shmessy().fix_schema(df)
+    shmessy = Shmessy()
+    df = shmessy.fix_schema(df)
+    inferred_schema = shmessy.get_inferred_schema()
     pretty_print_df(
         df=df,
         inferred_schema=inferred_schema
