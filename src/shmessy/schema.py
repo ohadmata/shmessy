@@ -4,7 +4,7 @@ from typing import Any, List, Optional
 from pydantic import BaseModel
 
 
-class ValidatorTypes(str, Enum):
+class CastingTypes(str, Enum):
     NUMERIC = "NUMERIC"
     STRING = "STRING"
 

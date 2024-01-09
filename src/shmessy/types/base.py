@@ -4,12 +4,12 @@ from typing import Optional, Tuple, Type
 from numpy import issubdtype, ndarray, number, object_, str_
 from pandas import Series
 
-from ..schema import InferredField, ValidatorTypes
+from ..schema import CastingTypes, InferredField
 
 
 class BaseType(ABC):
     weight: int = 0
-    validator_types: Tuple[ValidatorTypes]
+    casting_types: Tuple[CastingTypes]
 
     @abstractmethod
     def validate(self, data: ndarray) -> Optional[InferredField]:
@@ -19,22 +19,22 @@ class BaseType(ABC):
     def fix(self, column: Series, inferred_field: InferredField) -> Series:
         pass
 
-    def is_validator_type_valid(self, dtype: Type) -> bool:
-        for possible_validator_type in self.validator_types:
-            if self._check_single_validator_type(dtype, possible_validator_type):
+    def is_casting_type_valid(self, dtype: Type) -> bool:
+        for possible_casting_type in self.casting_types:
+            if self._check_single_validator_type(dtype, possible_casting_type):
                 return True
         return False
 
     @staticmethod
     def _check_single_validator_type(
-        dtype: Type, possible_validator_type: ValidatorTypes
+        dtype: Type, possible_casting_type: CastingTypes
     ) -> bool:
-        if possible_validator_type == ValidatorTypes.NUMERIC and not issubdtype(
+        if possible_casting_type == CastingTypes.NUMERIC and not issubdtype(
             dtype, number
         ):
             return False
 
-        if possible_validator_type == ValidatorTypes.STRING and not (
+        if possible_casting_type == CastingTypes.STRING and not (
             issubdtype(dtype, object_) or issubdtype(dtype, str_)
         ):
             return False

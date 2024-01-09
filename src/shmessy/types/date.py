@@ -3,14 +3,14 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from ..schema import InferredField, ValidatorTypes
+from ..schema import CastingTypes, InferredField
 from . import validate_strptime_pattern
 from .base import BaseType
 
 
 class DateType(BaseType):
     weight = 2
-    validator_types = (ValidatorTypes.STRING,)
+    casting_types = (CastingTypes.STRING,)
     patterns: list[str] = [
         "%m/%d/%Y",  # 12/01/2022
         "%m-%d-%Y",  # 12-01-2022
@@ -32,9 +32,6 @@ class DateType(BaseType):
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
-        if not self.is_validator_type_valid(dtype=data.dtype):
-            return None
-
         for pattern in self.patterns:
             if validate_strptime_pattern(data, pattern):
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)

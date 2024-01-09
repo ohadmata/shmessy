@@ -85,14 +85,15 @@ class TypesHandler:
     def infer_field(self, field_name: str, data: ndarray) -> Field:
         sorted_types = sorted(self.__types, key=lambda x: x.weight)
         for type_ in sorted_types:
-            inferred = type_.validate(data)
-            if inferred:
-                return Field(
-                    field_name=field_name,
-                    source_type=_numpy_type_shmessy_type(data.dtype),
-                    inferred_type=inferred.inferred_type,
-                    inferred_pattern=inferred.inferred_pattern,
-                )
+            if type_.is_casting_type_valid(data.dtype):
+                inferred = type_.validate(data)
+                if inferred:
+                    return Field(
+                        field_name=field_name,
+                        source_type=_numpy_type_shmessy_type(data.dtype),
+                        inferred_type=inferred.inferred_type,
+                        inferred_pattern=inferred.inferred_pattern,
+                    )
 
         return Field(
             field_name=field_name, source_type=_numpy_type_shmessy_type(data.dtype)

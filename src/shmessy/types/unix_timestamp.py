@@ -7,7 +7,7 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from ..schema import InferredField, ValidatorTypes
+from ..schema import CastingTypes, InferredField
 from .base import BaseType
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ class TimestampResolution(str, Enum):
 
 class UnixTimestampType(BaseType):
     weight = 4
-    validator_types = (ValidatorTypes.NUMERIC,)
+    casting_types = (CastingTypes.NUMERIC,)
     min_valid_year: int = 1980
     max_valid_year: int = 2100
 
@@ -47,9 +47,6 @@ class UnixTimestampType(BaseType):
             return value / 1000 / 1000
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
-        if not self.is_validator_type_valid(dtype=data.dtype):
-            return None
-
         try:
             selected_resolution = self._unix_timestamp_resolution(float(data[0]))
             if not selected_resolution:

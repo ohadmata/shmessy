@@ -3,13 +3,13 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series
 
-from ..schema import InferredField, ValidatorTypes
+from ..schema import CastingTypes, InferredField
 from .base import BaseType
 
 
 class StringType(BaseType):
     weight = 9
-    validator_types = (ValidatorTypes.STRING,)
+    casting_types = (CastingTypes.STRING, CastingTypes.NUMERIC)
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for column in data:

@@ -3,13 +3,13 @@ from typing import Optional, Tuple
 from numpy import ndarray
 from pandas import Series
 
-from ..schema import InferredField, ValidatorTypes
+from ..schema import CastingTypes, InferredField
 from .base import BaseType
 
 
 class BooleanType(BaseType):
     weight = 1
-    validator_types = (ValidatorTypes.STRING, ValidatorTypes.NUMERIC)
+    casting_types = (CastingTypes.STRING, CastingTypes.NUMERIC)
     patterns: list[Tuple] = [  # The first member should be the true value
         ("YES", "NO"),
         ("TRUE", "FALSE"),
@@ -30,9 +30,6 @@ class BooleanType(BaseType):
         return True
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
-        if not self.is_validator_type_valid(dtype=data.dtype):
-            return None
-
         for pattern in self.patterns:
             if self._validate_value_pattern(data, pattern):
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)
