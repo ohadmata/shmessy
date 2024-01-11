@@ -20,14 +20,23 @@ class BooleanType(BaseType):
 
     @staticmethod
     def _validate_value_pattern(data: ndarray, pattern: Tuple) -> bool:
+        match_first_value: bool = False
+        match_second_value: bool = False
+
         for value in data:
             if isinstance(value, str):
                 value = value.lower()
             if isinstance(pattern[0], str):
                 pattern = (pattern[0].lower(), pattern[1].lower())
-            if value not in (pattern[0], pattern[1]):
+            if value == pattern[0]:
+                match_first_value = True
+            elif value == pattern[1]:
+                match_second_value = True
+            else:
                 return False
-        return True
+        if match_first_value and match_second_value:
+            return True
+        return False
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for pattern in self.patterns:
