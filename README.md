@@ -128,6 +128,7 @@ shmessy.read_csv(
     filepath_or_buffer: str | TextIO | BinaryIO,
     use_sniffer: Optional[bool] = True,  # Use python sniffer to identify the dialect (seperator / quote-char / etc...)
     fixed_schema: Optional[ShmessySchema] = None,  # Fix the given CSV according to this schema
+    fix_column_names: Optional[bool] = False,  # Replace non-alphabetic/numeric chars with underscore
 ) -> DataFrame
 ```
 
