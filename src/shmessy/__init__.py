@@ -42,7 +42,7 @@ class Shmessy:
         df: DataFrame,
         *,
         fix_column_names: Optional[bool] = False,
-        fixed_schema: Optional[ShmessySchema] = None
+        fixed_schema: Optional[ShmessySchema] = None,
     ) -> DataFrame:
         if fixed_schema is None:
             fixed_schema = self.infer_schema(df)
@@ -63,7 +63,8 @@ class Shmessy:
         filepath_or_buffer: Union[str, TextIO, BinaryIO],
         *,
         use_sniffer: Optional[bool] = True,
-        fixed_schema: Optional[ShmessySchema] = None
+        fixed_schema: Optional[ShmessySchema] = None,
+        fix_column_names: Optional[bool] = False,
     ) -> DataFrame:
         if use_sniffer:
             dialect = csv.Sniffer().sniff(
@@ -82,4 +83,6 @@ class Shmessy:
             fixed_schema = self.infer_schema(df)
 
         self.__inferred_schema = fixed_schema
-        return self.fix_schema(df=df, fixed_schema=fixed_schema)
+        return self.fix_schema(
+            df=df, fixed_schema=fixed_schema, fix_column_names=fix_column_names
+        )
