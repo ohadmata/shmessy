@@ -1,9 +1,11 @@
 import codecs
 import re
 from io import TextIOWrapper
-from typing import BinaryIO, Optional, TextIO, Union
+from typing import BinaryIO, Dict, Optional, TextIO, Union
 
 from pandas import DataFrame
+
+from .schema import ShmessySchema
 
 
 def _get_sampled_df(df: DataFrame, sample_size: int) -> DataFrame:
@@ -13,11 +15,24 @@ def _get_sampled_df(df: DataFrame, sample_size: int) -> DataFrame:
     return df.sample(n=sample_size)
 
 
-def _fix_column_names(df: DataFrame) -> DataFrame:
+def _fix_column_names(df: DataFrame) -> Dict[str, str]:
     fixed_column_names = {}
     for column in df.columns:
         fixed_column_names[column] = re.sub("[^0-9a-zA-Z]+", "_", column)
-    return df.rename(columns=fixed_column_names)
+    return fixed_column_names
+
+
+def _fix_column_names_in_df(input_df: DataFrame, mapping: Dict[str, str]) -> DataFrame:
+    return input_df.rename(columns=mapping)
+
+
+def _fix_column_names_in_shmessy_schema(
+    input_schema: ShmessySchema, mapping: Dict[str, str]
+) -> ShmessySchema:
+    for column in input_schema.columns:
+        if mapping[column.field_name]:
+            column.field_name = mapping[column.field_name]
+    return input_schema
 
 
 def _get_sample_from_csv(
