@@ -53,3 +53,20 @@ def test_fix_column_names(df_data, fix_column_names, expected_result):
     assert [column for column in df] == expected_result
     assert [column.field_name for column in fixed_schema.columns] == expected_result
 
+
+@Parametrization.autodetect_parameters()
+@Parametrization.case(
+    name="Regular data",
+    df_data={
+        "name": ["Guy", "Yaron", "Mish", "Moyiz"],
+        "degree": ["MBA", "BCA", "M.Tech", "MBA"],
+        "score": [90, 40, 80, 98]
+    },
+    fix_column_names=False,
+    expected_result=["name", "degree", "score"]
+)
+def test_issue_input_columns_as_object(df_data, fix_column_names, expected_result):
+    df = pd.DataFrame(df_data).astype(object)
+    df = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
+    assert [column for column in df] == expected_result
+
