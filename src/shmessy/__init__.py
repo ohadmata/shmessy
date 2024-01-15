@@ -8,7 +8,13 @@ from pandas import DataFrame
 
 from .schema import ShmessySchema
 from .types_handler import TypesHandler
-from .utils import _fix_column_names, _get_sample_from_csv, _get_sampled_df
+from .utils import (
+    _fix_column_names,
+    _fix_column_names_in_df,
+    _fix_column_names_in_shmessy_schema,
+    _get_sample_from_csv,
+    _get_sampled_df,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +59,11 @@ class Shmessy:
             )
 
         if fix_column_names:
-            df = _fix_column_names(df)
+            mapping = _fix_column_names(df)
+            df = _fix_column_names_in_df(input_df=df, mapping=mapping)
+            fixed_schema = _fix_column_names_in_shmessy_schema(
+                input_schema=fixed_schema, mapping=mapping
+            )
 
         self.__inferred_schema = fixed_schema
         return df
