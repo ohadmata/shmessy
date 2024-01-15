@@ -54,3 +54,6 @@ def test_binary_buffer_as_read_csv_input():
     assert isinstance(df["name"].dtype, dtypes.ObjectDType)
     assert isinstance(df["value"].dtype, dtypes.Int64DType)
 
+
+def test_read_csv_wrong_number_of_columns():
+    df = Shmessy().read_csv("tests/data/data_6.csv")

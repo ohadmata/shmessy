@@ -1,10 +1,12 @@
 import csv
 import logging
+import re
 import time
 from typing import BinaryIO, Optional, TextIO, Union
 
 import pandas as pd
 from pandas import DataFrame
+from pandas.errors import ParserError
 
 from .schema import ShmessySchema
 from .types_handler import TypesHandler
@@ -66,18 +68,23 @@ class Shmessy:
         fixed_schema: Optional[ShmessySchema] = None,
         fix_column_names: Optional[bool] = False,
     ) -> DataFrame:
-        if use_sniffer:
-            dialect = csv.Sniffer().sniff(
-                sample=_get_sample_from_csv(
-                    filepath_or_buffer=filepath_or_buffer,
-                    sample_size=self.__sample_size,
-                    encoding=self.__csv_reader_encoding,
-                ),
-                delimiters="".join([",", "\t", ";", " ", ":"]),
-            )
-            df = pd.read_csv(filepath_or_buffer=filepath_or_buffer, dialect=dialect())
-        else:
-            df = pd.read_csv(filepath_or_buffer=filepath_or_buffer)
+        try:
+            if use_sniffer:
+                dialect = csv.Sniffer().sniff(
+                    sample=_get_sample_from_csv(
+                        filepath_or_buffer=filepath_or_buffer,
+                        sample_size=self.__sample_size,
+                        encoding=self.__csv_reader_encoding,
+                    ),
+                    delimiters="".join([",", "\t", ";", " ", ":"]),
+                )
+                df = pd.read_csv(
+                    filepath_or_buffer=filepath_or_buffer, dialect=dialect()
+                )
+            else:
+                df = pd.read_csv(filepath_or_buffer=filepath_or_buffer)
+        except ParserError as e:
+            raise Exception(self._parse_error(str(e))) from e
 
         if fixed_schema is None:
             fixed_schema = self.infer_schema(df)
@@ -86,3 +93,10 @@ class Shmessy:
         return self.fix_schema(
             df=df, fixed_schema=fixed_schema, fix_column_names=fix_column_names
         )
+
+    @staticmethod
+    def _parse_error(error: str) -> str:
+        match = re.match(r"(.*?)Expected (.*) fields in line (.*), saw (.*)\n", error)
+        if match is not None:
+            return f"Error in line {match.group(3)}: Expected {match.group(2)} fields, found {match.group(4)}!"
+        return "Unknown error"
