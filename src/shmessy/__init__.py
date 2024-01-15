@@ -85,9 +85,13 @@ class Shmessy:
                 ),
                 delimiters="".join([",", "\t", ";", " ", ":"]),
             )
-            df = pd.read_csv(filepath_or_buffer=filepath_or_buffer, dialect=dialect())
+            df = pd.read_csv(
+                filepath_or_buffer=filepath_or_buffer,
+                dialect=dialect(),
+                low_memory=False,
+            )
         else:
-            df = pd.read_csv(filepath_or_buffer=filepath_or_buffer)
+            df = pd.read_csv(filepath_or_buffer=filepath_or_buffer, low_memory=False)
 
         if fixed_schema is None:
             fixed_schema = self.infer_schema(df)
