@@ -28,6 +28,14 @@ class DateType(BaseType):
         "%d-%b-%Y",  # 01-Mar-2022
         "%-d-%b-%y",  # 1-Mar-22
         "%Y-%m",  # 2022-07
+        "%-m-%-d-%Y",
+        "%-d-%-m-%Y",
+        "%Y-%-m-%-d",
+        "%-m/%-d/%Y",
+        "%-d/%-m/%Y",
+        "%Y/%-m/%-d",
+        "%-d.%-m.%Y",
+        "%Y.%-m.%-d",
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
