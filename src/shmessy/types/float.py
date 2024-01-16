@@ -3,13 +3,12 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series
 
-from ..schema import CastingTypes, InferredField
+from ..schema import InferredField
 from .base import BaseType
 
 
 class FloatType(BaseType):
     weight = 8
-    casting_types = (CastingTypes.STRING, CastingTypes.NUMERIC)
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for column in data:

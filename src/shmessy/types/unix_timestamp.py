@@ -7,7 +7,7 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from ..schema import CastingTypes, InferredField
+from ..schema import InferredField
 from .base import BaseType
 
 logger = logging.getLogger(__name__)
@@ -21,7 +21,6 @@ class TimestampResolution(str, Enum):
 
 class UnixTimestampType(BaseType):
     weight = 4
-    casting_types = (CastingTypes.NUMERIC,)
     min_valid_year: int = 1980
     max_valid_year: int = 2100
 

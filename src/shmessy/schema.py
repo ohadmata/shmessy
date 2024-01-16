@@ -1,12 +1,6 @@
-from enum import Enum
 from typing import Any, List, Optional
 
 from pydantic import BaseModel
-
-
-class CastingTypes(str, Enum):
-    NUMERIC = "NUMERIC"
-    STRING = "STRING"
 
 
 class BaseField(BaseModel):
