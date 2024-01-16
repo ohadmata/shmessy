@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from numpy import ndarray
@@ -7,6 +8,8 @@ from pydantic.networks import IPv4Address  # noqa
 
 from ..schema import InferredField
 from .base import BaseType
+
+logger = logging.getLogger(__name__)
 
 
 class Model(BaseModel):
@@ -21,6 +24,7 @@ class IPv4Type(BaseType):
             try:
                 Model(ip=value)
             except ValueError:
+                logger.debug(f"Cannot cast the value '{value}' to {self.name}")
                 return None
         return InferredField(inferred_type=self.name)
 

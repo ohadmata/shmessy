@@ -85,6 +85,7 @@ class TypesHandler:
     def infer_field(self, field_name: str, data: ndarray) -> Field:
         sorted_types = sorted(self.__types, key=lambda x: x.weight)
         for type_ in sorted_types:
+            logger.debug(f"Trying to match column {field_name} to type {type_.name}")
             inferred = type_.validate(data)
             if inferred:
                 return Field(
