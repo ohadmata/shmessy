@@ -3,14 +3,13 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from ..schema import CastingTypes, InferredField
+from ..schema import InferredField
 from . import validate_strptime_pattern
 from .base import BaseType
 
 
 class DatetimeType(BaseType):
     weight = 3
-    casting_types = (CastingTypes.STRING,)
     patterns: list[str] = [
         "%m/%d/%Y %-H:%M",  # 11/14/2003 0:00
         "%d-%m-%Y %H:%M",  # 11-14-2003 00:00

@@ -5,7 +5,7 @@ from pandas import Series
 from pydantic import BaseModel
 from pydantic.networks import IPv4Address  # noqa
 
-from ..schema import CastingTypes, InferredField
+from ..schema import InferredField
 from .base import BaseType
 
 
@@ -15,7 +15,6 @@ class Model(BaseModel):
 
 class IPv4Type(BaseType):
     weight = 6
-    casting_types = (CastingTypes.STRING,)
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for value in data:
