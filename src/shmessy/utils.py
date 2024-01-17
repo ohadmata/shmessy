@@ -50,6 +50,14 @@ def _get_sample_from_csv(
     else:
         text_stream = codecs.getreader(encoding)(filepath_or_buffer)
 
-    sample = "".join(text_stream.readlines(sample_size))
+    # sample = "".join(text_stream.readlines(sample_size))
+    # There is an issue with readlines(x) that reads the whole data instead of X first rows
+
+    sample = ""
+    for idx, line in enumerate(text_stream):
+        if idx > sample_size:
+            break
+        sample += line
+
     filepath_or_buffer.seek(0)
     return sample
