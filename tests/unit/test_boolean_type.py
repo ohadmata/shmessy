@@ -74,6 +74,7 @@ def test_boolean_match_at_least_once_for_each_value(df_data, expected_shmessy_ty
     df = pd.DataFrame(df_data)
     fixed_df = shmessy.fix_schema(df)
     result = shmessy.get_inferred_schema()
+
     assert result.columns[0].inferred_type == expected_shmessy_type
     assert fixed_df["test_column"].dtype.type == expected_numpy_type.type
     assert [x for x in df["test_column"]] == [x for x in expected_result]
