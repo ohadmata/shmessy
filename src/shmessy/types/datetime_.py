@@ -11,9 +11,7 @@ from .base import BaseType
 class DatetimeType(BaseType):
     weight = 3
     patterns: list[str] = [
-        "%m/%d/%Y %-H:%M",  # 11/14/2003 0:00
         "%d-%m-%Y %H:%M",  # 11-14-2003 00:00
-        "%d-%m-%Y %-H:%M",  # 11-14-2003 0:00
         "%m/%d/%y %H:%M:%S",  # 12/15/22 00:00:00
         "%m-%d-%y %H:%M:%S",  # 12-30-2022 00:00:00
         "%m/%d/%Y %H:%M:%S",  # 12/30/2022 00:00:00
@@ -26,7 +24,6 @@ class DatetimeType(BaseType):
         "%Y-%m-%d %H:%M:%S.%fZ",  # 2022-12-30 00:00:00.000Z
         "%Y-%m-%d %H:%M:%S.%f",  # 2022-12-30 00:00:00.000
         "%Y-%m-%dT%H:%M:%S.%fZ",  # 2022-12-30T00:00:00.000Z
-        "%b %-d, %Y %H:%M %p",  # Jul 3, 2023 12:10 PM
         "%Y-%m-%dT%H:%M:%S",
     ]
 

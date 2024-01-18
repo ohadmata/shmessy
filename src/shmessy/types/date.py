@@ -14,7 +14,6 @@ class DateType(BaseType):
         "%m/%d/%Y",  # 12/01/2022
         "%m-%d-%Y",  # 12-01-2022
         "%m.%d.%Y",  # 12.01.2022
-        "%-d/%m/%Y",  # 1/12/2023
         "%m/%d/%y",  # 12/01/22
         "%m-%d-%y",  # 12.01.2022
         "%m.%d.%y",  # 12.01.22
@@ -26,16 +25,7 @@ class DateType(BaseType):
         "%d.%m.%Y",  # 01.12.2022
         "%d/%b/%Y",  # 01/Mar/2022
         "%d-%b-%Y",  # 01-Mar-2022
-        "%-d-%b-%y",  # 1-Mar-22
         "%Y-%m",  # 2022-07
-        "%-m-%-d-%Y",
-        "%-d-%-m-%Y",
-        "%Y-%-m-%-d",
-        "%-m/%-d/%Y",
-        "%-d/%-m/%Y",
-        "%Y/%-m/%-d",
-        "%-d.%-m.%Y",
-        "%Y.%-m.%-d",
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
