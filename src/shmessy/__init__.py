@@ -1,4 +1,5 @@
 import csv
+import locale
 import logging
 import time
 from typing import BinaryIO, Optional, TextIO, Union
@@ -20,11 +21,21 @@ logger = logging.getLogger(__name__)
 
 
 class Shmessy:
-    def __init__(self, sample_size: Optional[int] = 1000) -> None:
+    def __init__(
+        self,
+        sample_size: Optional[int] = 1000,
+        reader_encoding: Optional[str] = "UTF-8",
+        locale_formatter: Optional[str] = "en_US",
+    ) -> None:
         self.__types_handler = TypesHandler()
         self.__sample_size = sample_size
-        self.__csv_reader_encoding: str = "UTF-8"
+        self.__reader_encoding = reader_encoding
+        self.__locale_formatter = locale_formatter
         self.__inferred_schema: Optional[ShmessySchema] = None
+
+        locale.setlocale(
+            locale.LC_ALL, f"{self.__locale_formatter}.{self.__reader_encoding}"
+        )
 
     def get_inferred_schema(self) -> ShmessySchema:
         return self.__inferred_schema
@@ -81,7 +92,7 @@ class Shmessy:
                 sample=_get_sample_from_csv(
                     filepath_or_buffer=filepath_or_buffer,
                     sample_size=self.__sample_size,
-                    encoding=self.__csv_reader_encoding,
+                    encoding=self.__reader_encoding,
                 ),
                 delimiters="".join([",", "\t", ";", " ", ":"]),
             )
