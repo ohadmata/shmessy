@@ -39,9 +39,25 @@ from shmessy import Shmessy
     expected_numpy_type=np.dtype('float64')
 )
 @Parametrization.case(
-    name="Base case - Input as strings with comma and decimal point",
+    name="Input as strings with comma and decimal point",
     df_data={
         "test_column": ["15322.1", "123.10", "1"]
+    },
+    expected_shmessy_type="Float",
+    expected_numpy_type=np.dtype('float64')
+)
+@Parametrization.case(
+    name="Float with inf value",
+    df_data={
+        "test_column": [15322.1, 123.10, 1.323, float("inf")]
+    },
+    expected_shmessy_type="Float",
+    expected_numpy_type=np.dtype('float64')
+)
+@Parametrization.case(
+    name="Float with nan value",
+    df_data={
+        "test_column": [15322.1, 123.10, 1.323, float("nan")]
     },
     expected_shmessy_type="Float",
     expected_numpy_type=np.dtype('float64')
