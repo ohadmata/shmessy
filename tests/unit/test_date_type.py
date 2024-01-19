@@ -9,7 +9,21 @@ from shmessy import Shmessy
 
 @Parametrization.autodetect_parameters()
 @Parametrization.case(
-    name="Base case",
+    name="Base case (%m/%d/%Y)",
+    df_data={
+        "test_column": ["12/21/2022", "03/11/2022", "08/24/2022"]
+    },
+    expected_pattern="%m/%d/%Y",
+    expected_result=[
+        datetime(2022, 12, 21),
+        datetime(2022, 3, 11),
+        datetime(2022, 8, 24)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Base case (%d-%m-%Y)",
     df_data={
         "test_column": ["23-11-2023", "21-04-2022", "11-08-2021"]
     },
@@ -18,6 +32,20 @@ from shmessy import Shmessy
         datetime(2023, 11, 23),
         datetime(2022, 4, 21),
         datetime(2021, 8, 11)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Base case (%Y-%m-%d)",
+    df_data={
+        "test_column": ["2020-04-11", "2021-05-23", "2022-11-22"]
+    },
+    expected_pattern="%Y-%m-%d",
+    expected_result=[
+        datetime(2020, 4, 11),
+        datetime(2021, 5, 23),
+        datetime(2022, 11, 22)
     ],
     expected_shmessy_type="Date",
     expected_numpy_type=np.dtype("datetime64")
@@ -34,6 +62,54 @@ from shmessy import Shmessy
         datetime(2021, 12, 11),
         datetime(2020, 1, 2),
         datetime(2019, 4, 23)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Date without leading zeros in the day part and month part (%m/%d/%Y)",
+    df_data={
+        "test_column": ["7/25/2022", "8/24/2023", "9/23/2024", "10/22/2025", "11/21/2026"]
+    },
+    expected_pattern="%m/%d/%Y",
+    expected_result=[
+        datetime(2022, 7, 25),
+        datetime(2023, 8, 24),
+        datetime(2024, 9, 23),
+        datetime(2025, 10, 22),
+        datetime(2026, 11, 21)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Date without without day (%Y-%m)",
+    df_data={
+        "test_column": ["2022-02", "2019-01", "2011-02", "2020-12", "2004-06"]
+    },
+    expected_pattern="%Y-%m",
+    expected_result=[
+        datetime(2022, 2, 1),
+        datetime(2019, 1, 1),
+        datetime(2011, 2, 1),
+        datetime(2020, 12, 1),
+        datetime(2004, 6, 1)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Date dot delimiter without leading zero (%d.%m.%Y)",
+    df_data={
+        "test_column": ["14.11.2022", "11.11.2022", "29.6.2022", "13.9.2022", "26.7.2022"]
+    },
+    expected_pattern="%d.%m.%Y",
+    expected_result=[
+        datetime(2022, 11, 14),
+        datetime(2022, 11, 11),
+        datetime(2022, 6, 29),
+        datetime(2022, 9, 13),
+        datetime(2022, 7, 26)
     ],
     expected_shmessy_type="Date",
     expected_numpy_type=np.dtype("datetime64")

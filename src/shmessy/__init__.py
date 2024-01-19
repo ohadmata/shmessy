@@ -7,6 +7,7 @@ from typing import BinaryIO, Optional, TextIO, Union
 import pandas as pd
 from pandas import DataFrame
 
+from .exceptions import exception_router
 from .schema import ShmessySchema
 from .types_handler import TypesHandler
 from .utils import (
@@ -87,27 +88,33 @@ class Shmessy:
         fixed_schema: Optional[ShmessySchema] = None,
         fix_column_names: Optional[bool] = False,
     ) -> DataFrame:
-        if use_sniffer:
-            dialect = csv.Sniffer().sniff(
-                sample=_get_sample_from_csv(
+        try:
+            if use_sniffer:
+                dialect = csv.Sniffer().sniff(
+                    sample=_get_sample_from_csv(
+                        filepath_or_buffer=filepath_or_buffer,
+                        sample_size=self.__sample_size,
+                        encoding=self.__reader_encoding,
+                    ),
+                    delimiters="".join([",", "\t", ";", " ", ":"]),
+                )
+                df = pd.read_csv(
                     filepath_or_buffer=filepath_or_buffer,
-                    sample_size=self.__sample_size,
-                    encoding=self.__reader_encoding,
-                ),
-                delimiters="".join([",", "\t", ";", " ", ":"]),
-            )
-            df = pd.read_csv(
-                filepath_or_buffer=filepath_or_buffer,
-                dialect=dialect(),
-                low_memory=False,
-            )
-        else:
-            df = pd.read_csv(filepath_or_buffer=filepath_or_buffer, low_memory=False)
+                    dialect=dialect(),
+                    low_memory=False,
+                )
+            else:
+                df = pd.read_csv(
+                    filepath_or_buffer=filepath_or_buffer, low_memory=False
+                )
 
-        if fixed_schema is None:
-            fixed_schema = self.infer_schema(df)
+            if fixed_schema is None:
+                fixed_schema = self.infer_schema(df)
 
-        self.__inferred_schema = fixed_schema
-        return self.fix_schema(
-            df=df, fixed_schema=fixed_schema, fix_column_names=fix_column_names
-        )
+            self.__inferred_schema = fixed_schema
+            return self.fix_schema(
+                df=df, fixed_schema=fixed_schema, fix_column_names=fix_column_names
+            )
+
+        except Exception as e:
+            exception_router(e)
