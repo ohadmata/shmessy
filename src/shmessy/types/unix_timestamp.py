@@ -45,13 +45,23 @@ class UnixTimestampType(BaseType):
         if selected_resolution == TimestampResolution.NANOSECONDS:
             return value / 1000 / 1000
 
+    @staticmethod
+    def _is_non_numeric_float(value: float) -> bool:
+        if isinstance(value, float) and (math.isnan(value) or math.isinf(value)):
+            return True
+        return False
+
     def validate(self, data: ndarray) -> Optional[InferredField]:
         try:
-            selected_resolution = self._unix_timestamp_resolution(float(data[0]))
-            if not selected_resolution:
-                return None
+            selected_resolution = None
             for value in data:
-                if not math.isnan(value):
+                if not self._is_non_numeric_float(value):
+                    if not selected_resolution:
+                        selected_resolution = self._unix_timestamp_resolution(
+                            float(value)
+                        )
+                        if not selected_resolution:
+                            return None
                     parsed_value = datetime.utcfromtimestamp(
                         self._fix_input_resolution(value, selected_resolution)
                     )
