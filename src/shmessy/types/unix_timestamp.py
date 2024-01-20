@@ -71,6 +71,9 @@ class UnixTimestampType(BaseType):
                     ):
                         return None
 
+            if not selected_resolution:
+                return None
+
             return InferredField(
                 inferred_type=self.name, inferred_pattern=selected_resolution
             )
