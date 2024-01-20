@@ -25,7 +25,7 @@ class UnixTimestampType(BaseType):
     max_valid_year: int = 2100
 
     @staticmethod
-    def _unix_timestamp_resolution(value: float) -> TimestampResolution:
+    def _unix_timestamp_resolution(value: int) -> TimestampResolution:
         number_of_digits = len(str(int(value)))
         if number_of_digits == 10:
             return TimestampResolution.SECONDS
@@ -36,14 +36,14 @@ class UnixTimestampType(BaseType):
 
     @staticmethod
     def _fix_input_resolution(
-        value: float, selected_resolution: TimestampResolution
-    ) -> float:
+        value: int, selected_resolution: TimestampResolution
+    ) -> int:
         if selected_resolution == TimestampResolution.SECONDS:
-            return value
+            return int(value)
         if selected_resolution == TimestampResolution.MILLISECONDS:
-            return value / 1000
+            return int(int(value) / 1000)
         if selected_resolution == TimestampResolution.NANOSECONDS:
-            return value / 1000 / 1000
+            return int(int(value) / 1000 / 1000)
 
     @staticmethod
     def _is_non_numeric_float(value: float) -> bool:
@@ -58,7 +58,7 @@ class UnixTimestampType(BaseType):
                 if not self._is_non_numeric_float(value):
                     if not selected_resolution:
                         selected_resolution = self._unix_timestamp_resolution(
-                            float(value)
+                            int(value)
                         )
                         if not selected_resolution:
                             return None
