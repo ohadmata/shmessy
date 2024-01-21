@@ -7,7 +7,7 @@ from hypothesis.extra.pandas import data_frames, columns, range_indexes
 
 from shmessy import Shmessy
 
-max_examples = 20
+max_examples = 50
 
 
 @st.composite
@@ -34,21 +34,9 @@ def df_st(draw) -> st.SearchStrategy[pd.DataFrame]:
 
 @st.composite
 def df_bool_st(draw) -> st.SearchStrategy[pd.DataFrame]:
-    col_names = ['test_column']
-    df = draw(data_frames(
-        columns=columns(
-            list(col_names),
-            dtype=draw(st.sampled_from([
-                bool,
-            ])),
-        ),
-        rows=st.tuples(
-            *[st.booleans() for _ in col_names]
-        ),
-        index=range_indexes(min_size=2, max_size=5, ),
-
-    )
-    )
+    df = draw(df_st())
+    hp.assume(bool in df.dtypes.values)
+    df=df[[col for col in df.columns if df[col].dtype==bool]]
     draw_type = draw(st.sampled_from([
         int,
         str,
