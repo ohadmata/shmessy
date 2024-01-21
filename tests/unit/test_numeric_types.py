@@ -76,7 +76,7 @@ def test_numeric_type(df_data, expected_shmessy_type, expected_numpy_type):
 def test_dataframe_with_10k_numeric_records_and_single_string():
     line_number = 9465
     bad_value = "string value"
-    shmessy = Shmessy()
+    shmessy = Shmessy(sample_size=10)
     data = [x for x in range(10000)]
     data[line_number] = "string value"  # noqa
     df = pd.DataFrame({"test_column": data})
