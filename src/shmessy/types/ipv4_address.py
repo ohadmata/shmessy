@@ -22,6 +22,11 @@ class IPv4Type(BaseType):
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for value in data:
             try:
+                if not isinstance(value, str):
+                    logger.debug(
+                        f"Value '{value}' is not string, cannot cast to {self.name}"
+                    )
+                    return None
                 Model(ip=value)
             except ValueError:
                 logger.debug(f"Cannot cast the value '{value}' to {self.name}")

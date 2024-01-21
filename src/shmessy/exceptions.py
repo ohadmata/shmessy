@@ -40,3 +40,10 @@ class FormatCastingException(ShmessyException):
         super().__init__(
             f"The value {bad_value} doesn't match format {expected_format}."
         )
+
+
+class FieldCastingException(ShmessyException):
+    def __init__(self, type_: str, bad_value: str, line_number: int):
+        super().__init__(
+            f'Error in line: {line_number}: Could\'t cast value "{bad_value}" to type {type_}'
+        )
