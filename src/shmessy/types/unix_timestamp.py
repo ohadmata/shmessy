@@ -7,8 +7,8 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from ..schema import InferredField
 from .base import BaseType
+from ..schema import InferredField
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ class UnixTimestampType(BaseType):
 
     @staticmethod
     def _fix_input_resolution(
-        value: int, selected_resolution: TimestampResolution
+            value: int, selected_resolution: TimestampResolution
     ) -> int:
         if selected_resolution == TimestampResolution.SECONDS:
             return int(value)
@@ -62,12 +62,13 @@ class UnixTimestampType(BaseType):
                         )
                         if not selected_resolution:
                             return None
+
                     parsed_value = datetime.utcfromtimestamp(
                         self._fix_input_resolution(value, selected_resolution)
                     )
                     if (
-                        parsed_value.year < self.min_valid_year
-                        or parsed_value.year > self.max_valid_year
+                            parsed_value.year < self.min_valid_year
+                            or parsed_value.year > self.max_valid_year
                     ):
                         return None
 
@@ -77,7 +78,7 @@ class UnixTimestampType(BaseType):
             return InferredField(
                 inferred_type=self.name, inferred_pattern=selected_resolution
             )
-        except (ValueError, OSError) as e:
+        except (ValueError, OSError, OverflowError) as e:
             logger.debug(f"Cannot cast the given data to {self.name}: {e}")
             return None
 
