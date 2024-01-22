@@ -36,7 +36,7 @@ def df_st(draw) -> st.SearchStrategy[pd.DataFrame]:
 def df_bool_st(draw) -> st.SearchStrategy[pd.DataFrame]:
     df = draw(df_st())
     hp.assume(bool in df.dtypes.values)
-    df=df[[col for col in df.columns if df[col].dtype==bool]]
+    df = df[[col for col in df.columns if df[col].dtype == bool]]
     draw_type = draw(st.sampled_from([
         int,
         str,
@@ -46,15 +46,15 @@ def df_bool_st(draw) -> st.SearchStrategy[pd.DataFrame]:
     return df
 
 
-# @hp.given(df=df_st(), fix_column_names=st.booleans())
-# @hp.settings(max_examples=max_examples)
-# def test_fix_schema_cols_hp(df, fix_column_names):
-#     df_fixed = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
-#     assert set(list(df_fixed)) == set(list(df)) if not fix_column_names else True
-#     allowed_chars = set(string.ascii_lowercase).union(set(string.ascii_uppercase)).union(set(string.digits))
-#     allowed_chars.add("_")
-#     all_cols_name_chars = {char for col in list(df_fixed) for char in col}
-#     assert all_cols_name_chars.issubset(allowed_chars) if fix_column_names else True
+@hp.given(df=df_st(), fix_column_names=st.booleans())
+@hp.settings(max_examples=max_examples)
+def test_fix_schema_cols_hp(df, fix_column_names):
+    df_fixed = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
+    assert set(list(df_fixed)) == set(list(df)) if not fix_column_names else True
+    allowed_chars = set(string.ascii_lowercase).union(set(string.ascii_uppercase)).union(set(string.digits))
+    allowed_chars.add("_")
+    all_cols_name_chars = {char for col in list(df_fixed) for char in col}
+    assert all_cols_name_chars.issubset(allowed_chars) if fix_column_names else True
 
 
 @hp.given(df_bool=df_bool_st(), )
