@@ -4,11 +4,8 @@ from shmessy import Shmessy
 
 import hypothesis as hp
 import pandas as pd
-from hypothesis import HealthCheck
 from hypothesis import strategies as st
 from hypothesis.extra.pandas import data_frames, columns, range_indexes
-
-max_examples = 50
 
 
 @st.composite
@@ -22,8 +19,6 @@ def df_st(draw) -> st.SearchStrategy[pd.DataFrame]:
                 float,
                 bool,
                 str,
-                # object, # todo define object strategy for hypothesis
-
             ])),
         ),
         index=range_indexes(min_size=2, max_size=5, ),
@@ -35,20 +30,28 @@ def df_st(draw) -> st.SearchStrategy[pd.DataFrame]:
 
 @st.composite
 def df_bool_st(draw) -> st.SearchStrategy[pd.DataFrame]:
-    df = draw(df_st())
-    hp.assume(bool in df.dtypes.values)
-    df=df[[col for col in df.columns if df[col].dtype==bool]]
+    dfs_st = data_frames(
+        columns=columns(
+            list(['col1', 'col2']),
+            dtype=draw(st.sampled_from([
+                bool,
+            ])),
+        ),
+        index=range_indexes(min_size=2, max_size=5, ),
+
+    )
     draw_type = draw(st.sampled_from([
         int,
         str,
         object,
     ]))
+    df = draw(dfs_st)
     df = df.astype(draw_type)
+
     return df
 
 
 @hp.given(df=df_st(), fix_column_names=st.booleans())
-@hp.settings(max_examples=max_examples)
 def test_fix_schema_cols_hp(df, fix_column_names):
     df_fixed = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
     assert set(list(df_fixed)) == set(list(df)) if not fix_column_names else True
@@ -59,7 +62,6 @@ def test_fix_schema_cols_hp(df, fix_column_names):
 
 
 @hp.given(df_bool=df_bool_st(), )
-@hp.settings(max_examples=max_examples,suppress_health_check=[HealthCheck.filter_too_much])
 def test_schema_infer_booleans_hp(df_bool, ):
     shmessy_scheme = Shmessy().infer_schema(df=df_bool.copy())
     for col in shmessy_scheme.columns:
