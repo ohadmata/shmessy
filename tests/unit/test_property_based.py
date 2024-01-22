@@ -1,11 +1,12 @@
 import string
 
+from shmessy import Shmessy
+
 import hypothesis as hp
 import pandas as pd
+from hypothesis import HealthCheck
 from hypothesis import strategies as st
 from hypothesis.extra.pandas import data_frames, columns, range_indexes
-
-from shmessy import Shmessy
 
 max_examples = 50
 
@@ -58,7 +59,7 @@ def df_bool_st(draw) -> st.SearchStrategy[pd.DataFrame]:
 
 
 @hp.given(df_bool=df_bool_st(), )
-@hp.settings(max_examples=max_examples)
+@hp.settings(max_examples=max_examples,suppress_health_check=[HealthCheck.filter_too_much])
 def test_schema_infer_booleans_hp(df_bool, ):
     shmessy_scheme = Shmessy().infer_schema(df=df_bool.copy())
     for col in shmessy_scheme.columns:
