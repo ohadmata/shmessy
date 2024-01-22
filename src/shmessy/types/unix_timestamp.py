@@ -78,7 +78,9 @@ class UnixTimestampType(BaseType):
             return InferredField(
                 inferred_type=self.name, inferred_pattern=selected_resolution
             )
+
         except (ValueError, OSError, OverflowError) as e:
+
             logger.debug(f"Cannot cast the given data to {self.name}: {e}")
             return None
 
