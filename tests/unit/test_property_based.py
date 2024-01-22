@@ -36,7 +36,7 @@ def df_st(draw) -> st.SearchStrategy[pd.DataFrame]:
 def df_bool_st(draw) -> st.SearchStrategy[pd.DataFrame]:
     df = draw(df_st())
     hp.assume(bool in df.dtypes.values)
-    df=df[[col for col in df.columns if df[col].dtype==bool]]
+    df = df[[col for col in df.columns if df[col].dtype == bool]]
     draw_type = draw(st.sampled_from([
         int,
         str,
