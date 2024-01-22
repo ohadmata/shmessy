@@ -1,11 +1,12 @@
 import string
 
+from shmessy import Shmessy
+
 import hypothesis as hp
 import pandas as pd
+from hypothesis import HealthCheck
 from hypothesis import strategies as st
 from hypothesis.extra.pandas import data_frames, columns, range_indexes
-
-from shmessy import Shmessy
 
 max_examples = 50
 
@@ -46,19 +47,19 @@ def df_bool_st(draw) -> st.SearchStrategy[pd.DataFrame]:
     return df
 
 
-# @hp.given(df=df_st(), fix_column_names=st.booleans())
-# @hp.settings(max_examples=max_examples)
-# def test_fix_schema_cols_hp(df, fix_column_names):
-#     df_fixed = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
-#     assert set(list(df_fixed)) == set(list(df)) if not fix_column_names else True
-#     allowed_chars = set(string.ascii_lowercase).union(set(string.ascii_uppercase)).union(set(string.digits))
-#     allowed_chars.add("_")
-#     all_cols_name_chars = {char for col in list(df_fixed) for char in col}
-#     assert all_cols_name_chars.issubset(allowed_chars) if fix_column_names else True
+@hp.given(df=df_st(), fix_column_names=st.booleans())
+@hp.settings(max_examples=max_examples)
+def test_fix_schema_cols_hp(df, fix_column_names):
+    df_fixed = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
+    assert set(list(df_fixed)) == set(list(df)) if not fix_column_names else True
+    allowed_chars = set(string.ascii_lowercase).union(set(string.ascii_uppercase)).union(set(string.digits))
+    allowed_chars.add("_")
+    all_cols_name_chars = {char for col in list(df_fixed) for char in col}
+    assert all_cols_name_chars.issubset(allowed_chars) if fix_column_names else True
 
 
 @hp.given(df_bool=df_bool_st(), )
-@hp.settings(max_examples=max_examples)
+@hp.settings(max_examples=max_examples,suppress_health_check=[HealthCheck.filter_too_much])
 def test_schema_infer_booleans_hp(df_bool, ):
     shmessy_scheme = Shmessy().infer_schema(df=df_bool.copy())
     for col in shmessy_scheme.columns:

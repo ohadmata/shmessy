@@ -6,9 +6,8 @@ from typing import Optional
 
 from numpy import ndarray
 from pandas import Series, to_datetime
-
-from ..schema import InferredField
 from .base import BaseType
+from ..schema import InferredField
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +76,7 @@ class UnixTimestampType(BaseType):
             return InferredField(
                 inferred_type=self.name, inferred_pattern=selected_resolution
             )
-        except (ValueError, OSError) as e:
+        except (ValueError, OSError, OverflowError) as e:
             logger.debug(f"Cannot cast the given data to {self.name}: {e}")
             return None
 
