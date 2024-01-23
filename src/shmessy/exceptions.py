@@ -4,6 +4,12 @@ import re
 def exception_router(exception: Exception):
     error_message = str(exception)
     match = re.match(
+        r"(.*)'(.*)' codec can't decode byte (.*) in position (.*):(.*)", error_message
+    )
+    if match is not None:
+        raise WrongEncodingException(match.group(2))
+
+    match = re.match(
         r"(.*)Expected (.*) fields in line (.*), saw (.*)\n", error_message
     )
     if match is not None:
@@ -45,5 +51,12 @@ class FormatCastingException(ShmessyException):
 class FieldCastingException(ShmessyException):
     def __init__(self, type_: str, bad_value: str, line_number: int):
         super().__init__(
-            f'Error in line: {line_number}: Couldn\'t cast value "{bad_value}" to type {type_}'
+            f'Error in line: {line_number}: Couldn\'t cast value "{bad_value}" to type {type_}.'
+        )
+
+
+class WrongEncodingException(ShmessyException):
+    def __init__(self, expected_encoding: str):
+        super().__init__(
+            f"The given file cannot be read using {expected_encoding} encoding."
         )

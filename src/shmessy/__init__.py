@@ -105,10 +105,13 @@ class Shmessy:
                     filepath_or_buffer=filepath_or_buffer,
                     dialect=dialect(),
                     low_memory=False,
+                    encoding=self.__reader_encoding,
                 )
             else:
                 df = pd.read_csv(
-                    filepath_or_buffer=filepath_or_buffer, low_memory=False
+                    filepath_or_buffer=filepath_or_buffer,
+                    low_memory=False,
+                    encoding=self.__reader_encoding,
                 )
 
             if fixed_schema is None:
