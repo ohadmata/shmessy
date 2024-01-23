@@ -45,5 +45,5 @@ class FormatCastingException(ShmessyException):
 class FieldCastingException(ShmessyException):
     def __init__(self, type_: str, bad_value: str, line_number: int):
         super().__init__(
-            f'Error in line: {line_number}: Could\'t cast value "{bad_value}" to type {type_}'
+            f'Error in line: {line_number}: Couldn\'t cast value "{bad_value}" to type {type_}'
         )
