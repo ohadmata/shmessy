@@ -83,4 +83,4 @@ def test_dataframe_with_10k_numeric_records_and_single_string():
 
     with pytest.raises(Exception) as exception:
         shmessy.fix_schema(df)
-    assert f"Error in line: {line_number}: Could\'t cast value \"{bad_value}\" to type Integer" in str(exception.value)
+    assert f"Error in line: {line_number}: Couldn\'t cast value \"{bad_value}\" to type Integer" in str(exception.value)
