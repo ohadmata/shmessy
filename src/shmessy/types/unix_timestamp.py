@@ -24,7 +24,7 @@ class UnixTimestampType(BaseType):
     min_valid_year: int = 1980
     max_valid_year: int = 2100
 
-    resolution: TimestampResolution = None
+    resolution: Optional[TimestampResolution] = None
 
     @staticmethod
     def _unix_timestamp_resolution(value: int) -> TimestampResolution:
@@ -66,6 +66,7 @@ class UnixTimestampType(BaseType):
         return False
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
+        self.resolution = None
         try:
             for value in data:
                 if not self._is_valid_unix_timestamp(value):
