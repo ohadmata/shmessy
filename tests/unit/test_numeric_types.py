@@ -63,6 +63,14 @@ from shmessy import Shmessy
     expected_shmessy_type="Float",
     expected_numpy_type=np.dtype('float64')
 )
+@Parametrization.case(
+    name="Float with int value 2",
+    df_data={
+        "test_column": [1.000000e+12, float("inf")]
+    },
+    expected_shmessy_type="Float",
+    expected_numpy_type=np.dtype('float64')
+)
 def test_numeric_type(df_data, expected_shmessy_type, expected_numpy_type):
     shmessy = Shmessy()
     df = pd.DataFrame(df_data)
