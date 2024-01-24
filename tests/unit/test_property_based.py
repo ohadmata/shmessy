@@ -9,7 +9,7 @@ from hypothesis.extra.pandas import data_frames, columns, range_indexes
 
 
 @st.composite
-def df_st(draw) -> st.SearchStrategy[pd.DataFrame]:
+def df_st(draw) -> pd.DataFrame:
     col_names = draw(st.sets(st.text(min_size=1, max_size=10), min_size=2, max_size=5))
     dfs_st = data_frames(
         columns=columns(
@@ -29,7 +29,7 @@ def df_st(draw) -> st.SearchStrategy[pd.DataFrame]:
 
 
 @st.composite
-def df_bool_st(draw) -> st.SearchStrategy[pd.DataFrame]:
+def df_bool_st(draw) -> pd.DataFrame:
     dfs_st = data_frames(
         columns=columns(
             list(['col1', 'col2']),
