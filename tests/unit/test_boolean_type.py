@@ -80,8 +80,8 @@ def test_boolean_match_at_least_once_for_each_value(df_data, expected_shmessy_ty
     assert [x for x in df["test_column"]] == [x for x in expected_result]
 
 
-def test_read_bool_from_csv_only_true_values():
-    df = Shmessy().read_csv("tests/data/data_6.csv")
+def test_read_bool_from_csv_only_true_values(files_folder):
+    df = Shmessy().read_csv(files_folder.as_posix() + "/data_6.csv")
     result = Shmessy().infer_schema(df=df)
     assert result.columns[1].inferred_type == "Boolean"
 
