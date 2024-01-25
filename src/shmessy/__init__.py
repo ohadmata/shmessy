@@ -92,27 +92,29 @@ class Shmessy:
         fix_column_names: Optional[bool] = False,
     ) -> DataFrame:
         try:
+            dialect = None
+
             if use_sniffer:
-                dialect = csv.Sniffer().sniff(
-                    sample=_get_sample_from_csv(
-                        filepath_or_buffer=filepath_or_buffer,
-                        sample_size=self.__sample_size,
-                        encoding=self.__reader_encoding,
-                    ),
-                    delimiters="".join([",", "\t", ";", " ", ":"]),
-                )
-                df = pd.read_csv(
-                    filepath_or_buffer=filepath_or_buffer,
-                    dialect=dialect(),
-                    low_memory=False,
-                    encoding=self.__reader_encoding,
-                )
-            else:
-                df = pd.read_csv(
-                    filepath_or_buffer=filepath_or_buffer,
-                    low_memory=False,
-                    encoding=self.__reader_encoding,
-                )
+                try:
+                    dialect = csv.Sniffer().sniff(
+                        sample=_get_sample_from_csv(
+                            filepath_or_buffer=filepath_or_buffer,
+                            sample_size=self.__sample_size,
+                            encoding=self.__reader_encoding,
+                        ),
+                        delimiters="".join([",", "\t", ";", " ", ":"]),
+                    )
+                except Exception as e:  # noqa
+                    logger.debug(
+                        f"Could not use python sniffer to infer csv schema, Using pandas default settings: {e}"
+                    )
+
+            df = pd.read_csv(
+                filepath_or_buffer=filepath_or_buffer,
+                dialect=dialect() if dialect else None,
+                low_memory=False,
+                encoding=self.__reader_encoding,
+            )
 
             if fixed_schema is None:
                 fixed_schema = self.infer_schema(df)

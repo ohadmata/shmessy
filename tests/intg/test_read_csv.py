@@ -1,4 +1,4 @@
-from numpy import dtypes
+import numpy as np
 
 from shmessy import Shmessy
 
@@ -6,33 +6,33 @@ from shmessy import Shmessy
 def test_read_csv(files_folder):
     df = Shmessy().read_csv(files_folder.as_posix() + "/data_1.csv")
 
-    assert isinstance(df["created_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["modified_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["deleted_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["celebrated_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["joined_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["laughed_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["loled_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["fooled_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["emerged_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["processed_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["isolated_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["scheduled_at"].dtype, dtypes.DateTime64DType)
-    assert isinstance(df["unixed_at"].dtype, dtypes.DateTime64DType)
+    assert df["created_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["modified_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["deleted_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["celebrated_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["joined_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["laughed_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["loled_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["fooled_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["emerged_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["processed_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["isolated_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["scheduled_at"].dtype == np.dtype("datetime64[ns]")
+    assert df["unixed_at"].dtype == np.dtype("datetime64[ns]")
 
 
 def test_read_csv_colon_as_delimiter(files_folder):
     df = Shmessy().read_csv(files_folder.as_posix() + "/data_3.csv")
-    assert isinstance(df["id"].dtype, dtypes.Int64DType)
-    assert isinstance(df["name"].dtype, dtypes.ObjectDType)
-    assert isinstance(df["value"].dtype, dtypes.Int64DType)
+    assert df["id"].dtype == np.dtype("int64")
+    assert df["name"].dtype == np.dtype("O")
+    assert df["value"].dtype == np.dtype("int64")
 
 
 def test_read_csv_semicolon_as_delimiter(files_folder):
     df = Shmessy().read_csv(files_folder.as_posix() + "/data_4.csv")
-    assert isinstance(df["id"].dtype, dtypes.Int64DType)
-    assert isinstance(df["name"].dtype, dtypes.ObjectDType)
-    assert isinstance(df["value"].dtype, dtypes.Int64DType)
+    assert df["id"].dtype == np.dtype("int64")
+    assert df["name"].dtype == np.dtype("O")
+    assert df["value"].dtype == np.dtype("int64")
 
 
 def test_buffer_as_read_csv_input(files_folder):
@@ -40,9 +40,9 @@ def test_buffer_as_read_csv_input(files_folder):
     with open(path, mode="rt") as file_input:
         df = Shmessy().read_csv(file_input)
 
-    assert isinstance(df["id"].dtype, dtypes.Int64DType)
-    assert isinstance(df["name"].dtype, dtypes.ObjectDType)
-    assert isinstance(df["value"].dtype, dtypes.Int64DType)
+    assert df["id"].dtype == np.dtype("int64")
+    assert df["name"].dtype == np.dtype("O")
+    assert df["value"].dtype == np.dtype("int64")
 
 
 def test_binary_buffer_as_read_csv_input(files_folder):
@@ -50,6 +50,13 @@ def test_binary_buffer_as_read_csv_input(files_folder):
     with open(path, mode="rb") as file_input:
         df = Shmessy().read_csv(file_input)
 
-    assert isinstance(df["id"].dtype, dtypes.Int64DType)
-    assert isinstance(df["name"].dtype, dtypes.ObjectDType)
-    assert isinstance(df["value"].dtype, dtypes.Int64DType)
+    assert df["id"].dtype == np.dtype("int64")
+    assert df["name"].dtype == np.dtype("O")
+    assert df["value"].dtype == np.dtype("int64")
+
+
+def test_read_csv_file_with_single_column(files_folder):
+    path = files_folder.as_posix() + "/data_7.csv"
+    with open(path, mode="rb") as file_input:
+        df = Shmessy().read_csv(file_input)
+    assert df["header_name"].dtype == np.dtype("O")
