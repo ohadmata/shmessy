@@ -4,9 +4,6 @@ import re
 def exception_router(exception: Exception):
     error_message = str(exception)
 
-    if "Could not determine delimiter" in error_message:
-        raise CouldNotDetermineDelimiterException()
-
     match = re.match(
         r"(.*)'(.*)' codec can't decode byte (.*) in position (.*):(.*)", error_message
     )
@@ -63,12 +60,4 @@ class WrongEncodingException(ShmessyException):
     def __init__(self, expected_encoding: str):
         super().__init__(
             f"The given file cannot be read using {expected_encoding} encoding."
-        )
-
-
-class CouldNotDetermineDelimiterException(ShmessyException):
-    def __init__(self):
-        super().__init__(
-            "Could not determine delimiter. "
-            "Make sure a delimiter is shown the same number of times on every row in the file."
         )

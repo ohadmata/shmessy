@@ -27,11 +27,10 @@ def pretty_print_df(
         df: DataFrame,
         *,
         sample_size: Optional[int] = 10,
-        sort_key: Optional[str] = "id",
         inferred_schema: Optional[ShmessySchema] = None
 ) -> None:
     df = df[:sample_size]
-    df = df.sort_values(by=[sort_key])
+    df = df.sort_values(df.columns[0])
     df = df.rename(columns=add_data_types_to_column_names(df, inferred_schema))
     print(tabulate(df, headers="keys", tablefmt="rounded_outline", showindex=False))
 
