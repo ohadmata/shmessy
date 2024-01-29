@@ -12,7 +12,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">= 3.9, < 4.0"
-pandas = ">= 2.0"
+pandas = "~2.1.4"
 tabulate = ">= 0.9"
 pydantic = {extras=["email"], version = "^1.10"}
 
