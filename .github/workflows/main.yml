@@ -6,8 +6,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['3.9', '3.10', '3.11']
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        python-version: [ '3.9', '3.10', '3.11', '3.12' ]
 
     steps:
       - uses: actions/checkout@v3
@@ -33,6 +33,8 @@ jobs:
 
       - name: Install the project dependencies
         run: poetry install
-      - name: Run the automated tests (for example)
-        run: poetry run pytest -v
+      - name: Unit Tests
+        run: poetry run pytest tests/unit -v --cov=shmessy
+      - name: Integration Tests
+        run: poetry run pytest tests/intg -v
     continue-on-error: true
