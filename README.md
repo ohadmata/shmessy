@@ -4,6 +4,10 @@
 ![Coverage report](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/coverage.svg)
 [![CI](https://github.com/ohadmata/shmessy/actions/workflows/main.yml/badge.svg)](https://github.com/ohadmata/shmessy/actions/workflows/main.yml)
 [![License](https://img.shields.io/:license-MIT-blue.svg)](https://opensource.org/license/mit/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/shmessy)](https://pypi.org/project/shmessy/)
+![OS](https://img.shields.io/badge/ubuntu-blue?logo=ubuntu)
+![OS](https://img.shields.io/badge/mac-blue?logo=apple)
+![OS](https://img.shields.io/badge/win-blue?logo=windows)
 ### If your data is messy - Use Shmessy!
 
 Shmessy designed to deal with messy pandas dataframes.
