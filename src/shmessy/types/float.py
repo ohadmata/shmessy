@@ -1,5 +1,6 @@
 import locale
 import logging
+from datetime import datetime
 from typing import Optional
 
 from numpy import ndarray
@@ -20,6 +21,8 @@ class FloatType(BaseType):
             try:
                 if isinstance(value, str):
                     float(locale.atof(value))
+                elif isinstance(value, datetime):
+                    return None
                 else:
                     float(value)
             except Exception:  # noqa

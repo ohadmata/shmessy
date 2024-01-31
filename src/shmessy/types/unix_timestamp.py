@@ -48,6 +48,8 @@ class UnixTimestampType(BaseType):
             return int(int(value) / 1000 / 1000)
 
     def _is_valid_unix_timestamp(self, value: Any) -> bool:
+        if isinstance(value, datetime):
+            return False
         if isinstance(value, float) and math.isnan(value):
             return True
 

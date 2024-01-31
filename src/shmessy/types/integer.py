@@ -1,6 +1,7 @@
 import locale
 import logging
-from typing import Any, Optional, Tuple
+from datetime import datetime
+from typing import Any, Optional, Tuple, Union
 
 from numpy import ndarray
 from pandas import Series, to_numeric
@@ -16,11 +17,13 @@ logger = logging.getLogger(__name__)
 class IntegerType(BaseType):
     weight = 7
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray) -> Union[bool, None, InferredField]:
         for value in data:
             try:
                 if isinstance(value, str):
                     int(locale.atoi(value))
+                elif isinstance(value, datetime):
+                    return False
                 else:
                     int(value)
             except Exception:  # noqa
