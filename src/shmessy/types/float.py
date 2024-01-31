@@ -1,6 +1,6 @@
 import locale
 import logging
-from typing import Any, Optional, Tuple
+from typing import Any, Tuple
 from datetime import datetime
 from typing import Optional
 
