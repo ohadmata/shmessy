@@ -1,11 +1,11 @@
 import string
 
-from shmessy import Shmessy
-
 import hypothesis as hp
 import pandas as pd
 from hypothesis import strategies as st
 from hypothesis.extra.pandas import data_frames, columns, range_indexes
+
+from shmessy import Shmessy
 
 
 @st.composite
@@ -19,6 +19,10 @@ def df_st(draw) -> pd.DataFrame:
                 float,
                 bool,
                 str,
+                "datetime64[ns]",
+                "timedelta64[ns]",
+                "period[D]"
+
             ])),
         ),
         index=range_indexes(min_size=2, max_size=5, ),
