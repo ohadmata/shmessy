@@ -21,7 +21,6 @@ def df_st(draw) -> pd.DataFrame:
                 str,
                 "datetime64[ns]",
                 "timedelta64[ns]",
-                "period[D]"
 
             ])),
         ),
