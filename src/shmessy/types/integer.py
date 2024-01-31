@@ -6,9 +6,9 @@ from numpy import ndarray
 from pandas import Series, to_numeric
 from pandas.api.types import is_numeric_dtype
 
+from .base import BaseType
 from ..exceptions import FieldCastingException
 from ..schema import InferredField
-from .base import BaseType
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,10 @@ class IntegerType(BaseType):
     weight = 7
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
+        str_dtype = str(data.dtype).lower()
+        if str_dtype.startswith('datetime') or str_dtype.startswith('timedelta'):
+            return None
+
         for value in data:
             try:
                 if isinstance(value, str):
