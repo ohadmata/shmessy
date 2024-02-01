@@ -1,11 +1,25 @@
 import string
 
-from shmessy import Shmessy
-
 import hypothesis as hp
 import pandas as pd
 from hypothesis import strategies as st
 from hypothesis.extra.pandas import data_frames, columns, range_indexes
+
+from shmessy import Shmessy
+
+
+@st.composite
+def dtypes_st(draw) -> pd.Series:
+    dtypes = st.sampled_from([
+        int,
+        float,
+        bool,
+        str,
+        "datetime64[ns]",
+        # "timedelta64[ns]", todo define shmessy behavior for timedelta
+
+    ])
+    return draw(dtypes)
 
 
 @st.composite
@@ -14,12 +28,7 @@ def df_st(draw) -> pd.DataFrame:
     dfs_st = data_frames(
         columns=columns(
             list(col_names),
-            dtype=draw(st.sampled_from([
-                int,
-                float,
-                bool,
-                str,
-            ])),
+            dtype=draw(dtypes_st()),
         ),
         index=range_indexes(min_size=2, max_size=5, ),
 
