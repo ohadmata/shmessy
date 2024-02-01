@@ -4,8 +4,8 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series
 
-from ..schema import InferredField
 from .base import BaseType
+from ..schema import InferredField
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +14,9 @@ class StringType(BaseType):
     weight = 9
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
+        str_dtype = str(data.dtype).lower()
+        if str_dtype.startswith('datetime') or str_dtype.startswith('timedelta'):
+            return None
         for value in data:
             try:
                 str(value)

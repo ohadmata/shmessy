@@ -26,7 +26,7 @@ mypy = "^0.991"
 pylint-junit = "^0.3.2"
 pytest-parametrization = "^2022.2"
 coverage-badge = "^1.1.0"
-hypothesis = "^6.96.3"
+hypothesis = "^6.97.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -1,14 +1,14 @@
 import logging
-import math
 from datetime import datetime
 from enum import Enum
 from typing import Any, Optional
 
+import math
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from ..schema import InferredField
 from .base import BaseType
+from ..schema import InferredField
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +66,11 @@ class UnixTimestampType(BaseType):
         return False
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
+        str_dtype = str(data.dtype).lower()
+        if str_dtype.startswith('datetime') or str_dtype.startswith('timedelta'):
+            return InferredField(
+                inferred_type=self.name, inferred_pattern=None
+            )
         self.resolution = None
         try:
             for value in data:
@@ -84,6 +89,8 @@ class UnixTimestampType(BaseType):
             return None
 
     def fix(self, column: Series, inferred_field: InferredField) -> Series:
+        if inferred_field.inferred_pattern is None:
+            return column
         return to_datetime(column, unit=inferred_field.inferred_pattern.value)
 
 
