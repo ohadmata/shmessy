@@ -3,7 +3,6 @@ import pandas as pd
 from hypothesis import strategies as st
 from hypothesis.extra.pandas import range_indexes, series
 
-import src.shmessy.types.base as shmessy_types
 from shmessy import TypesHandler
 from shmessy.types.base import BaseType
 from tests.unit.test_property_based import dtypes_st
@@ -16,15 +15,6 @@ def series_st(draw) -> pd.Series:
         index=range_indexes(min_size=2, max_size=5, ),
     )
     return draw(s)
-
-
-@st.composite
-def shmessy_type_st(draw, ) -> shmessy_types.BaseType:
-    types_handler = TypesHandler()
-    types_as_dict = types_handler._TypesHandler__types_as_dict
-    types = list(types_as_dict.values())
-    sht = draw(st.sampled_from(types))
-    return sht
 
 
 def test_handler_type_dict():
