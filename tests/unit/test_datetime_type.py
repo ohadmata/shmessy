@@ -32,3 +32,9 @@ def test_datetime_type(df_data, expected_shmessy_type, expected_numpy_type, expe
     assert inferred_schema.columns[0].inferred_type == expected_shmessy_type
     assert fixed_df["test_column"].dtype.type == expected_numpy_type.type
     assert [x for x in df["test_column"]] == [x for x in expected_result]
+
+
+def test_source_column_already_defines_as_date():
+    df = pd.DataFrame(pd.date_range(start='2020-11-03', end='2021-10-01'), columns=['test_column'])
+    fixed_df = Shmessy().fix_schema(df)
+    assert fixed_df["test_column"].dtype.type == np.dtype("datetime64")

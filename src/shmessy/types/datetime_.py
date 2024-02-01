@@ -1,5 +1,6 @@
 from typing import Optional
 
+import numpy as np
 from numpy import ndarray
 from pandas import Series, to_datetime
 
@@ -28,6 +29,9 @@ class DatetimeType(BaseType):
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
+        if data.dtype.type == np.dtype("datetime64"):
+            return InferredField(inferred_type=self.name)
+
         for pattern in self.patterns:
             if validate_strptime_pattern(data, pattern):
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)
