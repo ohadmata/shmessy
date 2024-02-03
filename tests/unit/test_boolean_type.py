@@ -38,7 +38,7 @@ import numpy as np
     df_data={
         "test_column": [1, 0, 1, 1, "hello", 1, 1, 0, 1, 0]
     },
-    expected_result=[1, 0, 1, 1, "hello", 1, 1, 0, 1, 0],
+    expected_result=["1", "0", "1", "1", "hello", "1", "1", "0", "1", "0"],
     expected_shmessy_type="String",
     expected_numpy_type=np.dtype("object")
 )
