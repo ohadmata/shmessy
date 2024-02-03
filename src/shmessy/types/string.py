@@ -23,7 +23,7 @@ class StringType(BaseType):
         return InferredField(inferred_type=self.name)
 
     def fix(self, column: Series, inferred_field: InferredField) -> Series:
-        raise NotImplementedError()
+        return column.apply(lambda x: str(x))
 
 
 def get_type() -> StringType:

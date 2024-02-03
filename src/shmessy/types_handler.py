@@ -21,6 +21,8 @@ from numpy.dtypes import (
 )
 from pandas import Series
 
+from shmessy.exceptions import FieldCastingException
+
 from .schema import Field
 from .types.base import BaseType
 from .types.boolean import BooleanType
@@ -70,7 +72,9 @@ class TypesHandler:
         except (ImportError, ValueError, AttributeError) as e:
             logger.error(f"Couldn't import {module}: {e}")
 
-    def fix_field(self, column: Series, inferred_field: Field) -> Any:
+    def fix_field(
+        self, column: Series, inferred_field: Field, fallback_to_string: bool
+    ) -> Any:
         try:
             fixed_field = self.__types_as_dict[inferred_field.inferred_type].fix(
                 column=column, inferred_field=inferred_field
@@ -79,7 +83,11 @@ class TypesHandler:
                 return fixed_field
         except NotImplementedError:
             pass
-
+        except FieldCastingException as e:
+            if not fallback_to_string:
+                raise e
+            logger.debug("Could not cast the field - Apply fallback to string")
+            StringType().fix(column=column, inferred_field=inferred_field)
         return column
 
     def infer_field(self, field_name: str, data: ndarray) -> Field:
