@@ -61,6 +61,7 @@ class Shmessy:
         *,
         fix_column_names: Optional[bool] = False,
         fixed_schema: Optional[ShmessySchema] = None,
+        fallback_to_string: Optional[bool] = False,
     ) -> DataFrame:
         try:
             if fixed_schema is None:
@@ -68,7 +69,9 @@ class Shmessy:
 
             for column in fixed_schema.columns:
                 df[column.field_name] = self.__types_handler.fix_field(
-                    column=df[column.field_name], inferred_field=column
+                    column=df[column.field_name],
+                    inferred_field=column,
+                    fallback_to_string=fallback_to_string,
                 )
 
             if fix_column_names:
@@ -90,6 +93,7 @@ class Shmessy:
         use_sniffer: Optional[bool] = True,
         fixed_schema: Optional[ShmessySchema] = None,
         fix_column_names: Optional[bool] = False,
+        fallback_to_string: Optional[bool] = False,
     ) -> DataFrame:
         try:
             dialect = None
@@ -121,7 +125,10 @@ class Shmessy:
 
             self.__inferred_schema = fixed_schema
             return self.fix_schema(
-                df=df, fixed_schema=fixed_schema, fix_column_names=fix_column_names
+                df=df,
+                fixed_schema=fixed_schema,
+                fix_column_names=fix_column_names,
+                fallback_to_string=fallback_to_string,
             )
 
         except Exception as e:
