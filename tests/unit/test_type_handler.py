@@ -25,14 +25,26 @@ def test_handler_type_dict():
     assert {BaseType} == values_base_types
 
 
-@hp.given(pd_series=series_st(), field_name=st.text(min_size=1, max_size=10))
-def test_type_handler(pd_series, field_name):
+@hp.given(
+    pd_series=series_st(),
+    field_name=st.text(min_size=1, max_size=10),
+    fallback_to_string=st.booleans(),
+)
+def test_type_handler(pd_series, field_name, fallback_to_string):
     type_handler = TypesHandler()
     copied_series = pd_series.copy()
     field = type_handler.infer_field(field_name=field_name, data=pd_series.values)
-    fixed_series = type_handler.fix_field(column=pd_series, inferred_field=field).copy()
+    fixed_series = type_handler.fix_field(
+        column=pd_series,
+        inferred_field=field,
+        fallback_to_string=fallback_to_string,
+    ).copy()
     assert copied_series.equals(pd_series)
-    new_fixed_series = type_handler.fix_field(column=fixed_series, inferred_field=field)
+    new_fixed_series = type_handler.fix_field(
+        column=fixed_series,
+        inferred_field=field,
+        fallback_to_string=fallback_to_string,
+    )
     assert new_fixed_series.equals(fixed_series)
     field_from_object = type_handler.infer_field(field_name=field_name, data=pd_series.astype(object).values)
     fixed_from_object = type_handler.fix_field(column=pd_series.astype(object), inferred_field=field_from_object)
