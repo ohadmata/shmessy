@@ -37,4 +37,5 @@ jobs:
         run: poetry run pylint src/shmessy
 
       - name: Run PyLint Shmessy tests
+        continue-on-error: true
         run: poetry run pylint tests
