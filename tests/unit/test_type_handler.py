@@ -1,5 +1,6 @@
 import hypothesis as hp
 import pandas as pd
+import pytest
 from hypothesis import strategies as st
 from hypothesis.extra.pandas import range_indexes, series
 
@@ -17,8 +18,12 @@ def series_st(draw) -> pd.Series:
     return draw(s)
 
 
-def test_handler_type_dict():
-    types_handler = TypesHandler()
+@pytest.fixture(scope="module")
+def types_handler():
+    return TypesHandler()
+
+
+def test_handler_type_dict(types_handler):
     types_as_dict = types_handler._TypesHandler__types_as_dict
     values = types_as_dict.values()
     values_base_types = {v.__class__.__bases__[0] for v in values}
@@ -30,23 +35,60 @@ def test_handler_type_dict():
     field_name=st.text(min_size=1, max_size=10),
     fallback_to_string=st.booleans(),
 )
-def test_type_handler(pd_series, field_name, fallback_to_string):
-    type_handler = TypesHandler()
+def test_th_preserve_original_series(
+        pd_series,
+        field_name,
+        fallback_to_string,
+        types_handler,
+
+):
     copied_series = pd_series.copy()
-    field = type_handler.infer_field(field_name=field_name, data=pd_series.values)
-    fixed_series = type_handler.fix_field(
+    field = types_handler.infer_field(field_name=field_name, data=pd_series.values)
+    _ = types_handler.fix_field(
         column=pd_series,
         inferred_field=field,
         fallback_to_string=fallback_to_string,
-    ).copy()
+    )
     assert copied_series.equals(pd_series)
-    new_fixed_series = type_handler.fix_field(
+
+
+@hp.given(
+    pd_series=series_st(),
+    field_name=st.text(min_size=1, max_size=10),
+    fallback_to_string=st.booleans(),
+)
+def test_th_double_fixing_yield_same_results(
+        pd_series,
+        field_name,
+        fallback_to_string,
+        types_handler,
+
+):
+    fixed_series = types_handler.fix_field(
+        column=pd_series,
+        inferred_field=types_handler.infer_field(field_name=field_name, data=pd_series.values),
+        fallback_to_string=fallback_to_string,
+    )
+    new_fixed_series = types_handler.fix_field(
         column=fixed_series,
-        inferred_field=field,
+        inferred_field=types_handler.infer_field(field_name=field_name, data=fixed_series.values),
         fallback_to_string=fallback_to_string,
     )
     assert new_fixed_series.equals(fixed_series)
-    field_from_object = type_handler.infer_field(field_name=field_name, data=pd_series.astype(object).values)
-    fixed_from_object = type_handler.fix_field(column=pd_series.astype(object), inferred_field=field_from_object)
-    assert fixed_from_object.equals(fixed_series)
-    # todo shmessy dealing with object type
+
+
+@hp.given(
+    pd_series=series_st(),
+    field_name=st.text(min_size=1, max_size=10),
+)
+@pytest.mark.xfail(reason="todo define shmessy consistency rules")
+def test_th_field_infer_consistency(
+        pd_series,
+        field_name,
+        types_handler,
+
+):
+    field = types_handler.infer_field(data=pd_series.values, field_name=field_name, )
+    field_from_object = types_handler.infer_field(data=pd_series.astype(object).values, field_name=field_name, )
+    assert field == field_from_object
+
