@@ -1,8 +1,5 @@
 import logging
-import os
-from importlib import import_module
-from types import ModuleType
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, List, Type
 
 from numpy import ndarray
 from numpy.dtypes import (
@@ -23,6 +20,7 @@ from pandas import Series
 
 from shmessy.exceptions import FieldCastingException
 
+from . import types
 from .schema import Field
 from .types.base import BaseType
 from .types.boolean import BooleanType
@@ -35,42 +33,16 @@ logger = logging.getLogger(__name__)
 
 
 class TypesHandler:
-    PACKAGE_NAME: str = "shmessy"
-    TYPES_DIR: str = "types"
 
-    def __init__(self):
-        self.__types = self._discover_types()
-        self.__types_as_dict: Dict[str, BaseType] = self._types_as_dict(self.__types)
+    @property
+    def __types(self) -> List[BaseType]:
+        type_names = types.__all__
+        types_objects = [getattr(types, type_)() for type_ in type_names]
+        return types_objects
 
-    @classmethod
-    def _types_as_dict(cls, __types: List[BaseType]) -> Dict[str, BaseType]:
-        res = {}
-        for type_ in __types:
-            res[type_.name] = type_
-        return res
-
-    @classmethod
-    def _discover_types(cls) -> List[BaseType]:
-        types: List[BaseType] = []
-        root_directory = os.path.join(os.path.dirname(__file__))
-        types_directory = os.path.join(root_directory, cls.TYPES_DIR)
-
-        for filename in os.listdir(types_directory):
-            try:
-                types.append(cls._load_type(filename).get_type())
-            except AttributeError:
-                pass  # ignore types without factory (Such as base types)
-        return types
-
-    @classmethod
-    def _load_type(cls, type_filename: str) -> Optional[ModuleType]:
-        module = (
-            f"{cls.PACKAGE_NAME}.{cls.TYPES_DIR}.{type_filename.replace('.py', '')}"
-        )
-        try:
-            return import_module(module)
-        except (ImportError, ValueError, AttributeError) as e:
-            logger.error(f"Couldn't import {module}: {e}")
+    @property
+    def __types_as_dict(self) -> Dict[str, BaseType]:
+        return {type_.name: type_ for type_ in self.__types}
 
     def fix_field(
         self, column: Series, inferred_field: Field, fallback_to_string: bool
@@ -110,14 +82,14 @@ class TypesHandler:
 
 def _numpy_type_shmessy_type(numpy_type: Type) -> str:
     if isinstance(
-        numpy_type,
-        (
-            IntDType,
-            Int64DType,
-            Int8DType,
-            Int16DType,
-            Int32DType,
-        ),
+            numpy_type,
+            (
+                    IntDType,
+                    Int64DType,
+                    Int8DType,
+                    Int16DType,
+                    Int32DType,
+            ),
     ):
         return IntegerType().name
     if isinstance(numpy_type, (ObjectDType, StrDType)):

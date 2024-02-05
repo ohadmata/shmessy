@@ -1,19 +1,26 @@
 import logging
-from datetime import datetime
 
-from numpy import ndarray
+from .boolean import BooleanType
+from .date import DateType
+from .datetime_ import DatetimeType
+from .email import EmailType
+from .float import FloatType
+from .integer import IntegerType
+from .ipv4_address import IPv4Type
+from .string import StringType
+from .unix_timestamp import UnixTimestampType
 
 logger = logging.getLogger(__name__)
 
+__all__ = [
+    "BooleanType",
+    "DateType",
+    "DatetimeType",
+    "EmailType",
+    "FloatType",
+    "IntegerType",
+    "IPv4Type",
+    "StringType",
+    "UnixTimestampType",
 
-def validate_strptime_pattern(data: ndarray, pattern: str) -> bool:
-    validated: bool = False
-    for value in data:
-        try:
-            if isinstance(value, str):  # For security reasons & skip nan values
-                datetime.strptime(value, pattern)
-                validated = True
-        except ValueError:
-            logger.debug(f"Cannot cast the value '{value}' using pattern '{pattern}'")
-            return False
-    return validated
+]

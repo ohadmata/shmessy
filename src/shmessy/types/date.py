@@ -3,9 +3,9 @@ from typing import Optional
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from ..schema import InferredField
-from . import validate_strptime_pattern
 from .base import BaseType
+from .utils import validate_strptime_pattern
+from ..schema import InferredField
 
 
 class DateType(BaseType):
