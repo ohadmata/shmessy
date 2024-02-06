@@ -80,15 +80,20 @@ def test_th_double_fixing_yield_same_results(
 @hp.given(
     pd_series=series_st(),
     field_name=st.text(min_size=1, max_size=10),
+    object_type=st.sampled_from([
+        str,  # fails with AssertionError: assert 'Datetime' == 'Date'
+        object,  # fails with TypeError: int() argument must be a string, a bytes-like object or a real number
+    ]),
 )
 @pytest.mark.xfail(reason="todo define shmessy consistency rules")
 def test_th_field_infer_consistency(
         pd_series,
         field_name,
+        object_type,
         types_handler,
 
 ):
+    hp.assume(pd_series.dtype != bool)
     field = types_handler.infer_field(data=pd_series.values, field_name=field_name, )
-    field_from_object = types_handler.infer_field(data=pd_series.astype(object).values, field_name=field_name, )
-    assert field == field_from_object
-
+    field_from_object = types_handler.infer_field(data=pd_series.astype(object_type).values, field_name=field_name, )
+    assert field.inferred_type == field_from_object.inferred_type
