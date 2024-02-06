@@ -129,6 +129,36 @@ from shmessy import Shmessy
     expected_shmessy_type="Date",
     expected_numpy_type=np.dtype("datetime64")
 )
+@Parametrization.case(
+    name="New date format (%m.%d.%y)",
+    df_data={
+        "test_column": ["11.24.22", "01.22.21", "12.20.11", "02.12.23"]
+    },
+    expected_pattern="%m.%d.%y",
+    expected_result=[
+        datetime(2022, 11, 24),
+        datetime(2021, 1, 22),
+        datetime(2011, 12, 20),
+        datetime(2023, 2, 12)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="New date format (%d.%m.%y)",
+    df_data={
+        "test_column": ["24.11.22", "22.01.21", "20.12.11", "12.02.23"]
+    },
+    expected_pattern="%d.%m.%y",
+    expected_result=[
+        datetime(2022, 11, 24),
+        datetime(2021, 1, 22),
+        datetime(2011, 12, 20),
+        datetime(2023, 2, 12)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
 def test_date_type(df_data, expected_shmessy_type, expected_numpy_type, expected_result, expected_pattern):
     shmessy = Shmessy()
     df = pd.DataFrame(df_data)
