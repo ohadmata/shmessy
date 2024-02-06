@@ -115,7 +115,7 @@ from shmessy import Shmessy
     expected_numpy_type=np.dtype("datetime64")
 )
 @Parametrization.case(
-    name="New date format (%d %b %Y)",
+    name="Date format (%d %b %Y)",
     df_data={
         "test_column": ["13 Jan 2023", "1 Jan 2024", "17 Jan 2025", "16 Mar 2020"]
     },
@@ -125,6 +125,66 @@ from shmessy import Shmessy
         datetime(2024, 1, 1),
         datetime(2025, 1, 17),
         datetime(2020, 3, 16)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Date format (%Y%m%d)",
+    df_data={
+        "test_column": ["20220421", "20190811", "20201211", "19960227"]
+    },
+    expected_pattern="%Y%m%d",
+    expected_result=[
+        datetime(2022, 4, 21),
+        datetime(2019, 8, 11),
+        datetime(2020, 12, 11),
+        datetime(1996, 2, 27)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Date format (%Y%m%d) Input as integer",
+    df_data={
+        "test_column": [20220421, 20190811, 20201211, 19960227]
+    },
+    expected_pattern="%Y%m%d",
+    expected_result=[
+        datetime(2022, 4, 21),
+        datetime(2019, 8, 11),
+        datetime(2020, 12, 11),
+        datetime(1996, 2, 27)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Date format (%Y%d%m)",
+    df_data={
+        "test_column": ["20222104", "20191108", "20201112", "19962702"]
+    },
+    expected_pattern="%Y%d%m",
+    expected_result=[
+        datetime(2022, 4, 21),
+        datetime(2019, 8, 11),
+        datetime(2020, 12, 11),
+        datetime(1996, 2, 27)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+@Parametrization.case(
+    name="Date format (%Y%d%m)  Input as integer",
+    df_data={
+        "test_column": [20222104, 20191108, 20201112, 19962702]
+    },
+    expected_pattern="%Y%d%m",
+    expected_result=[
+        datetime(2022, 4, 21),
+        datetime(2019, 8, 11),
+        datetime(2020, 12, 11),
+        datetime(1996, 2, 27)
     ],
     expected_shmessy_type="Date",
     expected_numpy_type=np.dtype("datetime64")
