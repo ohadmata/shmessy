@@ -37,7 +37,10 @@ class IntegerType(BaseType):
             logger.debug(f"Couldn't cast column to type {self.name}: {e}")
             line_number, bad_value = self._extract_bad_value(column)
             raise FieldCastingException(
-                type_=self.name, line_number=line_number, bad_value=bad_value
+                type_=self.name,
+                line_number=line_number,
+                bad_value=bad_value,
+                column_name=str(column.name),
             )
 
     @staticmethod
