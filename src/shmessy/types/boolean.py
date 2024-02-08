@@ -1,3 +1,4 @@
+import math
 from typing import Optional, Tuple
 
 import numpy as np
@@ -51,9 +52,13 @@ class BooleanType(BaseType):
 
         if isinstance(inferred_field.inferred_pattern[0], str):
             return column.apply(
-                lambda x: True
-                if x.lower() == inferred_field.inferred_pattern[0].lower()
-                else False
+                lambda x: None
+                if isinstance(x, float) and math.isnan(x)
+                else (
+                    True
+                    if x.lower() == inferred_field.inferred_pattern[0].lower()
+                    else False
+                )  # noqa
             )
 
         return column.apply(
