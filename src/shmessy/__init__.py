@@ -114,11 +114,12 @@ class Shmessy:
                     )
 
             df = pd.read_csv(
-                index_col=False,
                 filepath_or_buffer=filepath_or_buffer,
                 dialect=dialect() if dialect else None,
                 low_memory=False,
                 encoding=self.__reader_encoding,
+                keep_default_na=False,  # read empty column as empty string instead of NaN
+                index_col=False,  # Do not recognize ant column as index
             )
 
             if fixed_schema is None:
