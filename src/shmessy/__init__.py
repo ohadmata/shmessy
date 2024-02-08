@@ -114,6 +114,7 @@ class Shmessy:
                     )
 
             df = pd.read_csv(
+                index_col=False,
                 filepath_or_buffer=filepath_or_buffer,
                 dialect=dialect() if dialect else None,
                 low_memory=False,
