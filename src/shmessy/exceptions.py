@@ -52,7 +52,7 @@ class FormatCastingException(ShmessyException):
 class FieldCastingException(ShmessyException):
     def __init__(self, type_: str, bad_value: str, line_number: int, column_name: str):
         super().__init__(
-            f'Error in line: {line_number:,} for column "{column_name}": '
+            f'Error in line {line_number:,} for column "{column_name}": '
             f'Couldn\'t cast value "{bad_value}" to type {type_}.'
         )
 
