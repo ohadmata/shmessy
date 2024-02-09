@@ -19,14 +19,6 @@ def exception_router(exception: Exception):
             num_of_saw=match.group(4),
             line_number=match.group(3),
         )
-
-    match = re.match(
-        r"(.*)data (.*) doesn't match format (.*), at position(.*)", error_message
-    )
-    if match is not None:
-        raise FormatCastingException(
-            bad_value=match.group(2), expected_format=match.group(3)
-        )
     raise exception
 
 
@@ -39,13 +31,6 @@ class WrongNumberOfColumnException(ShmessyException):
     def __init__(self, num_of_expected: int, num_of_saw: int, line_number: int):
         super().__init__(
             f"Error in line {line_number}: Expected {num_of_expected} fields, found {num_of_saw}."
-        )
-
-
-class FormatCastingException(ShmessyException):
-    def __init__(self, bad_value: str, expected_format: str):
-        super().__init__(
-            f"The value {bad_value} doesn't match format {expected_format}."
         )
 
 
