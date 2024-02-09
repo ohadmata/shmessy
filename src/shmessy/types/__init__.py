@@ -26,7 +26,7 @@ def extract_bad_value_strptime(column: Series, pattern: str) -> Tuple[int, Any]:
         try:
             datetime.strptime(row, pattern)  # noqa
         except Exception:  # noqa
-            return idx, row
+            return idx + 2, row
 
     # If we reached this piece of code - The dtype is probably an object - do nothing!
     raise NotImplementedError()
