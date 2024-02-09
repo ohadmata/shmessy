@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class BaseField(BaseModel):
-    field_name: str
+    field_name: Any
     source_type: str
 
 

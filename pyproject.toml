@@ -28,6 +28,7 @@ pylint-junit = "^0.3.2"
 pytest-parametrization = "^2022.2"
 coverage-badge = "^1.1.0"
 hypothesis = "^6.96.3"
+openpyxl = "^3.1.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
