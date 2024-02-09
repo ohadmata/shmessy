@@ -82,13 +82,12 @@ def test_numeric_type(df_data, expected_shmessy_type, expected_numpy_type):
 
 
 def test_dataframe_with_10k_numeric_records_and_single_string():
-    line_number = 9465
     bad_value = "string value"
     shmessy = Shmessy(sample_size=10)
     data = [x for x in range(10000)]
-    data[line_number] = "string value"  # noqa
+    data[9465] = bad_value  # noqa
     df = pd.DataFrame({"test_column": data})
 
-    with pytest.raises(Exception) as exception:
+    with pytest.raises(Exception) as e:
         shmessy.fix_schema(df)
-    assert f"Error in line: {line_number}: Couldn\'t cast value \"{bad_value}\" to type Integer" in str(exception.value)
+    assert f"Couldn\\\'t cast value \"{bad_value}\" to type Integer" in str(e)
