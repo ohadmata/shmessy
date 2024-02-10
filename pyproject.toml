@@ -15,6 +15,7 @@ python = ">= 3.9, < 4.0"
 pandas = ">= 2.0"
 tabulate = ">= 0.9"
 pydantic = {extras=["email"], version = "^1.10"}
+pyarrow = "^14.0.0"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.20.0"
