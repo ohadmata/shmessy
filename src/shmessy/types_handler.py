@@ -87,6 +87,8 @@ class TypesHandler:
         self, column: Series, inferred_field: InferredField, type_: BaseType
     ) -> Series:
         try:
+            if column.dtype.type in type_.ignore_cast_for_types():
+                return column
             return column.apply(
                 lambda x: type_.cast(x, inferred_field.inferred_pattern)
             )
@@ -117,8 +119,6 @@ class TypesHandler:
             )
             if fixed_field is not None:
                 return fixed_field
-        except NotImplementedError:
-            pass
         except FieldCastingException as e:
             if not fallback_to_string:
                 raise e

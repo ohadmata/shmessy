@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
+import numpy as np
 from numpy import ndarray
 
 from ..schema import InferredField
@@ -58,6 +59,9 @@ class DateType(BaseType):
         except ValueError as e:
             logger.debug(f"Cannot cast the value '{value}' using pattern '{pattern}'")
             raise e
+
+    def ignore_cast_for_types(self) -> Tuple[Any]:
+        return (np.dtype("datetime64"),)
 
 
 def get_type() -> DateType:

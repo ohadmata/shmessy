@@ -1,6 +1,7 @@
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
+import numpy as np
 from numpy import ndarray
 from pydantic import BaseModel, EmailStr
 
@@ -28,6 +29,9 @@ class EmailType(BaseType):
 
     def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         return str(value)
+
+    def ignore_cast_for_types(self) -> Tuple[Any]:
+        return (np.dtype("O"),)
 
 
 def get_type() -> EmailType:

@@ -1,6 +1,6 @@
 import math
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 from numpy import ndarray
 
@@ -16,6 +16,10 @@ class BaseType(ABC):
 
     @abstractmethod
     def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+        pass
+
+    @abstractmethod
+    def ignore_cast_for_types(self) -> Tuple[Any]:
         pass
 
     @property

@@ -1,7 +1,8 @@
 import locale
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
+import numpy as np
 from numpy import ndarray
 
 from ..schema import InferredField
@@ -26,6 +27,9 @@ class IntegerType(BaseType):
         if isinstance(value, str):
             return int(locale.atoi(value))
         return int(value)
+
+    def ignore_cast_for_types(self) -> Tuple[Any]:
+        return (np.dtype("int64"),)
 
 
 def get_type() -> IntegerType:

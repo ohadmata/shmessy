@@ -2,7 +2,7 @@ import logging
 import math
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 from numpy import ndarray
 
@@ -86,6 +86,9 @@ class UnixTimestampType(BaseType):
         if self.is_empty_value(value):
             return None
         return datetime.fromtimestamp(self._fix_input_resolution(value, pattern))
+
+    def ignore_cast_for_types(self) -> Tuple[Any]:
+        return tuple()
 
 
 def get_type() -> UnixTimestampType:
