@@ -1,8 +1,8 @@
+import math
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
 from numpy import ndarray
-from pandas import Series
 
 from ..schema import InferredField
 
@@ -15,9 +15,15 @@ class BaseType(ABC):
         pass
 
     @abstractmethod
-    def fix(self, column: Series, inferred_field: InferredField) -> Series:
+    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         pass
 
     @property
     def name(self) -> str:
         return str(self.__class__.__name__.replace("Type", ""))
+
+    @staticmethod
+    def is_empty_value(value: Any) -> bool:
+        if value is None or (isinstance(value, float) and math.isnan(value)):
+            return True
+        return False

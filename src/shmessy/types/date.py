@@ -1,13 +1,10 @@
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from numpy import ndarray
-from pandas import Series, to_datetime
 
-from ..exceptions import FieldCastingException
 from ..schema import InferredField
-from . import extract_bad_value, validate_strptime_pattern
 from .base import BaseType
 
 logger = logging.getLogger(__name__)
@@ -37,25 +34,30 @@ class DateType(BaseType):
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for pattern in self.patterns:
-            if validate_strptime_pattern(data, pattern):
+            valid_pattern = True
+            at_least_single_not_nan_value = False
+            for value in data:
+                try:
+                    self.cast(value, pattern)
+                    if not self.is_empty_value(value):
+                        at_least_single_not_nan_value = True
+                except Exception as e:
+                    logger.debug(e)
+                    valid_pattern = False
+
+            if valid_pattern and at_least_single_not_nan_value:
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)
 
-    def fix(self, column: Series, inferred_field: InferredField) -> Series:
+    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         try:
-            return to_datetime(column, format=inferred_field.inferred_pattern)
-        except Exception as e:
-            logger.debug(f"Couldn't cast column to type {self.name}: {e}")
-            line_number, bad_value = extract_bad_value(
-                column=column,
-                func=lambda x: datetime.strptime(x, inferred_field.inferred_pattern),
-            )
-            raise FieldCastingException(
-                type_=self.name,
-                line_number=line_number,
-                bad_value=bad_value,
-                column_name=str(column.name),
-                pattern=inferred_field.inferred_pattern,
-            )
+            if self.is_empty_value(value):
+                return None
+            if isinstance(value, str):  # For security reasons & skip nan values
+                return datetime.strptime(value, pattern)
+            raise Exception(f"Input value for {self.name} casting must be string.")
+        except ValueError as e:
+            logger.debug(f"Cannot cast the value '{value}' using pattern '{pattern}'")
+            raise e
 
 
 def get_type() -> DateType:

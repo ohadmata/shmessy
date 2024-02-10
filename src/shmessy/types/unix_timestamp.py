@@ -5,7 +5,6 @@ from enum import Enum
 from typing import Any, Optional
 
 from numpy import ndarray
-from pandas import Series, to_datetime
 
 from ..schema import InferredField
 from .base import BaseType
@@ -14,9 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 class TimestampResolution(str, Enum):
-    SECONDS = "s"
-    MILLISECONDS = "ms"
-    NANOSECONDS = "ns"
+    SECONDS = "SECONDS"
+    MILLISECONDS = "MILLISECONDS"
+    NANOSECONDS = "NANOSECONDS"
 
 
 class UnixTimestampType(BaseType):
@@ -48,7 +47,7 @@ class UnixTimestampType(BaseType):
             return int(int(value) / 1000 / 1000)
 
     def _is_valid_unix_timestamp(self, value: Any) -> bool:
-        if isinstance(value, float) and math.isnan(value):
+        if self.is_empty_value(value):
             return True
 
         if isinstance(value, float) and math.isinf(value):
@@ -83,8 +82,10 @@ class UnixTimestampType(BaseType):
             logger.debug(f"Cannot cast the given data to {self.name}: {e}")
             return None
 
-    def fix(self, column: Series, inferred_field: InferredField) -> Series:
-        return to_datetime(column, unit=inferred_field.inferred_pattern.value)
+    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+        if self.is_empty_value(value):
+            return None
+        return datetime.fromtimestamp(self._fix_input_resolution(value, pattern))
 
 
 def get_type() -> UnixTimestampType:
