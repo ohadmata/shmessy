@@ -24,7 +24,7 @@ def create_large_file(tmp_files_folder) -> str:
     return file_path.as_posix()
 
 
-@pytest.disable()
+@pytest.mark.skip(reason="Takes too much time at pre-commit. Need to execute only in CI")
 def test_large_file_infer_should_be_less_than_3000_ms(create_large_file):
     df = pd.read_csv(create_large_file)
     result = Shmessy().infer_schema(df)
@@ -32,7 +32,7 @@ def test_large_file_infer_should_be_less_than_3000_ms(create_large_file):
 
 
 @Parametrization.autodetect_parameters()
-@pytest.disable()
+@pytest.mark.skip(reason="Duration issue on MacOS")
 @Parametrization.case(
     name="Test demo data 1",
     file_path="data_1.csv",
