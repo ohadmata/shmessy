@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime
-from typing import Any, Tuple
+from typing import Any, Callable, Tuple
 
 from numpy import ndarray
 from pandas import Series
@@ -21,10 +21,10 @@ def validate_strptime_pattern(data: ndarray, pattern: str) -> bool:
     return validated
 
 
-def extract_bad_value_strptime(column: Series, pattern: str) -> Tuple[int, Any]:
+def extract_bad_value(column: Series, func: Callable) -> Tuple[int, Any]:
     for idx, row in enumerate(column):
         try:
-            datetime.strptime(row, pattern)  # noqa
+            func(row)  # noqa
         except Exception:  # noqa
             return idx + 2, row
 

@@ -1,6 +1,6 @@
 import locale
 import logging
-from typing import Any, Optional, Tuple
+from typing import Optional
 
 from numpy import ndarray
 from pandas import Series, to_numeric
@@ -8,6 +8,7 @@ from pandas.api.types import is_numeric_dtype
 
 from ..exceptions import FieldCastingException
 from ..schema import InferredField
+from . import extract_bad_value
 from .base import BaseType
 
 logger = logging.getLogger(__name__)
@@ -35,24 +36,16 @@ class IntegerType(BaseType):
             return to_numeric(column.apply(locale.atoi))
         except Exception as e:
             logger.debug(f"Couldn't cast column to type {self.name}: {e}")
-            line_number, bad_value = self._extract_bad_value(column)
+            line_number, bad_value = extract_bad_value(
+                column=column, func=lambda x: int(x)
+            )
             raise FieldCastingException(
                 type_=self.name,
                 line_number=line_number,
                 bad_value=bad_value,
                 column_name=str(column.name),
+                pattern=inferred_field.inferred_pattern,
             )
-
-    @staticmethod
-    def _extract_bad_value(column: Series) -> Tuple[int, Any]:
-        for idx, row in enumerate(column):
-            try:
-                int(row)  # noqa
-            except Exception:  # noqa
-                return idx + 2, row
-
-        # If we reached this piece of code - The dtype is probably an object - do nothing!
-        raise NotImplementedError()
 
 
 def get_type() -> IntegerType:

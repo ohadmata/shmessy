@@ -1,4 +1,5 @@
 import re
+from typing import Any, Optional
 
 
 def exception_router(exception: Exception):
@@ -35,10 +36,18 @@ class WrongNumberOfColumnException(ShmessyException):
 
 
 class FieldCastingException(ShmessyException):
-    def __init__(self, type_: str, bad_value: str, line_number: int, column_name: str):
+    def __init__(
+        self,
+        type_: str,
+        bad_value: str,
+        line_number: int,
+        column_name: str,
+        pattern: Optional[Any] = None,
+    ):
+        pattern_str = f"[{pattern}]" if pattern else ""
         super().__init__(
             f'Error in line {line_number:,} for column "{column_name}": '
-            f'Couldn\'t cast value "{bad_value}" to type {type_}.'
+            f'Couldn\'t cast value "{bad_value}" to type {type_}{pattern_str}.'
         )
 
 

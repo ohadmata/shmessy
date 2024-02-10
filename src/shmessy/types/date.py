@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 from typing import Optional
 
 from numpy import ndarray
@@ -6,7 +7,7 @@ from pandas import Series, to_datetime
 
 from ..exceptions import FieldCastingException
 from ..schema import InferredField
-from . import extract_bad_value_strptime, validate_strptime_pattern
+from . import extract_bad_value, validate_strptime_pattern
 from .base import BaseType
 
 logger = logging.getLogger(__name__)
@@ -44,14 +45,16 @@ class DateType(BaseType):
             return to_datetime(column, format=inferred_field.inferred_pattern)
         except Exception as e:
             logger.debug(f"Couldn't cast column to type {self.name}: {e}")
-            line_number, bad_value = extract_bad_value_strptime(
-                column, inferred_field.inferred_pattern
+            line_number, bad_value = extract_bad_value(
+                column=column,
+                func=lambda x: datetime.strptime(x, inferred_field.inferred_pattern),
             )
             raise FieldCastingException(
-                type_=f"{self.name}[{inferred_field.inferred_pattern}]",
+                type_=self.name,
                 line_number=line_number,
                 bad_value=bad_value,
                 column_name=str(column.name),
+                pattern=inferred_field.inferred_pattern,
             )
 
 
