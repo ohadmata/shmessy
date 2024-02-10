@@ -39,7 +39,7 @@ def test_large_file_infer_should_be_less_than_3000_ms(create_large_file):
     name="Test demo data 2",
     file_path="data_2.csv",
 )
-def test_duration_for_sample_file_should_be_less_than_3000_ms(file_path,files_folder):
+def test_duration_for_sample_file_should_be_less_than_3000_ms(file_path, files_folder):
     path = files_folder.as_posix() + f"/{file_path}"
     df = pd.read_csv(path)
     result = Shmessy().infer_schema(df)
