@@ -67,12 +67,12 @@ def test_read_csv_with_99_percent_empty_values(files_folder):
     path = files_folder.as_posix() + "/data_8.csv"
     with open(path, mode="rt") as file_input:
         with pytest.raises(Exception) as e:
-            Shmessy().read_csv(file_input)
+            Shmessy(use_random_sample=False).read_csv(file_input)
         assert "Couldn\\\'t cast value \"string_value\" to type Float" in str(e)
 
 
 def test_read_csv_with_99_percent_empty_values_fallback_to_string(files_folder):
     path = files_folder.as_posix() + "/data_8.csv"
     with open(path, mode="rt") as file_input:
-        df = Shmessy().read_csv(file_input, fallback_to_string=True)
+        df = Shmessy(use_random_sample=False).read_csv(file_input, fallback_to_string=True)
         assert df["test_column"].dtype == np.dtype("O")
