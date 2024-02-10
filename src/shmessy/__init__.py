@@ -27,11 +27,14 @@ class Shmessy:
         sample_size: Optional[int] = 1000,
         reader_encoding: Optional[str] = "UTF-8",
         locale_formatter: Optional[str] = "en_US",
+        use_random_sample: Optional[bool] = True,
     ) -> None:
         self.__types_handler = TypesHandler()
         self.__sample_size = sample_size
         self.__reader_encoding = reader_encoding
         self.__locale_formatter = locale_formatter
+        self.__use_random_sample = use_random_sample
+
         self.__inferred_schema: Optional[ShmessySchema] = None
 
         locale.setlocale(
@@ -43,7 +46,11 @@ class Shmessy:
 
     def infer_schema(self, df: DataFrame) -> ShmessySchema:
         start_time = time.time()
-        df = _get_sampled_df(df=df, sample_size=self.__sample_size)
+        df = _get_sampled_df(
+            df=df,
+            sample_size=self.__sample_size,
+            random_sample=self.__use_random_sample,
+        )
         columns = [
             self.__types_handler.infer_field(field_name=column, data=df[column].values)
             for column in df

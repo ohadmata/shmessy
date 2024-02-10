@@ -8,11 +8,13 @@ from pandas import DataFrame
 from .schema import ShmessySchema
 
 
-def _get_sampled_df(df: DataFrame, sample_size: int) -> DataFrame:
+def _get_sampled_df(df: DataFrame, sample_size: int, random_sample: bool) -> DataFrame:
     number_of_rows: int = len(df)
     if number_of_rows < sample_size:
         sample_size = number_of_rows
-    return df.sample(n=sample_size)
+    if random_sample:
+        return df.sample(sample_size)
+    return df.head(sample_size)
 
 
 def _fix_column_names(df: DataFrame) -> Dict[str, str]:

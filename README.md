@@ -125,7 +125,8 @@ df = Shmessy().read_csv('/tmp/file.csv')
 shmessy = Shmessy(
     sample_size: Optional[int] = 1000,
     reader_encoding: Optional[str] = "UTF-8",
-    locale_formatter: Optional[str] = "en_US"
+    locale_formatter: Optional[str] = "en_US",
+    use_random_sample: Optional[bool] = True
 )
 ```
 
