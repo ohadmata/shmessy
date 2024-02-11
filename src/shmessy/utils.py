@@ -20,7 +20,7 @@ def _get_sampled_df(df: DataFrame, sample_size: int, random_sample: bool) -> Dat
 def _fix_column_names(df: DataFrame) -> Dict[str, str]:
     fixed_column_names = {}
     for column in df.columns:
-        fixed_column_names[column] = re.sub("[^0-9a-zA-Z]+", "_", column)
+        fixed_column_names[column] = re.sub("[^0-9a-zA-Z]+", "_", str(column))
     return fixed_column_names
 
 
