@@ -1,9 +1,8 @@
 import math
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 
 import numpy as np
 from numpy import ndarray
-from pandas import Series
 
 from ..schema import InferredField
 from .base import BaseType
@@ -19,23 +18,20 @@ class BooleanType(BaseType):
         (1, 0),
     ]
 
-    @staticmethod
-    def _validate_value_pattern(data: ndarray, pattern: Tuple) -> bool:
-        match_first_value: bool = False
-        match_second_value: bool = False
+    def _match_bool_pattern(self, data: ndarray, pattern: Tuple) -> bool:
+        match_positive: bool = False
+        match_negative: bool = False
 
         for value in data:
-            if isinstance(value, str):
-                value = value.lower()
-            if isinstance(pattern[0], str):
-                pattern = (pattern[0].lower(), pattern[1].lower())
-            if value == pattern[0]:
-                match_first_value = True
-            elif value == pattern[1]:
-                match_second_value = True
-            else:
+            casted_value = self.cast(value, pattern)
+            if casted_value is None:
                 return False
-        if match_first_value and match_second_value:
+            if casted_value is True:
+                match_positive = True
+            else:
+                match_negative = True
+
+        if match_positive and match_negative:
             return True
         return False
 
@@ -43,27 +39,27 @@ class BooleanType(BaseType):
         if data.dtype == np.dtype("bool"):
             return InferredField(inferred_type=self.name)
         for pattern in self.patterns:
-            if self._validate_value_pattern(data, pattern):
+            if self._match_bool_pattern(data, pattern):
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)
 
-    def fix(self, column: Series, inferred_field: InferredField) -> Series:
-        if not inferred_field.inferred_pattern:
-            raise NotImplementedError()  # Missing pattern - Mean that the column recognized as boolean by pandas
+    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+        if pattern is None:
+            return value
+        if isinstance(pattern[0], str) and isinstance(value, str):
+            return (
+                None
+                if isinstance(value, float) and math.isnan(value)
+                else (True if value.lower() == pattern[0].lower() else False)
+            )  # noqa
 
-        if isinstance(inferred_field.inferred_pattern[0], str):
-            return column.apply(
-                lambda x: None
-                if isinstance(x, float) and math.isnan(x)
-                else (
-                    True
-                    if x.lower() == inferred_field.inferred_pattern[0].lower()
-                    else False
-                )  # noqa
-            )
+        if isinstance(pattern[0], (bool, int)):
+            if value == pattern[0]:
+                return True
+            if value == pattern[1]:
+                return False
 
-        return column.apply(
-            lambda x: True if x == inferred_field.inferred_pattern[0] else False
-        )
+    def ignore_cast_for_types(self) -> Tuple[Any]:
+        return (np.dtype("bool"),)
 
 
 def get_type() -> BooleanType:
