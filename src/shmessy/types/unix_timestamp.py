@@ -4,6 +4,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Optional, Tuple
 
+import numpy as np
 from numpy import ndarray
 
 from ..schema import InferredField
@@ -88,7 +89,7 @@ class UnixTimestampType(BaseType):
         return datetime.fromtimestamp(self._fix_input_resolution(value, pattern))
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
-        return tuple()
+        return (np.dtype("datetime64"),)
 
 
 def get_type() -> UnixTimestampType:

@@ -31,8 +31,8 @@ def test_large_file_infer_should_be_less_than_800_ms(create_large_file):
     assert result.infer_duration_ms < 800
 
 
-@Parametrization.autodetect_parameters()
 @pytest.mark.skip(reason="Duration issue on MacOS")
+@Parametrization.autodetect_parameters()
 @Parametrization.case(
     name="Test demo data 1",
     file_path="data_1.csv",
