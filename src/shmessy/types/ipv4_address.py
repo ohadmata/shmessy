@@ -1,8 +1,8 @@
 import logging
-from typing import Optional
+from typing import Any, Optional, Tuple
 
+import numpy as np
 from numpy import ndarray
-from pandas import Series
 from pydantic import BaseModel
 from pydantic.networks import IPv4Address  # noqa
 
@@ -33,9 +33,11 @@ class IPv4Type(BaseType):
                 return None
         return InferredField(inferred_type=self.name)
 
-    def fix(self, column: Series, inferred_field: InferredField) -> Series:
-        # IP defined as a virtual data-type. Fix is not relevant.
-        raise NotImplementedError()
+    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+        return str(value)
+
+    def ignore_cast_for_types(self) -> Tuple[Any]:
+        return (np.dtype("O"),)
 
 
 def get_type() -> IPv4Type:

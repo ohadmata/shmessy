@@ -1,8 +1,8 @@
 import logging
-from typing import Optional
+from typing import Any, Optional, Tuple
 
+import numpy as np
 from numpy import ndarray
-from pandas import Series
 
 from ..schema import InferredField
 from .base import BaseType
@@ -22,8 +22,11 @@ class StringType(BaseType):
                 return None
         return InferredField(inferred_type=self.name)
 
-    def fix(self, column: Series, inferred_field: InferredField) -> Series:
-        return column.apply(lambda x: str(x))
+    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+        return str(value)
+
+    def ignore_cast_for_types(self) -> Tuple[Any]:
+        return (np.dtype("O"),)
 
 
 def get_type() -> StringType:

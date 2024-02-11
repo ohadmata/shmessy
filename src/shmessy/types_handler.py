@@ -2,7 +2,7 @@ import logging
 import os
 from importlib import import_module
 from types import ModuleType
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
 from numpy import ndarray
 from numpy.dtypes import (
@@ -23,7 +23,7 @@ from pandas import Series
 
 from shmessy.exceptions import FieldCastingException
 
-from .schema import Field
+from .schema import Field, InferredField
 from .types.base import BaseType
 from .types.boolean import BooleanType
 from .types.datetime_ import DatetimeType
@@ -72,22 +72,60 @@ class TypesHandler:
         except (ImportError, ValueError, AttributeError) as e:
             logger.error(f"Couldn't import {module}: {e}")
 
+    @staticmethod
+    def _extract_bad_value(column: Series, func: Callable) -> Tuple[int, Any]:
+        for idx, row in enumerate(column):
+            try:
+                func(row)  # noqa
+            except Exception:  # noqa
+                return idx + 2, row
+
+        # If we reached this piece of code - The dtype is probably an object - do nothing!
+        raise NotImplementedError()
+
+    def _fix_column(
+        self, column: Series, inferred_field: InferredField, type_: BaseType
+    ) -> Series:
+        try:
+            if column.dtype.type in type_.ignore_cast_for_types():
+                return column
+            return column.apply(
+                lambda x: type_.cast(x, inferred_field.inferred_pattern)
+            )
+        except Exception as e:
+            logger.debug(f"Couldn't cast column to type {type_.name}: {e}")
+            line_number, bad_value = self._extract_bad_value(
+                column=column,
+                func=lambda x: type_.cast(
+                    value=x, pattern=inferred_field.inferred_pattern
+                ),
+            )
+            raise FieldCastingException(
+                type_=type_.name,
+                line_number=line_number,
+                bad_value=bad_value,
+                column_name=str(column.name),
+                pattern=inferred_field.inferred_pattern,
+            )
+
     def fix_field(
         self, column: Series, inferred_field: Field, fallback_to_string: bool
     ) -> Any:
         try:
-            fixed_field = self.__types_as_dict[inferred_field.inferred_type].fix(
-                column=column, inferred_field=inferred_field
+            fixed_field = self._fix_column(
+                column=column,
+                inferred_field=inferred_field,
+                type_=self.__types_as_dict[inferred_field.inferred_type],
             )
             if fixed_field is not None:
                 return fixed_field
-        except NotImplementedError:
-            pass
         except FieldCastingException as e:
             if not fallback_to_string:
                 raise e
             logger.debug("Could not cast the field - Apply fallback to string")
-            StringType().fix(column=column, inferred_field=inferred_field)
+            self._fix_column(
+                column=column, inferred_field=inferred_field, type_=StringType()
+            )
         return column
 
     def infer_field(self, field_name: str, data: ndarray) -> Field:

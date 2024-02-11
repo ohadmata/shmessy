@@ -1,14 +1,11 @@
 import locale
 import logging
-from typing import Optional
+from typing import Any, Optional, Tuple
 
+import numpy as np
 from numpy import ndarray
-from pandas import Series, to_numeric
-from pandas.api.types import is_numeric_dtype
 
-from ..exceptions import FieldCastingException
 from ..schema import InferredField
-from . import extract_bad_value
 from .base import BaseType
 
 logger = logging.getLogger(__name__)
@@ -20,32 +17,19 @@ class FloatType(BaseType):
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for value in data:
             try:
-                if isinstance(value, str):
-                    float(locale.atof(value))
-                else:
-                    float(value)
+                self.cast(value)
             except Exception:  # noqa
                 logger.debug(f"Cannot cast the value '{value}' to {self.name}")
                 return None
         return InferredField(inferred_type=self.name)
 
-    def fix(self, column: Series, inferred_field: InferredField) -> Series:
-        if is_numeric_dtype(column):
-            return column
-        try:
-            return to_numeric(column.apply(locale.atof))
-        except Exception as e:
-            logger.debug(f"Couldn't cast column to type {self.name}: {e}")
-            line_number, bad_value = extract_bad_value(
-                column=column, func=lambda x: float(x)
-            )
-            raise FieldCastingException(
-                type_=self.name,
-                line_number=line_number,
-                bad_value=bad_value,
-                column_name=str(column.name),
-                pattern=inferred_field.inferred_pattern,
-            )
+    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+        if isinstance(value, str):
+            return float(locale.atof(value))
+        return float(value)
+
+    def ignore_cast_for_types(self) -> Tuple[Any]:
+        return (np.dtype("float64"),)
 
 
 def get_type() -> FloatType:
