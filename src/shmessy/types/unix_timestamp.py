@@ -90,7 +90,3 @@ class UnixTimestampType(BaseType):
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
         return (np.dtype("datetime64"),)
-
-
-def get_type() -> UnixTimestampType:
-    return UnixTimestampType()

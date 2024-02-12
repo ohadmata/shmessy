@@ -30,7 +30,3 @@ class IntegerType(BaseType):
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
         return (np.dtype("int64"),)
-
-
-def get_type() -> IntegerType:
-    return IntegerType()

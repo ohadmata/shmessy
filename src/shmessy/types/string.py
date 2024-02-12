@@ -27,7 +27,3 @@ class StringType(BaseType):
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
         return (np.dtype("O"),)
-
-
-def get_type() -> StringType:
-    return StringType()
