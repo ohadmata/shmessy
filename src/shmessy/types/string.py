@@ -3,6 +3,7 @@ from typing import Any, Optional, Tuple
 
 import numpy as np
 from numpy import ndarray
+from pandas import Series
 
 from ..schema import InferredField
 from .base import BaseType
@@ -22,7 +23,14 @@ class StringType(BaseType):
                 return None
         return InferredField(inferred_type=self.name)
 
-    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+    @property
+    def prefer_column_casting(self) -> bool:
+        return True
+
+    def cast_column(self, column: Series, inferred_field: InferredField) -> Series:
+        raise column.apply(lambda x: str(x))
+
+    def cast_value(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         return str(value)
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
