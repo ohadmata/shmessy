@@ -4,6 +4,7 @@ from typing import Any, Optional, Tuple
 
 import numpy as np
 from numpy import ndarray
+from pandas import Series, to_datetime
 
 from ..schema import InferredField
 from .base import BaseType
@@ -39,7 +40,7 @@ class DateType(BaseType):
             at_least_single_not_nan_value = False
             for value in data:
                 try:
-                    self.cast(value, pattern)
+                    self.cast_value(value, pattern)
                     if not self.is_empty_value(value):
                         at_least_single_not_nan_value = True
                 except Exception as e:
@@ -49,7 +50,14 @@ class DateType(BaseType):
             if valid_pattern and at_least_single_not_nan_value:
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)
 
-    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+    @property
+    def prefer_column_casting(self) -> bool:
+        return True
+
+    def cast_column(self, column: Series, inferred_field: InferredField) -> Series:
+        return to_datetime(column, format=inferred_field.inferred_pattern)
+
+    def cast_value(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         try:
             if self.is_empty_value(value):
                 return None

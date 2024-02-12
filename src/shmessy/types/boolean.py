@@ -3,6 +3,7 @@ from typing import Any, Optional, Tuple
 
 import numpy as np
 from numpy import ndarray
+from pandas import Series
 
 from ..schema import InferredField
 from .base import BaseType
@@ -23,7 +24,7 @@ class BooleanType(BaseType):
         match_negative: bool = False
 
         for value in data:
-            casted_value = self.cast(value, pattern)
+            casted_value = self.cast_value(value, pattern)
             if casted_value is None:
                 return False
             if casted_value is True:
@@ -42,15 +43,18 @@ class BooleanType(BaseType):
             if self._match_bool_pattern(data, pattern):
                 return InferredField(inferred_type=self.name, inferred_pattern=pattern)
 
-    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+    def cast_column(self, column: Series, inferred_field: InferredField) -> Series:
+        raise NotImplementedError()
+
+    def cast_value(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         if pattern is None:
             return value
         if isinstance(pattern[0], str) and isinstance(value, str):
             return (
                 None
                 if isinstance(value, float) and math.isnan(value)
-                else (True if value.lower() == pattern[0].lower() else False)
-            )  # noqa
+                else (True if value.lower() == pattern[0].lower() else False)  # noqa
+            )
 
         if isinstance(pattern[0], (bool, int)):
             if value == pattern[0]:

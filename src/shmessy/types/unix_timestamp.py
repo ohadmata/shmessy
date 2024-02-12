@@ -6,6 +6,7 @@ from typing import Any, Optional, Tuple
 
 import numpy as np
 from numpy import ndarray
+from pandas import Series, to_datetime
 
 from ..schema import InferredField
 from .base import BaseType
@@ -14,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 class TimestampResolution(str, Enum):
-    SECONDS = "SECONDS"
-    MILLISECONDS = "MILLISECONDS"
-    NANOSECONDS = "NANOSECONDS"
+    SECONDS = "s"
+    MILLISECONDS = "ms"
+    NANOSECONDS = "ns"
 
 
 class UnixTimestampType(BaseType):
@@ -83,7 +84,14 @@ class UnixTimestampType(BaseType):
             logger.debug(f"Cannot cast the given data to {self.name}: {e}")
             return None
 
-    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+    @property
+    def prefer_column_casting(self) -> bool:
+        return True
+
+    def cast_column(self, column: Series, inferred_field: InferredField) -> Series:
+        return to_datetime(column, unit=inferred_field.inferred_pattern.value)
+
+    def cast_value(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         if self.is_empty_value(value):
             return None
         return datetime.fromtimestamp(self._fix_input_resolution(value, pattern))

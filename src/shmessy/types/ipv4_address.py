@@ -3,6 +3,7 @@ from typing import Any, Optional, Tuple
 
 import numpy as np
 from numpy import ndarray
+from pandas import Series
 from pydantic import BaseModel
 from pydantic.networks import IPv4Address  # noqa
 
@@ -33,7 +34,10 @@ class IPv4Type(BaseType):
                 return None
         return InferredField(inferred_type=self.name)
 
-    def cast(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
+    def cast_column(self, column: Series, inferred_field: InferredField) -> Series:
+        raise NotImplementedError()
+
+    def cast_value(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         return str(value)
 
     def ignore_cast_for_types(self) -> Tuple[Any]:

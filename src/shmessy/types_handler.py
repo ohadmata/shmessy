@@ -85,24 +85,29 @@ class TypesHandler:
         try:
             if column.dtype.type in type_.ignore_cast_for_types():
                 return column
+            if type_.prefer_column_casting:
+                return type_.cast_column(column, inferred_field)
             return column.apply(
-                lambda x: type_.cast(x, inferred_field.inferred_pattern)
+                lambda x: type_.cast_value(x, inferred_field.inferred_pattern)
             )
         except Exception as e:
             logger.debug(f"Couldn't cast column to type {type_.name}: {e}")
-            line_number, bad_value = self._extract_bad_value(
-                column=column,
-                func=lambda x: type_.cast(
-                    value=x, pattern=inferred_field.inferred_pattern
-                ),
-            )
-            raise FieldCastingException(
-                type_=type_.name,
-                line_number=line_number,
-                bad_value=bad_value,
-                column_name=str(column.name),
-                pattern=inferred_field.inferred_pattern,
-            )
+            try:
+                line_number, bad_value = self._extract_bad_value(
+                    column=column,
+                    func=lambda x: type_.cast_value(
+                        value=x, pattern=inferred_field.inferred_pattern
+                    ),
+                )
+                raise FieldCastingException(
+                    type_=type_.name,
+                    line_number=line_number,
+                    bad_value=bad_value,
+                    column_name=str(column.name),
+                    pattern=inferred_field.inferred_pattern,
+                )
+            except NotImplementedError:
+                pass
 
     def fix_field(
         self, column: Series, inferred_field: Field, fallback_to_string: bool
