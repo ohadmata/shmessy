@@ -32,7 +32,3 @@ class EmailType(BaseType):
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
         return (np.dtype("O"),)
-
-
-def get_type() -> EmailType:
-    return EmailType()

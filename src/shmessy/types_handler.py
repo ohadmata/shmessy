@@ -1,8 +1,5 @@
 import logging
-import os
-from importlib import import_module
-from types import ModuleType
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type
+from typing import Any, Callable, Dict, List, Tuple, Type
 
 from numpy import ndarray
 from numpy.dtypes import (
@@ -26,10 +23,14 @@ from shmessy.exceptions import FieldCastingException
 from .schema import Field, InferredField
 from .types.base import BaseType
 from .types.boolean import BooleanType
+from .types.date import DateType
 from .types.datetime_ import DatetimeType
+from .types.email import EmailType
 from .types.float import FloatType
 from .types.integer import IntegerType
+from .types.ipv4_address import IPv4Type
 from .types.string import StringType
+from .types.unix_timestamp import UnixTimestampType
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +39,8 @@ class TypesHandler:
     PACKAGE_NAME: str = "shmessy"
     TYPES_DIR: str = "types"
 
-    def __init__(self):
-        self.__types = self._discover_types()
+    def __init__(self, ignore_virtual_types: bool):
+        self.__types = self._discover_types(ignore_virtual_types=ignore_virtual_types)
         self.__types_as_dict: Dict[str, BaseType] = self._types_as_dict(self.__types)
 
     @classmethod
@@ -50,27 +51,22 @@ class TypesHandler:
         return res
 
     @classmethod
-    def _discover_types(cls) -> List[BaseType]:
-        types: List[BaseType] = []
-        root_directory = os.path.join(os.path.dirname(__file__))
-        types_directory = os.path.join(root_directory, cls.TYPES_DIR)
-
-        for filename in os.listdir(types_directory):
-            try:
-                types.append(cls._load_type(filename).get_type())
-            except AttributeError:
-                pass  # ignore types without factory (Such as base types)
-        return types
-
-    @classmethod
-    def _load_type(cls, type_filename: str) -> Optional[ModuleType]:
-        module = (
-            f"{cls.PACKAGE_NAME}.{cls.TYPES_DIR}.{type_filename.replace('.py', '')}"
-        )
-        try:
-            return import_module(module)
-        except (ImportError, ValueError, AttributeError) as e:
-            logger.error(f"Couldn't import {module}: {e}")
+    def _discover_types(cls, ignore_virtual_types: bool) -> List[BaseType]:
+        types = [
+            BooleanType(),
+            DatetimeType(),
+            DateType(),
+            FloatType(),
+            IntegerType(),
+            StringType(),
+            UnixTimestampType(),
+        ]
+        if not ignore_virtual_types:
+            types += [
+                IPv4Type(),
+                EmailType(),
+            ]
+        return sorted(types, key=lambda x: x.weight)
 
     @staticmethod
     def _extract_bad_value(column: Series, func: Callable) -> Tuple[int, Any]:
@@ -129,8 +125,7 @@ class TypesHandler:
         return column
 
     def infer_field(self, field_name: str, data: ndarray) -> Field:
-        sorted_types = sorted(self.__types, key=lambda x: x.weight)
-        for type_ in sorted_types:
+        for type_ in self.__types:
             logger.debug(f"Trying to match column {field_name} to type {type_.name}")
             inferred = type_.validate(data)
             if inferred:

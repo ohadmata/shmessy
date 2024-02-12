@@ -60,7 +60,3 @@ class BooleanType(BaseType):
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
         return (np.dtype("bool"),)
-
-
-def get_type() -> BooleanType:
-    return BooleanType()

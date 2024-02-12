@@ -28,8 +28,9 @@ class Shmessy:
         reader_encoding: Optional[str] = "UTF-8",
         locale_formatter: Optional[str] = "en_US",
         use_random_sample: Optional[bool] = True,
+        ignore_virtual_types: Optional[bool] = False,
     ) -> None:
-        self.__types_handler = TypesHandler()
+        self.__types_handler = TypesHandler(ignore_virtual_types=ignore_virtual_types)
         self.__sample_size = sample_size
         self.__reader_encoding = reader_encoding
         self.__locale_formatter = locale_formatter

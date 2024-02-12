@@ -30,7 +30,3 @@ class FloatType(BaseType):
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
         return (np.dtype("float64"),)
-
-
-def get_type() -> FloatType:
-    return FloatType()

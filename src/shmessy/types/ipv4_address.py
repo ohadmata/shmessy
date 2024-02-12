@@ -38,7 +38,3 @@ class IPv4Type(BaseType):
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
         return (np.dtype("O"),)
-
-
-def get_type() -> IPv4Type:
-    return IPv4Type()
