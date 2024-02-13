@@ -114,7 +114,7 @@ class Shmessy:
                             sample_size=self.__sample_size,
                             encoding=self.__reader_encoding,
                         ),
-                        delimiters="".join([",", "\t", ";", " ", ":"]),
+                        delimiters="".join([",", "\t", ";", ":"]),
                     )
                 except Exception as e:  # noqa
                     logger.debug(
