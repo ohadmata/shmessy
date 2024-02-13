@@ -76,3 +76,11 @@ def test_read_csv_with_99_percent_empty_values_fallback_to_string(files_folder):
     with open(path, mode="rt") as file_input:
         df = Shmessy(use_random_sample=False).read_csv(file_input, fallback_to_string=True)
         assert df["test_column"].dtype == np.dtype("O")
+
+
+@pytest.mark.skip(reason="issue #109 needs to be fixed")
+def test_read_csv_with_text_data(files_folder):
+    path = files_folder.as_posix() + "/data_with_text.csv"
+    with open(path, mode="rt") as file_input:
+        df = Shmessy(use_random_sample=False).read_csv(file_input, fallback_to_string=True)
+        assert True
