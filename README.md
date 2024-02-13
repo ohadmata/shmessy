@@ -8,6 +8,7 @@
 ![OS](https://img.shields.io/badge/ubuntu-blue?logo=ubuntu)
 ![OS](https://img.shields.io/badge/mac-blue?logo=apple)
 ![OS](https://img.shields.io/badge/win-blue?logo=windows)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ### If your data is messy - Use Shmessy!
 
 Shmessy designed to deal with messy pandas dataframes.
