@@ -82,3 +82,44 @@ def test_schema_infer_booleans_hp(df_bool, ):
     for col in shmessy_scheme.columns:
         one_unique = len(df_bool[col.field_name].unique()) == 1
         assert col.inferred_type != "Boolean" if one_unique else col.inferred_type == "Boolean"
+
+
+@hp.given(
+    df=df_st(),
+    fix_column_names=st.booleans(),
+    fallback_to_string=st.booleans(),
+    fixed_schema=st.booleans(),
+    use_random_sample=st.booleans(),
+    file_id=st.uuids(),
+)
+@hp.settings(
+    suppress_health_check=[hp.HealthCheck.function_scoped_fixture],
+    max_examples=20,
+)
+def test_csv_read_with_sniffer_hp(
+        df,
+        fix_column_names,
+        fallback_to_string,
+        fixed_schema,
+        use_random_sample,
+        file_id,
+        tmp_files_folder
+):
+    df.columns = [f"{i}" for i in range(len(df.columns))]
+    hp.assume(not df.empty)
+    shmessy_scheme = Shmessy(use_random_sample=use_random_sample).infer_schema(df)
+    file_path = tmp_files_folder.as_posix() + f"/data_hp_{file_id}.csv"
+    df.to_csv(file_path)
+    try:
+        with open(file_path, mode="rt") as file_input:
+            df_out = Shmessy().read_csv(
+                file_input,
+                use_sniffer=True,
+                fix_column_names=fix_column_names,
+                fallback_to_string=fallback_to_string,
+                fixed_schema=shmessy_scheme if fixed_schema else None,
+            )
+    except pd.errors.EmptyDataError as e:
+        pass
+
+    assert True
