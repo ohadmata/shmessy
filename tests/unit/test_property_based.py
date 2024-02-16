@@ -106,7 +106,6 @@ def test_csv_read_with_sniffer_hp(
         tmp_files_folder
 ):
     df.columns = [f"{i}" for i in range(len(df.columns))]
-    hp.assume(not df.empty)
     shmessy_scheme = Shmessy(use_random_sample=use_random_sample).infer_schema(df)
     file_path = tmp_files_folder.as_posix() + f"/data_hp_{file_id}.csv"
     df.to_csv(file_path)
