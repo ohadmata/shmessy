@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 
-@pytest.fixture()
+@pytest.fixture(scope='session')
 def test_cleaner():
     funcs = []
 
@@ -16,14 +16,14 @@ def test_cleaner():
         func()
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def files_folder() -> Path:
     folder_path = Path(__file__).parent / 'data'
     assert folder_path.exists()
     return folder_path
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def tmp_files_folder(test_cleaner) -> Path:
     folder_path = Path(__file__).parent / 'tmp_folder_for_tests'
     if folder_path.exists():
