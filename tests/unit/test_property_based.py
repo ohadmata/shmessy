@@ -42,9 +42,7 @@ def df_bool_st(draw) -> pd.DataFrame:
     dfs_st = data_frames(
         columns=columns(
             list(['col1', 'col2']),
-            dtype=draw(st.sampled_from([
-                bool,
-            ])),
+            dtype=bool,
         ),
         index=range_indexes(min_size=2, max_size=5, ),
 
