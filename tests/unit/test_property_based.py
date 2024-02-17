@@ -94,7 +94,6 @@ def test_schema_infer_booleans_hp(df_bool, ):
 )
 @hp.settings(
     suppress_health_check=[hp.HealthCheck.function_scoped_fixture],
-    max_examples=20,
 )
 def test_csv_read_with_sniffer_hp(
         df,
