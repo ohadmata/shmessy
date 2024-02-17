@@ -1,4 +1,3 @@
-import math
 from typing import Any, Optional, Tuple
 
 import numpy as np
@@ -24,8 +23,9 @@ class BooleanType(BaseType):
         match_negative: bool = False
 
         for value in data:
-            casted_value = self.cast_value(value, pattern)
-            if casted_value is None:
+            try:
+                casted_value = self.cast_value(value, pattern)
+            except ValueError:
                 return False
             if casted_value is True:
                 match_positive = True
@@ -50,17 +50,20 @@ class BooleanType(BaseType):
         if pattern is None:
             return value
         if isinstance(pattern[0], str) and isinstance(value, str):
-            return (
-                None
-                if isinstance(value, float) and math.isnan(value)
-                else (True if value.lower() == pattern[0].lower() else False)  # noqa
-            )
+            if self.is_empty_value(value):
+                return None
+            if value.lower() == pattern[0].lower():
+                return True
+            if value.lower() == pattern[1].lower():
+                return False
 
         if isinstance(pattern[0], (bool, int)):
             if value == pattern[0]:
                 return True
             if value == pattern[1]:
                 return False
+
+        raise ValueError(f"Could not cast value {value} using pattern {pattern}")
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
         return (np.dtype("bool"),)

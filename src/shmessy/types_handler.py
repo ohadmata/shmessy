@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Callable, Dict, List, Tuple, Type
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
 from numpy import ndarray
 from numpy.dtypes import (
@@ -79,12 +79,32 @@ class TypesHandler:
         # If we reached this piece of code - The dtype is probably an object - do nothing!
         raise NotImplementedError()
 
+    @staticmethod
+    def _cast_with_fallback_to_null(
+        value: Any, inferred_pattern: Any, type_: BaseType
+    ) -> Any:
+        try:
+            return type_.cast_value(value, inferred_pattern)
+        except Exception as e:
+            logger.debug(e)
+            return None
+
     def _fix_column(
-        self, column: Series, inferred_field: InferredField, type_: BaseType
+        self,
+        column: Series,
+        inferred_field: InferredField,
+        type_: BaseType,
+        fallback_to_null: Optional[bool] = False,
     ) -> Series:
         try:
             if column.dtype.type in type_.ignore_cast_for_types():
                 return column
+            if fallback_to_null:
+                return column.apply(
+                    lambda x: self._cast_with_fallback_to_null(
+                        x, inferred_field.inferred_pattern, type_
+                    )
+                )
             if type_.prefer_column_casting:
                 return type_.cast_column(column, inferred_field)
             return column.apply(
@@ -110,24 +130,36 @@ class TypesHandler:
                 pass
 
     def fix_field(
-        self, column: Series, inferred_field: Field, fallback_to_string: bool
+        self,
+        column: Series,
+        inferred_field: Field,
+        fallback_to_string: bool,
+        fallback_to_null: bool,
     ) -> Any:
         try:
-            fixed_field = self._fix_column(
+            return self._fix_column(
                 column=column,
                 inferred_field=inferred_field,
                 type_=self.__types_as_dict[inferred_field.inferred_type],
             )
-            if fixed_field is not None:
-                return fixed_field
+
         except FieldCastingException as e:
-            if not fallback_to_string:
-                raise e
-            logger.debug("Could not cast the field - Apply fallback to string")
-            self._fix_column(
-                column=column, inferred_field=inferred_field, type_=StringType()
-            )
-        return column
+            logger.debug(e)
+
+            if fallback_to_string:
+                logger.debug("Could not cast the field - Apply fallback to string")
+                return self._fix_column(
+                    column=column, inferred_field=inferred_field, type_=StringType()
+                )
+
+            if fallback_to_null:
+                return self._fix_column(
+                    column=column,
+                    inferred_field=inferred_field,
+                    type_=self.__types_as_dict[inferred_field.inferred_type],
+                    fallback_to_null=True,
+                )
+            raise e
 
     def infer_field(self, field_name: str, data: ndarray) -> Field:
         for type_ in self.__types:
