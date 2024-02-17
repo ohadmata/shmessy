@@ -90,7 +90,6 @@ def test_schema_infer_booleans_hp(df_bool, ):
     fallback_to_string=st.booleans(),
     fixed_schema=st.booleans(),
     use_random_sample=st.booleans(),
-    file_id=st.uuids(),
     read_mode=st.sampled_from(["rt", "rb", "r"]),
 )
 @hp.settings(
@@ -102,13 +101,12 @@ def test_csv_read_with_sniffer_hp(
         fallback_to_string,
         fixed_schema,
         use_random_sample,
-        file_id,
         read_mode,
         tmp_files_folder
 ):
     df.columns = [f"{i}" for i in range(len(df.columns))]
     shmessy_scheme = Shmessy(use_random_sample=use_random_sample).infer_schema(df)
-    file_path = tmp_files_folder.as_posix() + f"/data_hp_{file_id}.csv"
+    file_path = tmp_files_folder.as_posix() + f"/data_hp.csv"
     df.to_csv(file_path)
     with open(file_path, mode=read_mode) as file_input:
         try:
