@@ -193,8 +193,6 @@ def test_date_fallback_to_null_turn_on(df_data, expected_shmessy_type, expected_
     fixed_df = shmessy.fix_schema(df, fallback_to_null=True)
     result = shmessy.get_inferred_schema()
 
-    fixed_df.to_parquet("df_as_parquet.parquet")
-
     assert result.columns[0].inferred_type == expected_shmessy_type
     assert fixed_df["test_column"].dtype.type == expected_numpy_type.type
     assert [x for x in df["test_column"]] == [x for x in expected_result]
