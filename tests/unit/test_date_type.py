@@ -169,3 +169,30 @@ def test_date_type(df_data, expected_shmessy_type, expected_numpy_type, expected
     assert inferred_schema.columns[0].inferred_type == expected_shmessy_type
     assert fixed_df["test_column"].dtype.type == expected_numpy_type.type
     assert [x for x in df["test_column"]] == [x for x in expected_result]
+
+
+@Parametrization.autodetect_parameters()
+@Parametrization.case(
+    name="Cannot cast bad value to date - fallback to null",
+    df_data={
+        "test_column": ["10-12-1991", "23-11-2006", "27-01-2002", "bad_value", "09-05-2022"]
+    },
+    expected_result=[
+        datetime(1991, 12, 10),
+        datetime(2006, 11, 23),
+        datetime(2002, 1, 27),
+        pd.NaT,
+        datetime(2022, 5, 9)
+    ],
+    expected_shmessy_type="Date",
+    expected_numpy_type=np.dtype("datetime64")
+)
+def test_date_fallback_to_null_turn_on(df_data, expected_shmessy_type, expected_numpy_type, expected_result):
+    shmessy = Shmessy(use_random_sample=False, sample_size=2)
+    df = pd.DataFrame(df_data)
+    fixed_df = shmessy.fix_schema(df, fallback_to_null=True)
+    result = shmessy.get_inferred_schema()
+
+    assert result.columns[0].inferred_type == expected_shmessy_type
+    assert fixed_df["test_column"].dtype.type == expected_numpy_type.type
+    assert [x for x in df["test_column"]] == [x for x in expected_result]

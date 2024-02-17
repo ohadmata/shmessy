@@ -140,6 +140,7 @@ shmessy.read_csv(
     fixed_schema: Optional[ShmessySchema] = None,  # Fix the given CSV according to this schema
     fix_column_names: Optional[bool] = False,  # Replace non-alphabetic/numeric chars with underscore
     fallback_to_string: Optional[bool] = False,  # Fallback to string in case of casting exception
+    fallback_to_null: Optional[bool] = False,  # Fallback to null in case of casting exception
 ) -> DataFrame
 ```
 
@@ -157,6 +158,7 @@ shmessy.fix_schema(
     fix_column_names: Optional[bool] = False,  # Replace non-alphabetic/numeric chars with underscore
     fixed_schema: Optional[ShmessySchema] = None,  # Fix the given DF according to this schema
     fallback_to_string: Optional[bool] = False,  # Fallback to string in case of casting exception
+    fallback_to_null: Optional[bool] = False,  # Fallback to null in case of casting exception
 ) -> DataFrame
 ```
 
