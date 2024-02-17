@@ -70,6 +70,7 @@ class Shmessy:
         fix_column_names: Optional[bool] = False,
         fixed_schema: Optional[ShmessySchema] = None,
         fallback_to_string: Optional[bool] = False,
+        fallback_to_null: Optional[bool] = False,
     ) -> DataFrame:
         try:
             if fixed_schema is None:
@@ -80,6 +81,7 @@ class Shmessy:
                     column=df[column.field_name],
                     inferred_field=column,
                     fallback_to_string=fallback_to_string,
+                    fallback_to_null=fallback_to_null,
                 )
 
             if fix_column_names:
@@ -102,6 +104,7 @@ class Shmessy:
         fixed_schema: Optional[ShmessySchema] = None,
         fix_column_names: Optional[bool] = False,
         fallback_to_string: Optional[bool] = False,
+        fallback_to_null: Optional[bool] = False,
     ) -> DataFrame:
         try:
             dialect = None
@@ -138,6 +141,7 @@ class Shmessy:
                 fixed_schema=fixed_schema,
                 fix_column_names=fix_column_names,
                 fallback_to_string=fallback_to_string,
+                fallback_to_null=fallback_to_null,
             )
 
         except Exception as e:
