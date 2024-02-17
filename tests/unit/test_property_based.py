@@ -110,8 +110,8 @@ def test_csv_read_with_sniffer_hp(
     shmessy_scheme = Shmessy(use_random_sample=use_random_sample).infer_schema(df)
     file_path = tmp_files_folder.as_posix() + f"/data_hp_{file_id}.csv"
     df.to_csv(file_path)
-    try:
-        with open(file_path, mode=read_mode) as file_input:
+    with open(file_path, mode=read_mode) as file_input:
+        try:
             df_out = Shmessy().read_csv(
                 file_input,
                 use_sniffer=True,
@@ -119,7 +119,7 @@ def test_csv_read_with_sniffer_hp(
                 fallback_to_string=fallback_to_string,
                 fixed_schema=shmessy_scheme if fixed_schema else None,
             )
-    except pd.errors.EmptyDataError as e:
-        pass
+        except pd.errors.EmptyDataError as e:
+            pass
 
     assert True
