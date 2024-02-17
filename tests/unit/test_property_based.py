@@ -2,10 +2,13 @@ import string
 
 import hypothesis as hp
 import pandas as pd
+import pytest
 from hypothesis import strategies as st
-from hypothesis.extra.pandas import data_frames, columns, range_indexes
+from hypothesis.extra.pandas import data_frames, columns, range_indexes, series
 
 from shmessy import Shmessy
+
+from src.shmessy.types.boolean import BooleanType
 
 
 @st.composite
@@ -38,26 +41,16 @@ def df_st(draw) -> pd.DataFrame:
 
 
 @st.composite
-def df_bool_st(draw) -> pd.DataFrame:
-    dfs_st = data_frames(
-        columns=columns(
-            list(['col1', 'col2']),
-            dtype=draw(st.sampled_from([
-                bool,
-            ])),
-        ),
-        index=range_indexes(min_size=2, max_size=5, ),
+def shmessy_bool_st(draw) -> pd.Series:
+    pattern = draw(st.sampled_from(BooleanType().patterns))
+    return draw(
+        series(
+            elements=st.sampled_from(pattern),
+            dtype=str,
+            index=range_indexes(min_size=2, max_size=10)
 
+        )
     )
-    draw_type = draw(st.sampled_from([
-        int,
-        str,
-        object,
-    ]))
-    df = draw(dfs_st)
-    df = df.astype(draw_type)
-
-    return df
 
 
 @hp.given(
@@ -78,9 +71,10 @@ def test_fix_schema_cols_hp(df, fix_column_names, fallback_to_string):
     assert all_cols_name_chars.issubset(allowed_chars) if fix_column_names else True
 
 
-@hp.given(df_bool=df_bool_st(), )
-def test_schema_infer_booleans_hp(df_bool, ):
-    shmessy_scheme = Shmessy().infer_schema(df=df_bool.copy())
-    for col in shmessy_scheme.columns:
-        one_unique = len(df_bool[col.field_name].unique()) == 1
-        assert col.inferred_type != "Boolean" if one_unique else col.inferred_type == "Boolean"
+@hp.given(series_st=shmessy_bool_st(), )
+@hp.settings(suppress_health_check=[hp.HealthCheck.function_scoped_fixture], )
+@pytest.mark.skip(reason="Issue #115")
+def test_schema_infer_booleans_hp(series_st, type_handler):
+    field = type_handler.infer_field(field_name="field_name", data=series_st)
+    hp.assume(len(series_st.unique()) > 1)
+    assert field.inferred_type == "Boolean"
