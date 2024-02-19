@@ -15,6 +15,7 @@ class BooleanType(BaseType):
         ("TRUE", "FALSE"),
         ("T", "F"),
         ("Y", "N"),
+        ("1", "0"),
         (1, 0),
     ]
 
