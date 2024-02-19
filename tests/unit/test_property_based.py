@@ -73,7 +73,6 @@ def test_fix_schema_cols_hp(df, fix_column_names, fallback_to_string):
 
 @hp.given(series_st=shmessy_bool_st(), )
 @hp.settings(suppress_health_check=[hp.HealthCheck.function_scoped_fixture], )
-@pytest.mark.skip(reason="Issue #115")
 def test_schema_infer_booleans_hp(series_st, type_handler):
     field = type_handler.infer_field(field_name="field_name", data=series_st)
     hp.assume(len(series_st.unique()) > 1)
