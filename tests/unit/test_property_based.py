@@ -2,13 +2,12 @@ import string
 
 import hypothesis as hp
 import pandas as pd
-import pytest
 from hypothesis import strategies as st
 from hypothesis.extra.pandas import data_frames, columns, range_indexes, series
 
 from shmessy import Shmessy
 
-from src.shmessy.types.boolean import BooleanType
+from shmessy.types.boolean import BooleanType
 
 
 @st.composite

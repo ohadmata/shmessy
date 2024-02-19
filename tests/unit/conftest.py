@@ -1,5 +1,5 @@
 import pytest
-from src.shmessy import TypesHandler  # if imported outside the function, coverage drops from 92% to 64%
+from shmessy import TypesHandler
 
 
 @pytest.fixture
