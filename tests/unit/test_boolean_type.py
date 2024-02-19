@@ -17,6 +17,15 @@ import pytest
     expected_numpy_type=np.dtype("bool")
 )
 @Parametrization.case(
+    name="Base case - 1 / 0 as string",
+    df_data={
+        "test_column": ["1", "0", "1", "1", "0", "1", "1", "0", "1", "0"]
+    },
+    expected_result=[True, False, True, True, False, True, True, False, True, False],
+    expected_shmessy_type="Boolean",
+    expected_numpy_type=np.dtype("bool")
+)
+@Parametrization.case(
     name="Base case - Yes / No",
     df_data={
         "test_column": ["yes", "no", "yes", "yes", "no"]
