@@ -71,9 +71,9 @@ def test_fix_schema_cols_hp(df, fix_column_names, fallback_to_string):
     assert all_cols_name_chars.issubset(allowed_chars) if fix_column_names else True
 
 
-@hp.given(series_st=shmessy_bool_st(), )
+@hp.given(pd_series=shmessy_bool_st(), )
 @hp.settings(suppress_health_check=[hp.HealthCheck.function_scoped_fixture], )
-def test_schema_infer_booleans_hp(series_st, type_handler):
-    field = type_handler.infer_field(field_name="field_name", data=series_st)
-    hp.assume(len(series_st.unique()) > 1)
+def test_schema_infer_booleans_hp(pd_series, type_handler):
+    field = type_handler.infer_field(field_name="field_name", data=pd_series)
+    hp.assume(len(pd_series.unique()) > 1)
     assert field.inferred_type == "Boolean"
