@@ -56,3 +56,11 @@ class WrongEncodingException(ShmessyException):
         super().__init__(
             f"The given file cannot be read using {expected_encoding} encoding."
         )
+
+
+class TooManyColumnException(ShmessyException):
+    def __init__(self, existing_columns_num: int, max_columns_num: int):
+        super().__init__(
+            f"The input table contains {existing_columns_num} columns. "
+            f"The maximum number of columns we support is {max_columns_num}."
+        )
