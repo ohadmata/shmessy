@@ -28,7 +28,8 @@ class DatetimeType(BaseType):
         "%Y-%m-%d %H:%M:%S.%fZ",  # 2022-12-30 00:00:00.000Z
         "%Y-%m-%d %H:%M:%S.%f",  # 2022-12-30 00:00:00.000
         "%Y-%m-%dT%H:%M:%S.%fZ",  # 2022-12-30T00:00:00.000Z
-        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S",  # 2022-12-30T00:00:00
+        "%d/%m/%Y %H:%M",  # 30/12/2022 00:00
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
