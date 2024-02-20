@@ -7,7 +7,7 @@ from typing import BinaryIO, Optional, TextIO, Union
 import pandas as pd
 from pandas import DataFrame
 
-from .exceptions import exception_router
+from .exceptions import TooManyColumnException, exception_router
 from .schema import ShmessySchema
 from .types_handler import TypesHandler
 from .utils import (
@@ -29,12 +29,14 @@ class Shmessy:
         locale_formatter: Optional[str] = "en_US",
         use_random_sample: Optional[bool] = True,
         ignore_virtual_types: Optional[bool] = False,
+        max_columns_num: Optional[int] = 500,
     ) -> None:
         self.__types_handler = TypesHandler(ignore_virtual_types=ignore_virtual_types)
         self.__sample_size = sample_size
         self.__reader_encoding = reader_encoding
         self.__locale_formatter = locale_formatter
         self.__use_random_sample = use_random_sample
+        self.__max_columns_num = max_columns_num
 
         self.__inferred_schema: Optional[ShmessySchema] = None
 
@@ -73,6 +75,13 @@ class Shmessy:
         fallback_to_null: Optional[bool] = False,
     ) -> DataFrame:
         try:
+            existing_columns_num = len(df.columns)
+            if existing_columns_num > self.__max_columns_num:
+                raise TooManyColumnException(
+                    max_columns_num=self.__max_columns_num,
+                    existing_columns_num=existing_columns_num,
+                )
+
             if fixed_schema is None:
                 fixed_schema = self.infer_schema(df)
 
@@ -131,6 +140,13 @@ class Shmessy:
                 low_memory=False,
                 encoding=self.__reader_encoding,
             )
+
+            existing_columns_num = len(df.columns)
+            if existing_columns_num > self.__max_columns_num:
+                raise TooManyColumnException(
+                    max_columns_num=self.__max_columns_num,
+                    existing_columns_num=existing_columns_num,
+                )
 
             if fixed_schema is None:
                 fixed_schema = self.infer_schema(df)
