@@ -1,0 +1,48 @@
+name: Code Quality
+
+on: [ push, pull_request ]
+
+jobs:
+  lint:
+    name: Code Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2
+
+      - name: Setup a local virtual environment (if no poetry.toml file)
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      - uses: actions/cache@v3
+        name: Define a cache for the virtual environment based on the dependencies lock file
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+
+      - name: Install the project dependencies
+        run: poetry install
+
+      - name: Run PyLint ./src
+        run: poetry run pylint src/shmessy
+
+      - name: Run PyLint Shmessy ./tests
+        continue-on-error: true
+        run: poetry run pylint tests
+
+      - name: Run Mypy ./src
+        continue-on-error: true
+        run: poetry run mypy src
+
+      - name: Run Mypy ./tests
+        continue-on-error: true
+        run: poetry run mypy tests
