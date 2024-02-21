@@ -137,7 +137,6 @@ class Shmessy:
                 index_col=False,
                 filepath_or_buffer=filepath_or_buffer,
                 dialect=dialect() if dialect else None,
-                low_memory=False,
                 encoding=self.__reader_encoding,
             )
 
