@@ -65,6 +65,7 @@ def dt_st(draw, patterns) -> pd.Series:
 
         )
     )
+    hp.assume(pd_series.notna().all())
     return pd_series.dt.strftime(pattern)
 
 
