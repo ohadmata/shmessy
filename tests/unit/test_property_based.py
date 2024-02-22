@@ -8,6 +8,8 @@ from hypothesis.extra.pandas import data_frames, columns, range_indexes, series
 from shmessy import Shmessy
 
 from shmessy.types.boolean import BooleanType
+from shmessy.types.date import DateType
+from shmessy.types.datetime_ import DatetimeType
 
 
 @st.composite
@@ -90,3 +92,17 @@ def test_schema_infer_booleans_hp(pd_series, type_handler):
     field = type_handler.infer_field(field_name="field_name", data=pd_series)
     hp.assume(len(pd_series.unique()) > 1)
     assert field.inferred_type == "Boolean"
+
+
+@hp.given(pd_series=dt_st(patterns=DateType().patterns), )
+@hp.settings(suppress_health_check=[hp.HealthCheck.function_scoped_fixture], )
+def test_schema_infer_date_hp(pd_series, type_handler):
+    field = type_handler.infer_field(field_name="field_name", data=pd_series)
+    assert field.inferred_type == "Date"
+
+
+@hp.given(pd_series=dt_st(patterns=DatetimeType().patterns), )
+@hp.settings(suppress_health_check=[hp.HealthCheck.function_scoped_fixture], )
+def test_schema_infer_datetime_hp(pd_series, type_handler):
+    field = type_handler.infer_field(field_name="field_name", data=pd_series)
+    assert field.inferred_type == "Datetime"
