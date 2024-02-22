@@ -48,7 +48,7 @@ def test_buffer_as_read_csv_input(files_folder):
 
 def test_binary_buffer_as_read_csv_input(files_folder):
     path = files_folder.as_posix() + "/data_4.csv"
-    with open(path, mode="rb") as file_input:
+    with open(path, mode="r") as file_input:
         df = Shmessy().read_csv(file_input)
 
     assert df["id"].dtype == np.dtype("int64")
@@ -58,7 +58,7 @@ def test_binary_buffer_as_read_csv_input(files_folder):
 
 def test_read_csv_file_with_single_column(files_folder):
     path = files_folder.as_posix() + "/data_7.csv"
-    with open(path, mode="rb") as file_input:
+    with open(path, mode="r") as file_input:
         df = Shmessy().read_csv(file_input)
     assert df["header_name"].dtype == np.dtype("O")
 
