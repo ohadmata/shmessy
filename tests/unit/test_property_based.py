@@ -52,6 +52,20 @@ def shmessy_bool_st(draw) -> pd.Series:
     )
 
 
+@st.composite
+def dt_st(draw, patterns) -> pd.Series:
+    pattern = draw(st.sampled_from(patterns))
+    hp.assume('Y' in pattern)  # format y instead of Y probably have pandas bug with .dt.strftime(pattern)
+    pd_series = draw(
+        series(
+            dtype="datetime64[ns]",
+            index=range_indexes(min_size=2, max_size=10),
+
+        )
+    )
+    return pd_series.dt.strftime(pattern)
+
+
 @hp.given(
     df=df_st(),
     fix_column_names=st.booleans(),
