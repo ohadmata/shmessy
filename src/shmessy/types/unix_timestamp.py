@@ -1,5 +1,4 @@
 import logging
-import math
 from datetime import datetime
 from enum import Enum
 from typing import Any, Optional, Tuple
@@ -52,7 +51,7 @@ class UnixTimestampType(BaseType):
         if self.is_empty_value(value):
             return True
 
-        if isinstance(value, float) and math.isinf(value):
+        if self.is_empty_value(value) or isinstance(value, datetime):
             return False
 
         if not self.resolution:

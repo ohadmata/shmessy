@@ -1,6 +1,4 @@
-import codecs
 import re
-from io import TextIOWrapper
 from typing import BinaryIO, Dict, Optional, TextIO, Union
 
 from pandas import DataFrame
@@ -46,17 +44,11 @@ def _get_sample_from_csv(
         with open(file=filepath_or_buffer, mode="rt", encoding=encoding) as input_file:
             return "".join(input_file.readlines(sample_size))
 
-    elif isinstance(filepath_or_buffer, (TextIO, TextIOWrapper)):
-        text_stream = filepath_or_buffer
-
-    else:
-        text_stream = codecs.getreader(encoding)(filepath_or_buffer)
-
-    # sample = "".join(text_stream.readlines(sample_size))
+    # sample = "".join(filepath_or_buffer.readlines(sample_size))
     # There is an issue with readlines(x) that reads the whole data instead of X first rows
 
     sample = ""
-    for idx, line in enumerate(text_stream):
+    for idx, line in enumerate(filepath_or_buffer):
         if idx > sample_size:
             break
         sample += line
