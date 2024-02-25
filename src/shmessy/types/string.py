@@ -1,7 +1,6 @@
 import logging
 from typing import Any, Optional, Tuple
 
-import numpy as np
 from numpy import ndarray
 from pandas import Series
 
@@ -28,10 +27,10 @@ class StringType(BaseType):
         return True
 
     def cast_column(self, column: Series, inferred_field: InferredField) -> Series:
-        raise column.apply(lambda x: str(x))
+        return column.apply(lambda x: str(x))
 
     def cast_value(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         return str(value)
 
     def ignore_cast_for_types(self) -> Tuple[Any]:
-        return (np.dtype("O"),)
+        return tuple()

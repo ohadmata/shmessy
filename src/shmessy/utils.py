@@ -51,6 +51,8 @@ def _get_sample_from_csv(
     for idx, line in enumerate(filepath_or_buffer):
         if idx > sample_size:
             break
+        if not isinstance(line, str):
+            line = line.decode(encoding)  # noqa
         sample += line
 
     filepath_or_buffer.seek(0)
