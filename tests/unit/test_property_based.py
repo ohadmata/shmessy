@@ -57,7 +57,6 @@ def shmessy_bool_st(draw) -> pd.Series:
 @st.composite
 def dt_st(draw, patterns) -> pd.Series:
     pattern = draw(st.sampled_from(patterns))
-    hp.assume('Y' in pattern)  # format y instead of Y probably have pandas bug with .dt.strftime(pattern)
     pd_series = draw(
         series(
             dtype="datetime64[ns]",
@@ -66,6 +65,7 @@ def dt_st(draw, patterns) -> pd.Series:
         )
     )
     hp.assume(pd_series.notna().all())
+    hp.assume('Y' in pattern or (pd_series.dt.year > 1900).all())
     return pd_series.dt.strftime(pattern)
 
 
