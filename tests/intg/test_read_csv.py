@@ -53,23 +53,21 @@ def test_read_csv_file_with_single_column(files_folder):
     assert df["header_name"].dtype == np.dtype("O")
 
 
-def test_read_csv_with_99_percent_empty_values(files_folder):
-    path = files_folder.as_posix() + "/data_8.csv"
-    with open(path, mode="rt") as file_input:
-        with pytest.raises(Exception) as e:
-            Shmessy(use_random_sample=False).read_csv(file_input)
-        assert "Couldn\\\'t cast value \"string_value\" to type Float" in str(e)
-
-
-def test_read_csv_with_99_percent_empty_values_fallback_to_string(files_folder):
-    path = files_folder.as_posix() + "/data_8.csv"
-    with open(path, mode="rt") as file_input:
-        df = Shmessy(use_random_sample=False).read_csv(file_input, fallback_to_string=True)
-        assert df["test_column"].dtype == np.dtype("O")
-
-
 def test_read_csv_with_text_data(files_folder):
-    path = files_folder.as_posix() + "/data_with_text.csv"
+    path = files_folder.as_posix() + "/data_8.csv"
     with open(path, mode="rt") as file_input:
-        df = Shmessy(use_random_sample=False).read_csv(file_input, fallback_to_string=True)
+        Shmessy(use_random_sample=False).read_csv(file_input, fallback_to_string=True)
         assert True
+
+
+def test_empty_column_should_identified_as_string(files_folder):
+    path = files_folder.as_posix() + "/data_10.csv"
+    shmessy = Shmessy()
+    with open(path, mode="rt") as file_input:
+        df = shmessy.read_csv(file_input)
+        schema = shmessy.get_inferred_schema()
+
+    assert df["col_1"].dtype == np.dtype("O")
+    assert df["col_2"].dtype == np.dtype("O")
+    assert schema.columns[0].inferred_type == "String"
+    assert schema.columns[1].inferred_type == "String"

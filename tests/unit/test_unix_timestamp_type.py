@@ -7,12 +7,12 @@ from shmessy import Shmessy
 
 @Parametrization.autodetect_parameters()
 @Parametrization.case(
-    name="Only nan value should be recognized as float",
+    name="Only nan value should be recognized as string",
     df_data={
         "test_column": [float("nan"), float("nan"), float("nan"), float("nan"), float("nan")]
     },
-    expected_shmessy_type="Float",
-    expected_numpy_type=np.dtype("float64")
+    expected_shmessy_type="String",
+    expected_numpy_type=np.dtype("O")
 )
 @Parametrization.case(
     name="UnixTimestamp seconds",
