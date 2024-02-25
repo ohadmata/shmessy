@@ -17,13 +17,19 @@ class FloatType(BaseType):
     weight = 8
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
+        at_least_single_not_empty_value: bool = False
         for value in data:
             try:
                 self.cast_value(value)
+                if not at_least_single_not_empty_value and not self.is_empty_value(
+                    value
+                ):
+                    at_least_single_not_empty_value = True
             except Exception:  # noqa
                 logger.debug(f"Cannot cast the value '{value}' to {self.name}")
                 return None
-        return InferredField(inferred_type=self.name)
+        if at_least_single_not_empty_value:
+            return InferredField(inferred_type=self.name)
 
     @property
     def prefer_column_casting(self) -> bool:
