@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
-from numpy import ndarray
+from numpy import nan, ndarray
 from numpy.dtypes import (
     BoolDType,
     DateTime64DType,
@@ -87,7 +87,7 @@ class TypesHandler:
             return type_.cast_value(value, inferred_pattern)
         except Exception as e:
             logger.debug(e)
-            return None
+            return nan
 
     def _fix_column(
         self,
@@ -99,14 +99,32 @@ class TypesHandler:
         try:
             if column.dtype.type in type_.ignore_cast_for_types():
                 return column
+            if type_.prefer_column_casting:
+                try:
+                    return type_.cast_column(column, inferred_field)
+                except Exception as e:  # noqa
+                    logger.debug(f"Cannot cast column to type: {type_}. Error: {e}")
+
+                    if fallback_to_null:
+                        logger.debug(
+                            f"Trying to cast column to type: {type_} using FallbackToNull"
+                        )
+                        return column.apply(
+                            lambda x: self._cast_with_fallback_to_null(
+                                x, inferred_field.inferred_pattern, type_
+                            )
+                        )
+
             if fallback_to_null:
+                logger.debug(
+                    f"Trying to cast column to type: {type_} using FallbackToNull"
+                )
                 return column.apply(
                     lambda x: self._cast_with_fallback_to_null(
                         x, inferred_field.inferred_pattern, type_
                     )
                 )
-            if type_.prefer_column_casting:
-                return type_.cast_column(column, inferred_field)
+
             return column.apply(
                 lambda x: type_.cast_value(x, inferred_field.inferred_pattern)
             )

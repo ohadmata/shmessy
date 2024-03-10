@@ -121,7 +121,7 @@ def test_boolean_fallback_to_null_turn_off(df_data, expected_shmessy_type, expec
     df_data={
         "test_column": ["no", "yes", "no", "no", "bad_value", "yes"]
     },
-    expected_result=[False, True, False, False, None, True],
+    expected_result=[False, True, False, False, np.nan, True],
     expected_shmessy_type="Boolean",
     expected_numpy_type=np.dtype("O")
 )
