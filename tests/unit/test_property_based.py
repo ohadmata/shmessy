@@ -8,6 +8,8 @@ from hypothesis.extra.pandas import data_frames, columns, range_indexes, series
 from shmessy import Shmessy
 
 from shmessy.types.boolean import BooleanType
+from shmessy.types.date import DateType
+from shmessy.types.datetime_ import DatetimeType
 
 
 @st.composite
@@ -52,6 +54,21 @@ def shmessy_bool_st(draw) -> pd.Series:
     )
 
 
+@st.composite
+def dt_st(draw, patterns) -> pd.Series:
+    pattern = draw(st.sampled_from(patterns))
+    pd_series = draw(
+        series(
+            dtype="datetime64[ns]",
+            index=range_indexes(min_size=2, max_size=10),
+
+        )
+    )
+    hp.assume(pd_series.notna().all())
+    hp.assume('Y' in pattern or (pd_series.dt.year > 1900).all())
+    return pd_series.dt.strftime(pattern)
+
+
 @hp.given(
     df=df_st(),
     fix_column_names=st.booleans(),
@@ -76,3 +93,17 @@ def test_schema_infer_booleans_hp(pd_series, type_handler):
     field = type_handler.infer_field(field_name="field_name", data=pd_series)
     hp.assume(len(pd_series.unique()) > 1)
     assert field.inferred_type == "Boolean"
+
+
+@hp.given(pd_series=dt_st(patterns=DateType().patterns), )
+@hp.settings(suppress_health_check=[hp.HealthCheck.function_scoped_fixture], )
+def test_schema_infer_date_hp(pd_series, type_handler):
+    field = type_handler.infer_field(field_name="field_name", data=pd_series)
+    assert field.inferred_type == "Date"
+
+
+@hp.given(pd_series=dt_st(patterns=DatetimeType().patterns), )
+@hp.settings(suppress_health_check=[hp.HealthCheck.function_scoped_fixture], )
+def test_schema_infer_datetime_hp(pd_series, type_handler):
+    field = type_handler.infer_field(field_name="field_name", data=pd_series)
+    assert field.inferred_type == "Datetime"
