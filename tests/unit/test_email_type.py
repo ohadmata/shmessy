@@ -33,8 +33,8 @@ def test_email_type(df_data, expected_shmessy_type, expected_numpy_type):
     expected_shmessy_type="String",
     expected_numpy_type=np.dtype('O')
 )
-def test_email_type_turn_off_virtual_types(df_data, expected_shmessy_type, expected_numpy_type):
-    shmessy = Shmessy(ignore_virtual_types=True)
+def test_email_type_turn_off_email_types(df_data, expected_shmessy_type, expected_numpy_type):
+    shmessy = Shmessy(types_to_ignore=["email"])
     df = pd.DataFrame(df_data)
     inferred_schema = shmessy.infer_schema(df=df)
     fixed_df = shmessy.fix_schema(df)

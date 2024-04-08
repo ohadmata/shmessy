@@ -39,8 +39,8 @@ class TypesHandler:
     PACKAGE_NAME: str = "shmessy"
     TYPES_DIR: str = "types"
 
-    def __init__(self, ignore_virtual_types: bool):
-        self.__types = self._discover_types(ignore_virtual_types=ignore_virtual_types)
+    def __init__(self, types_to_ignore: List[str]):
+        self.__types = self._discover_types(types_to_ignore=types_to_ignore)
         self.__types_as_dict: Dict[str, BaseType] = self._types_as_dict(self.__types)
 
     @classmethod
@@ -51,7 +51,11 @@ class TypesHandler:
         return res
 
     @classmethod
-    def _discover_types(cls, ignore_virtual_types: bool) -> List[BaseType]:
+    def _discover_types(cls, types_to_ignore: List[str]) -> List[BaseType]:
+        filtered_types = []
+        types_to_ignore = (
+            [x.lower() for x in types_to_ignore] if types_to_ignore else []
+        )
         types = [
             BooleanType(),
             DatetimeType(),
@@ -60,13 +64,15 @@ class TypesHandler:
             IntegerType(),
             StringType(),
             UnixTimestampType(),
+            IPv4Type(),
+            EmailType(),
         ]
-        if not ignore_virtual_types:
-            types += [
-                IPv4Type(),
-                EmailType(),
-            ]
-        return sorted(types, key=lambda x: x.weight)
+
+        for _type in types:
+            if _type.name.lower() not in types_to_ignore:
+                filtered_types.append(_type)
+
+        return sorted(filtered_types, key=lambda x: x.weight)
 
     @staticmethod
     def _extract_bad_value(column: Series, func: Callable) -> Tuple[int, Any]:

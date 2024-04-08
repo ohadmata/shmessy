@@ -2,7 +2,7 @@ import csv
 import locale
 import logging
 import time
-from typing import BinaryIO, Optional, TextIO, Union
+from typing import BinaryIO, List, Optional, TextIO, Union
 
 import pandas as pd
 from pandas import DataFrame
@@ -28,10 +28,10 @@ class Shmessy:
         reader_encoding: Optional[str] = "UTF-8",
         locale_formatter: Optional[str] = "en_US",
         use_random_sample: Optional[bool] = True,
-        ignore_virtual_types: Optional[bool] = False,
+        types_to_ignore: Optional[List[str]] = None,
         max_columns_num: Optional[int] = 500,
     ) -> None:
-        self.__types_handler = TypesHandler(ignore_virtual_types=ignore_virtual_types)
+        self.__types_handler = TypesHandler(types_to_ignore=types_to_ignore)
         self.__sample_size = sample_size
         self.__reader_encoding = reader_encoding
         self.__locale_formatter = locale_formatter

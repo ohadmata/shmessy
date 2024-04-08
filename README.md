@@ -128,7 +128,7 @@ shmessy = Shmessy(
     reader_encoding: Optional[str] = "UTF-8",
     locale_formatter: Optional[str] = "en_US",
     use_random_sample: Optional[bool] = True,
-    ignore_virtual_types: Optional[bool] = False,
+    types_to_ignore: Optional[List[str]] = None,
     max_columns_num: Optional[int] = 500
 )
 ```
