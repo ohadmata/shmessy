@@ -33,6 +33,7 @@ class DateType(BaseType):
         "%Y-%m",  # 2022-07
         "%d %b %Y",  # 13 Jan 2023
         "%d %b %y",  # 04 Jul 96
+        "%B %d, %Y",  # March 21, 2021
     ]
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
