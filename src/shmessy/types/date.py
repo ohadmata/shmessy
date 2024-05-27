@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 class DateType(BaseType):
     weight = 2
-    delimiters: set[str] = {"/", ".", "-", " "}
-    static_patterns: set[str] = {"%B %d, %Y"}
+    delimiters: list[str] = {"/", ".", "-", " "}
+    static_patterns: list[str] = ["%B %d, %Y"]
     dynamic_patterns: list[list[str]] = [
         ["%m", "%d", "%Y"],
         ["%d", "%m", "%Y"],
@@ -29,12 +29,12 @@ class DateType(BaseType):
         ["%Y", "%m"],
     ]
 
-    def _get_patterns(self) -> set[str]:
-        results: set[str] = set()
+    def _get_patterns(self) -> list[str]:
+        results: list[str] = []
         for pattern in self.dynamic_patterns:
             for delimiter in self.delimiters:
-                results.add(delimiter.join(pattern))
-        return results.union(self.static_patterns)
+                results.append(delimiter.join(pattern))
+        return results + self.static_patterns
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for pattern in self._get_patterns():
