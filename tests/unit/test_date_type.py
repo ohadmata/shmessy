@@ -216,3 +216,13 @@ def test_dynamic_patterns(date: list[str], delimiters: set[str]):
 
     for delimiter in delimiters:
         assert delimiter.join(date) in patterns
+
+
+@Parametrization.autodetect_parameters()
+@Parametrization.case(
+    name="test %B %d, %Y",
+    date="%B %d, %Y",
+)
+def test_static_patterns(date: str):
+    date_type = DateType()
+    assert date in date_type._get_patterns()
