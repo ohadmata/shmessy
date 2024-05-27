@@ -14,31 +14,30 @@ logger = logging.getLogger(__name__)
 
 class DateType(BaseType):
     weight = 2
-    patterns: list[str] = [
-        "%m/%d/%Y",  # 12/01/2022
-        "%m-%d-%Y",  # 12-01-2022
-        "%m.%d.%Y",  # 12.01.2022
-        "%m/%d/%y",  # 12/01/22
-        "%m-%d-%y",  # 12.01.2022
-        "%m.%d.%y",  # 12.29.22
-        "%d.%m.%y",  # 29.01.22
-        "%Y/%m/%d",  # 2022/12/01
-        "%Y-%m-%d",  # 2022-12-01
-        "%Y.%m.%d",  # 2022.12.01
-        "%d/%m/%Y",  # 01/12/2022
-        "%d-%m-%Y",  # 01-12-2022
-        "%d.%m.%Y",  # 01.12.2022
-        "%d/%b/%Y",  # 01/Mar/2022
-        "%d-%b-%Y",  # 01-Mar-2022
-        "%Y-%m",  # 2022-07
-        "%d %b %Y",  # 13 Jan 2023
-        "%d %b %y",  # 04 Jul 96
-        "%B %d, %Y",  # March 21, 2021
-        "%b-%d-%Y",  # Mar-1-2023
+    delimiters: set[str] = {"/", ".", "-", " "}
+    static_patterns: set[str] = {"%B %d, %Y"}
+    dynamic_patterns: list[list[str]] = [
+        ["%m", "%d", "%Y"],
+        ["%d", "%m", "%Y"],
+        ["%m", "%d", "%y"],
+        ["%d", "%m", "%y"],
+        ["%Y", "%m", "%d"],
+        ["%y", "%m", "%d"],
+        ["%d", "%b", "%Y"],
+        ["%d", "%b", "%y"],
+        ["%b", "%d", "%Y"],
+        ["%Y", "%m"],
     ]
 
+    def _get_patterns(self) -> set[str]:
+        results: set[str] = set()
+        for pattern in self.dynamic_patterns:
+            for delimiter in self.delimiters:
+                results.add(delimiter.join(pattern))
+        return results.union(self.static_patterns)
+
     def validate(self, data: ndarray) -> Optional[InferredField]:
-        for pattern in self.patterns:
+        for pattern in self._get_patterns():
             valid_pattern = True
             at_least_single_not_nan_value = False
             for value in data:

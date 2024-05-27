@@ -3,6 +3,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 from parametrization import Parametrization
+from shmessy.types.date import DateType
 
 from shmessy import Shmessy
 
@@ -196,3 +197,22 @@ def test_date_fallback_to_null_turn_on(df_data, expected_shmessy_type, expected_
     assert result.columns[0].inferred_type == expected_shmessy_type
     assert fixed_df["test_column"].dtype.type == expected_numpy_type.type
     assert [x for x in df["test_column"]] == [x for x in expected_result]
+
+
+@Parametrization.autodetect_parameters()
+@Parametrization.case(
+    name="test %m %d %y",
+    date=["%m", "%d", "%Y"],
+    delimiters={"/", ".", "-", " "},
+)
+@Parametrization.case(
+    name="test %Y %m",
+    date=["%Y", "%m"],
+    delimiters={"/", ".", "-", " "},
+)
+def test_dynamic_patterns(date: list[str], delimiters: set[str]):
+    date_type = DateType()
+    patterns = date_type._get_patterns()
+
+    for delimiter in delimiters:
+        assert delimiter.join(date) in patterns
