@@ -30,6 +30,7 @@ class DateType(BaseType):
     ]
 
     def _get_patterns(self) -> list[str]:
+        # The value returned cannot be set since the order is important!
         results: list[str] = []
         for pattern in self.dynamic_patterns:
             for delimiter in self.delimiters:
