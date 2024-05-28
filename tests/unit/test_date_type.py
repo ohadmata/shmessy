@@ -212,7 +212,7 @@ def test_date_fallback_to_null_turn_on(df_data, expected_shmessy_type, expected_
 )
 def test_dynamic_patterns(date: list[str], delimiters: set[str]):
     date_type = DateType()
-    patterns = date_type._get_patterns()
+    patterns = date_type.get_patterns()
 
     for delimiter in delimiters:
         assert delimiter.join(date) in patterns
