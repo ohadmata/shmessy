@@ -29,17 +29,18 @@ class DateType(BaseType):
         ["%Y", "%m"],
     ]
 
-    def _get_patterns(self) -> list[str]:
+    @classmethod
+    def get_patterns(cls) -> list[str]:
         # The value returned cannot be set since the order is important!
         results: list[str] = []
-        for pattern in self.dynamic_patterns:
-            for delimiter in self.delimiters:
+        for pattern in cls.dynamic_patterns:
+            for delimiter in cls.delimiters:
                 results.append(delimiter.join(pattern))
-        return results + self.static_patterns
+        return results + cls.static_patterns
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         return validate(
-            data=data, patterns=self._get_patterns(), inferred_type=self.name
+            data=data, patterns=self.get_patterns(), inferred_type=self.name
         )
 
     @property
