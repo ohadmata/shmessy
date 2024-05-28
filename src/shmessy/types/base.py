@@ -1,3 +1,4 @@
+import logging
 import math
 from abc import ABC, abstractmethod
 from typing import Any, Optional, Tuple
@@ -6,6 +7,8 @@ from numpy import ndarray
 from pandas import Series
 
 from ..schema import InferredField
+
+logger = logging.getLogger(__name__)
 
 
 class BaseType(ABC):
