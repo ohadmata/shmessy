@@ -5,7 +5,7 @@ import numpy as np
 from numpy import ndarray
 from pandas import Series, to_datetime
 
-from ..date_utile import cast_value, validate
+from ..date_utils import cast_value, validate
 from ..schema import InferredField
 from .base import BaseType
 
