@@ -18,17 +18,13 @@ def is_empty_value(value: Any) -> bool:
 
 
 def cast_value(value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
-    try:
-        if is_empty_value(value):
-            return None
-        if isinstance(value, (datetime64, Timestamp)):
-            return value
-        if isinstance(value, str):  # For security reasons & skip nan values
-            return datetime.strptime(value, pattern)
-        raise Exception("Input type for date/datetime casting must be string.")
-    except ValueError as e:
-        logger.debug(f"Cannot cast the value '{value}' using pattern '{pattern}'")
-        raise e
+    if is_empty_value(value):
+        return None
+    if isinstance(value, (datetime64, Timestamp)):
+        return value
+    if isinstance(value, str):
+        return datetime.strptime(value, pattern)
+    raise Exception("Input type for date/datetime casting must be string.")
 
 
 def validate(
@@ -45,6 +41,7 @@ def validate(
             except ValueError as e:  # Not match the pattern
                 logger.debug(e)
                 valid_pattern = False
+                break
             except Exception as e:  # Any other exception
                 logger.debug(e)
                 return None
