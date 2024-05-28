@@ -3,7 +3,7 @@ import math
 from datetime import datetime
 from typing import Any, Optional
 
-from numpy import ndarray
+from numpy import datetime64, ndarray
 
 from .schema import InferredField
 
@@ -20,6 +20,8 @@ def cast_value(value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
     try:
         if is_empty_value(value):
             return None
+        if isinstance(value, (datetime, datetime64)):
+            return value
         if isinstance(value, str):  # For security reasons & skip nan values
             return datetime.strptime(value, pattern)
         raise Exception("Input type for date/datetime casting must be string.")
