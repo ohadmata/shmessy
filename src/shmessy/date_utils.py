@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Any, Optional
 
 from numpy import datetime64, ndarray
+from pandas import Timestamp
 
 from .schema import InferredField
 
@@ -20,7 +21,7 @@ def cast_value(value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
     try:
         if is_empty_value(value):
             return None
-        if isinstance(value, (datetime, datetime64)):
+        if isinstance(value, (datetime64, Timestamp)):
             return value
         if isinstance(value, str):  # For security reasons & skip nan values
             return datetime.strptime(value, pattern)
