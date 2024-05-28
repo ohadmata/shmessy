@@ -225,4 +225,4 @@ def test_dynamic_patterns(date: list[str], delimiters: set[str]):
 )
 def test_static_patterns(date: str):
     date_type = DateType()
-    assert date in date_type._get_patterns()
+    assert date in date_type.get_patterns()
