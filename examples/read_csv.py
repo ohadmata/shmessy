@@ -1,9 +1,7 @@
-import pandas
+import time
 
 from src.shmessy import Shmessy
 from utils import pretty_print_df, init_logger
-import time
-
 
 if __name__ == "__main__":
     init_logger()
