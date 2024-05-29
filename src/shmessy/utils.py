@@ -1,9 +1,43 @@
+import csv
+import logging
 import re
-from typing import BinaryIO, Dict, Optional, TextIO, Union
+from typing import Any, BinaryIO, Dict, Optional, TextIO, Union
 
 from pandas import DataFrame
 
+from .exceptions import TooManyColumnException
 from .schema import ShmessySchema
+
+logger = logging.getLogger(__name__)
+
+
+def _check_number_of_columns(df: DataFrame, max_columns_num: int) -> None:
+    existing_columns_num = len(df.columns)
+    if existing_columns_num > max_columns_num:
+        raise TooManyColumnException(
+            max_columns_num=max_columns_num,
+            existing_columns_num=existing_columns_num,
+        )
+
+
+def _get_dialect(
+    filepath_or_buffer: Union[str, TextIO, BinaryIO],
+    sample_size: int,
+    reader_encoding: Optional[str],
+) -> Optional[Any]:
+    try:
+        return csv.Sniffer().sniff(
+            sample=_get_sample_from_csv(
+                filepath_or_buffer=filepath_or_buffer,
+                sample_size=sample_size,
+                encoding=reader_encoding,
+            ),
+            delimiters="".join([",", "\t", ";", ":"]),
+        )
+    except Exception as e:  # noqa
+        logger.debug(
+            f"Could not use python sniffer to infer csv schema, Using pandas default settings: {e}"
+        )
 
 
 def _get_sampled_df(df: DataFrame, sample_size: int, random_sample: bool) -> DataFrame:
