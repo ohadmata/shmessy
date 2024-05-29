@@ -149,10 +149,7 @@ shmessy.infer_schema(df: Dataframe) -> ShmessySchema
 
 ### fix_schema
 ```python
-shmessy.fix_schema(
-    df: Dataframe,
-    fixed_schema: Optional[ShmessySchema] = None,  # Fix the given DF according to this schema
-) -> DataFrame
+shmessy.fix_schema(df: Dataframe) -> DataFrame
 ```
 
 ### get_inferred_schema
