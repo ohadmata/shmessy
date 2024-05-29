@@ -100,10 +100,10 @@ fixed_df = Shmessy().fix_schema(df)
 ```
 
 #### Original Dataframe
-![Original Dataframe](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_1.png)
+![Original Dataframe](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_7.png)
 
 #### Fixed Dataframe
-![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_2.png)
+![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_8.png)
 
 
 ### Read Messy CSV file
@@ -113,10 +113,10 @@ df = Shmessy().read_csv('/tmp/file.csv')
 ```
 
 #### Original file
-![Original Dataframe](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_3.png)
+![Original Dataframe](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_5.png)
 
 #### Fixed Dataframe
-![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_4.png)
+![After fix](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/screenshot_6.png)
 
 
 ## API
