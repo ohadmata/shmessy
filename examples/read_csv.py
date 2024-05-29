@@ -1,7 +1,7 @@
-from src.shmessy import Shmessy
-from utils import pretty_print_df, init_logger
 import time
 
+from src.shmessy import Shmessy
+from utils import pretty_print_df, init_logger
 
 if __name__ == "__main__":
     init_logger()
