@@ -74,17 +74,10 @@ class Shmessy:
         self.__inferred_schema = inferred_schema
         return inferred_schema
 
-    def fix_schema(
-        self,
-        df: DataFrame,
-        *,
-        fixed_schema: Optional[ShmessySchema] = None,
-    ) -> DataFrame:
+    def fix_schema(self, df: DataFrame) -> DataFrame:
         try:
             _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
-
-            if fixed_schema is None:
-                fixed_schema = self.infer_schema(df)
+            fixed_schema = self.infer_schema(df)
 
             for column in fixed_schema.columns:
                 df[column.field_name] = self.__types_handler.fix_field(
