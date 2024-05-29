@@ -16,7 +16,7 @@ def test_read_excel_with_numeric_headers(files_folder):
 
 def test_read_excel_with_numeric_headers_fix_column_names(files_folder):
     df = pandas.read_excel(files_folder.as_posix() + "/data_9.xlsx", engine="calamine")
-    df = Shmessy().fix_schema(df, fix_column_names=True)
+    df = Shmessy(fix_column_names=True).fix_schema(df)
 
     assert df["0"].dtype == np.dtype("int64")
     assert df["First_Name"].dtype == np.dtype("O")

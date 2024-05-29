@@ -58,11 +58,10 @@ def shmessy_bool_st(draw) -> pd.Series:
     fallback_to_string=st.booleans(),
 )
 def test_fix_schema_cols_hp(df, fix_column_names, fallback_to_string):
-    df_fixed = Shmessy().fix_schema(
-        df=df,
-        fix_column_names=fix_column_names,
+    df_fixed = Shmessy(
         fallback_to_string=fallback_to_string,
-    )
+        fix_column_names=fix_column_names
+    ).fix_schema(df)
     assert set(list(df_fixed)) == set(list(df)) if not fix_column_names else True
     allowed_chars = set(string.ascii_lowercase).union(set(string.ascii_uppercase)).union(set(string.digits))
     allowed_chars.add("_")

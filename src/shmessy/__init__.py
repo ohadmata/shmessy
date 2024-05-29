@@ -1,4 +1,3 @@
-import csv
 import locale
 import logging
 import time
@@ -7,14 +6,15 @@ from typing import BinaryIO, List, Optional, TextIO, Union
 import pandas as pd
 from pandas import DataFrame
 
-from .exceptions import TooManyColumnException, exception_router
+from .exceptions import exception_router
 from .schema import ShmessySchema
 from .types_handler import TypesHandler
 from .utils import (
+    _check_number_of_columns,
     _fix_column_names,
     _fix_column_names_in_df,
     _fix_column_names_in_shmessy_schema,
-    _get_sample_from_csv,
+    _get_dialect,
     _get_sampled_df,
 )
 
@@ -30,6 +30,10 @@ class Shmessy:
         use_random_sample: Optional[bool] = True,
         types_to_ignore: Optional[List[str]] = None,
         max_columns_num: Optional[int] = 500,
+        fallback_to_string: Optional[bool] = False,
+        fallback_to_null: Optional[bool] = False,
+        use_csv_sniffer: Optional[bool] = True,
+        fix_column_names: Optional[bool] = False,
     ) -> None:
         self.__types_handler = TypesHandler(types_to_ignore=types_to_ignore)
         self.__sample_size = sample_size
@@ -37,6 +41,10 @@ class Shmessy:
         self.__locale_formatter = locale_formatter
         self.__use_random_sample = use_random_sample
         self.__max_columns_num = max_columns_num
+        self.__fallback_to_string = fallback_to_string
+        self.__fallback_to_null = fallback_to_null
+        self.__use_csv_sniffer = use_csv_sniffer
+        self.__fix_column_names = fix_column_names
 
         self.__inferred_schema: Optional[ShmessySchema] = None
 
@@ -48,6 +56,7 @@ class Shmessy:
         return self.__inferred_schema
 
     def infer_schema(self, df: DataFrame) -> ShmessySchema:
+        _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
         start_time = time.time()
         df = _get_sampled_df(
             df=df,
@@ -69,18 +78,10 @@ class Shmessy:
         self,
         df: DataFrame,
         *,
-        fix_column_names: Optional[bool] = False,
         fixed_schema: Optional[ShmessySchema] = None,
-        fallback_to_string: Optional[bool] = False,
-        fallback_to_null: Optional[bool] = False,
     ) -> DataFrame:
         try:
-            existing_columns_num = len(df.columns)
-            if existing_columns_num > self.__max_columns_num:
-                raise TooManyColumnException(
-                    max_columns_num=self.__max_columns_num,
-                    existing_columns_num=existing_columns_num,
-                )
+            _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
 
             if fixed_schema is None:
                 fixed_schema = self.infer_schema(df)
@@ -89,11 +90,11 @@ class Shmessy:
                 df[column.field_name] = self.__types_handler.fix_field(
                     column=df[column.field_name],
                     inferred_field=column,
-                    fallback_to_string=fallback_to_string,
-                    fallback_to_null=fallback_to_null,
+                    fallback_to_string=self.__fallback_to_string,
+                    fallback_to_null=self.__fallback_to_null,
                 )
 
-            if fix_column_names:
+            if self.__fix_column_names:
                 mapping = _fix_column_names(df)
                 df = _fix_column_names_in_df(input_df=df, mapping=mapping)
                 fixed_schema = _fix_column_names_in_shmessy_schema(
@@ -105,59 +106,26 @@ class Shmessy:
         except Exception as e:
             exception_router(e)
 
-    def read_csv(
-        self,
-        filepath_or_buffer: Union[str, TextIO, BinaryIO],
-        *,
-        use_sniffer: Optional[bool] = True,
-        fixed_schema: Optional[ShmessySchema] = None,
-        fix_column_names: Optional[bool] = False,
-        fallback_to_string: Optional[bool] = False,
-        fallback_to_null: Optional[bool] = False,
-    ) -> DataFrame:
+    def read_csv(self, filepath_or_buffer: Union[str, TextIO, BinaryIO]) -> DataFrame:
         try:
-            dialect = None
-
-            if use_sniffer:
-                try:
-                    dialect = csv.Sniffer().sniff(
-                        sample=_get_sample_from_csv(
-                            filepath_or_buffer=filepath_or_buffer,
-                            sample_size=self.__sample_size,
-                            encoding=self.__reader_encoding,
-                        ),
-                        delimiters="".join([",", "\t", ";", ":"]),
-                    )
-                except Exception as e:  # noqa
-                    logger.debug(
-                        f"Could not use python sniffer to infer csv schema, Using pandas default settings: {e}"
-                    )
+            dialect = (
+                _get_dialect(
+                    filepath_or_buffer=filepath_or_buffer,
+                    sample_size=self.__sample_size,
+                    reader_encoding=self.__reader_encoding,
+                )
+                if self.__use_csv_sniffer
+                else None
+            )
 
             df = pd.read_csv(
                 index_col=False,
                 filepath_or_buffer=filepath_or_buffer,
-                dialect=dialect() if dialect else None,
+                dialect=dialect() if dialect else None,  # noqa
                 encoding=self.__reader_encoding,
             )
 
-            existing_columns_num = len(df.columns)
-            if existing_columns_num > self.__max_columns_num:
-                raise TooManyColumnException(
-                    max_columns_num=self.__max_columns_num,
-                    existing_columns_num=existing_columns_num,
-                )
-
-            if fixed_schema is None:
-                fixed_schema = self.infer_schema(df)
-
-            self.__inferred_schema = fixed_schema
-            return self.fix_schema(
-                df=df,
-                fixed_schema=fixed_schema,
-                fix_column_names=fix_column_names,
-                fallback_to_string=fallback_to_string,
-                fallback_to_null=fallback_to_null,
-            )
+            return self.fix_schema(df=df)
 
         except Exception as e:
             exception_router(e)

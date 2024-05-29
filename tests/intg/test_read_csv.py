@@ -55,7 +55,7 @@ def test_read_csv_file_with_single_column(files_folder):
 def test_read_csv_with_text_data(files_folder):
     path = files_folder.as_posix() + "/data_8.csv"
     with open(path, mode="rt") as file_input:
-        Shmessy(use_random_sample=False).read_csv(file_input, fallback_to_string=True)
+        Shmessy(use_random_sample=False, fallback_to_string=True).read_csv(file_input)
         assert True
 
 

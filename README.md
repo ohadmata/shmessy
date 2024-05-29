@@ -129,37 +129,29 @@ shmessy = Shmessy(
     locale_formatter: Optional[str] = "en_US",
     use_random_sample: Optional[bool] = True,
     types_to_ignore: Optional[List[str]] = None,
-    max_columns_num: Optional[int] = 500
+    max_columns_num: Optional[int] = 500,
+    fallback_to_string: Optional[bool] = False,  # Fallback to string in case of casting exception
+    fallback_to_null: Optional[bool] = False,  # Fallback to null in case of casting exception
+    use_csv_sniffer: Optional[bool] = True,  # Use python sniffer to identify the dialect (seperator / quote-char / etc...)
+    fix_column_names: Optional[bool] = False,  # Replace non-alphabetic/numeric chars with underscore
 )
 ```
 
 ### read_csv
 ```python
-shmessy.read_csv(
-    filepath_or_buffer: str | TextIO | BinaryIO,
-    use_sniffer: Optional[bool] = True,  # Use python sniffer to identify the dialect (seperator / quote-char / etc...)
-    fixed_schema: Optional[ShmessySchema] = None,  # Fix the given CSV according to this schema
-    fix_column_names: Optional[bool] = False,  # Replace non-alphabetic/numeric chars with underscore
-    fallback_to_string: Optional[bool] = False,  # Fallback to string in case of casting exception
-    fallback_to_null: Optional[bool] = False,  # Fallback to null in case of casting exception
-) -> DataFrame
+shmessy.read_csv(filepath_or_buffer: Union[str, TextIO, BinaryIO]) -> DataFrame
 ```
 
 ### infer_schema
 ```python
-shmessy.infer_schema(
-    df: Dataframe  # Input dataframe
-) -> ShmessySchema
+shmessy.infer_schema(df: Dataframe) -> ShmessySchema
 ```
 
 ### fix_schema
 ```python
 shmessy.fix_schema(
     df: Dataframe,
-    fix_column_names: Optional[bool] = False,  # Replace non-alphabetic/numeric chars with underscore
     fixed_schema: Optional[ShmessySchema] = None,  # Fix the given DF according to this schema
-    fallback_to_string: Optional[bool] = False,  # Fallback to string in case of casting exception
-    fallback_to_null: Optional[bool] = False,  # Fallback to null in case of casting exception
 ) -> DataFrame
 ```
 

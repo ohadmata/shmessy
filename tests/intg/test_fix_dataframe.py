@@ -46,9 +46,9 @@ from shmessy import Shmessy
     expected_result=["name&space", "degree", "score%to@100"]
 )
 def test_fix_column_names(df_data, fix_column_names, expected_result):
-    shmessy = Shmessy()
+    shmessy = Shmessy(fix_column_names=fix_column_names)
     df = pd.DataFrame(df_data)
-    df = shmessy.fix_schema(df=df, fix_column_names=fix_column_names)
+    df = shmessy.fix_schema(df=df)
     fixed_schema = shmessy.get_inferred_schema()
     assert [column for column in df] == expected_result
     assert [column.field_name for column in fixed_schema.columns] == expected_result
@@ -67,6 +67,6 @@ def test_fix_column_names(df_data, fix_column_names, expected_result):
 )
 def test_issue_input_columns_as_object(df_data, fix_column_names, expected_result):
     df = pd.DataFrame(df_data).astype(object)
-    df = Shmessy().fix_schema(df=df, fix_column_names=fix_column_names)
+    df = Shmessy(fix_column_names=fix_column_names).fix_schema(df)
     assert [column for column in df] == expected_result
 

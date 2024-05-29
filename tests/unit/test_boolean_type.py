@@ -126,9 +126,9 @@ def test_boolean_fallback_to_null_turn_off(df_data, expected_shmessy_type, expec
     expected_numpy_type=np.dtype("O")
 )
 def test_boolean_fallback_to_null_turn_on(df_data, expected_shmessy_type, expected_numpy_type, expected_result):
-    shmessy = Shmessy(use_random_sample=False, sample_size=2)
+    shmessy = Shmessy(use_random_sample=False, sample_size=2, fallback_to_null=True)
     df = pd.DataFrame(df_data)
-    fixed_df = shmessy.fix_schema(df, fallback_to_null=True)
+    fixed_df = shmessy.fix_schema(df)
     result = shmessy.get_inferred_schema()
 
     assert result.columns[0].inferred_type == expected_shmessy_type
