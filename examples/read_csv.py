@@ -4,7 +4,7 @@ from src.shmessy import Shmessy
 from utils import pretty_print_df, init_logger
 
 if __name__ == "__main__":
-    #init_logger()
+    init_logger()
     shmessy = Shmessy()
     start_time = time.time()
     df = shmessy.read_csv('../tests/data/data_1.csv')
