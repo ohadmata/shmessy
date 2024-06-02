@@ -9,7 +9,7 @@ import pandas as pd
 from pandas import DataFrame
 
 from .exceptions import exception_router
-from .schema import Field, ShmessySchema
+from .schema import ShmessySchema
 from .types_handler import TypesHandler
 from .utils import (
     _check_number_of_columns,
@@ -60,7 +60,6 @@ class Shmessy:
         return self.__inferred_schema
 
     def infer_schema(self, df: DataFrame) -> ShmessySchema:
-        futures: list[Future] = []
         _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
         start_time = time.time()
         df = _get_sampled_df(
@@ -68,23 +67,10 @@ class Shmessy:
             sample_size=self.__sample_size,
             random_sample=self.__use_random_sample,
         )
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=self.__max_number_of_workers
-        ) as executor:
-            for column in df:
-                futures.append(
-                    executor.submit(
-                        self.__types_handler.infer_field,
-                        field_name=column,
-                        data=df[column].values,
-                    )
-                )
-            columns: list[Field] = []
-            for future in concurrent.futures.as_completed(futures):
-                if e := future.exception():
-                    raise e
-                columns.append(future.result())
-
+        columns = [
+            self.__types_handler.infer_field(field_name=column, data=df[column].values)
+            for column in df
+        ]
         infer_duration_ms = int((time.time() - start_time) * 1000)
         inferred_schema = ShmessySchema(
             columns=columns, infer_duration_ms=infer_duration_ms
