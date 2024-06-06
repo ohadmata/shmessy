@@ -210,6 +210,22 @@ class TypesHandler:
             field_name=field_name, source_type=_numpy_type_shmessy_type(data.dtype)
         )
 
+    def infer_and_fix_field(
+        self,
+        field_name: str,
+        column: Series,
+        fallback_to_string: bool,
+        fallback_to_null: bool,
+    ) -> tuple[Any, str]:
+        # Used to speed up the process by running in parallel
+
+        return self.fix_field(
+            column=column,
+            inferred_field=self.infer_field(field_name, column.values),
+            fallback_to_string=fallback_to_string,
+            fallback_to_null=fallback_to_null,
+        )
+
 
 def _numpy_type_shmessy_type(numpy_type: Type) -> str:
     if isinstance(

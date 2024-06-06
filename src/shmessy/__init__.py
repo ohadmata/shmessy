@@ -15,7 +15,6 @@ from .utils import (
     _check_number_of_columns,
     _fix_column_names,
     _fix_column_names_in_df,
-    _fix_column_names_in_shmessy_schema,
     _get_dialect,
     _get_sampled_df,
 )
@@ -81,23 +80,34 @@ class Shmessy:
     def fix_schema(self, df: DataFrame) -> DataFrame:
         try:
             _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
-            fixed_schema = self.infer_schema(df)
+            # fixed_schema = self.infer_schema(df)
 
             futures: list[Future] = []
             with concurrent.futures.ThreadPoolExecutor(
                 max_workers=self.__max_number_of_workers
             ) as executor:
 
-                for column in fixed_schema.columns:
+                for column in df:
                     futures.append(
                         executor.submit(
-                            self.__types_handler.fix_field,
-                            column=df[column.field_name],
-                            inferred_field=column,
+                            self.__types_handler.infer_and_fix_field,
+                            field_name=column,
+                            column=df[column],
                             fallback_to_string=self.__fallback_to_string,
                             fallback_to_null=self.__fallback_to_null,
                         )
                     )
+
+                # for column in fixed_schema.columns:
+                #     futures.append(
+                #         executor.submit(
+                #             self.__types_handler.fix_field,
+                #             column=df[column.field_name],
+                #             inferred_field=column,
+                #             fallback_to_string=self.__fallback_to_string,
+                #             fallback_to_null=self.__fallback_to_null,
+                #         )
+                #     )
 
                 for future in concurrent.futures.as_completed(futures):
                     if e := future.exception():
@@ -108,11 +118,11 @@ class Shmessy:
             if self.__fix_column_names:
                 mapping = _fix_column_names(df)
                 df = _fix_column_names_in_df(input_df=df, mapping=mapping)
-                fixed_schema = _fix_column_names_in_shmessy_schema(
-                    input_schema=fixed_schema, mapping=mapping
-                )
-
-            self.__inferred_schema = fixed_schema
+            #     fixed_schema = _fix_column_names_in_shmessy_schema(
+            #         input_schema=fixed_schema, mapping=mapping
+            #     )
+            #
+            # self.__inferred_schema = fixed_schema
             return df
         except Exception as e:
             exception_router(e)
