@@ -27,9 +27,22 @@ def cast_value(value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
     raise Exception("Input type for date/datetime casting must be string.")
 
 
+def __match_date_delimiter(value: Any) -> bool:
+    # I am using this function to speed up the date infer mechanism
+    if isinstance(value, str):
+        for delimiter in ["/", ".", "-", " "]:
+            if delimiter in value:
+                return True
+    return False
+
+
 def validate(
     data: ndarray, patterns: list[str], inferred_type: str
 ) -> Optional[InferredField]:
+
+    if not __match_date_delimiter(data[0]):
+        return None
+
     for pattern in patterns:
         valid_pattern = True
         at_least_single_not_nan_value = False
