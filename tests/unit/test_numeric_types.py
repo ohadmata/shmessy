@@ -71,6 +71,14 @@ from shmessy import Shmessy
     expected_shmessy_type="Float",
     expected_numpy_type=np.dtype('float64')
 )
+@Parametrization.case(
+    name="Int that override the max boundary",
+    df_data={
+        "test_column": [9223372036854785807, 9223372436854775807]
+    },
+    expected_shmessy_type="Float",
+    expected_numpy_type=np.dtype('float64')
+)
 def test_numeric_type(df_data, expected_shmessy_type, expected_numpy_type):
     shmessy = Shmessy()
     df = pd.DataFrame(df_data)

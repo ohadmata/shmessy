@@ -4,8 +4,7 @@ from typing import Any, Optional, Tuple
 
 import numpy as np
 from numpy import ndarray
-from pandas import Series, to_numeric
-from pandas.api.types import is_numeric_dtype
+from pandas import Series
 
 from ..schema import InferredField
 from .base import BaseType
@@ -36,9 +35,7 @@ class FloatType(BaseType):
         return True
 
     def cast_column(self, column: Series, inferred_field: InferredField) -> Series:
-        if is_numeric_dtype(column):
-            return column
-        return to_numeric(column.apply(locale.atof))
+        return column.astype(np.float64)
 
     def cast_value(self, value: Any, pattern: Optional[Any] = None) -> Optional[Any]:
         if isinstance(value, str):

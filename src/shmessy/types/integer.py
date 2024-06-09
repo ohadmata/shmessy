@@ -15,11 +15,21 @@ logger = logging.getLogger(__name__)
 
 class IntegerType(BaseType):
     weight = 7
+    MAX_BOUNDARY: int = 9223372036854775807  # BIGINT max value
+    MIN_BOUNDARY: int = -9223372036854775807  # BIGINT min value
 
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for value in data:
             try:
-                self.cast_value(value)
+                casted_values = self.cast_value(value)
+                if (
+                    casted_values > self.MAX_BOUNDARY
+                    or casted_values < self.MIN_BOUNDARY
+                ):
+                    logger.debug(
+                        f"Value '{value}' does not match to {self.name} boundaries"
+                    )
+                    return None
             except Exception:  # noqa
                 logger.debug(f"Cannot cast the value '{value}' to {self.name}")
                 return None
