@@ -14,8 +14,12 @@ logger = logging.getLogger(__name__)
 
 class DateType(BaseType):
     weight = 2
-    delimiters: list[str] = {"/", ".", "-", " "}
-    static_patterns: list[str] = ["%B %d, %Y"]
+    delimiters: list[str] = {"/", ".", "-"}
+    static_patterns: list[str] = [
+        "%B %d, %Y",
+        "%d %b %Y",
+        "%d %b %y",
+    ]
     dynamic_patterns: list[list[str]] = [
         ["%m", "%d", "%Y"],
         ["%d", "%m", "%Y"],
