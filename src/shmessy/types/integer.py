@@ -21,8 +21,11 @@ class IntegerType(BaseType):
     def validate(self, data: ndarray) -> Optional[InferredField]:
         for value in data:
             try:
-                self.cast_value(value)
-                if value > self.MAX_BOUNDARY or value < self.MIN_BOUNDARY:
+                casted_values = self.cast_value(value)
+                if (
+                    casted_values > self.MAX_BOUNDARY
+                    or casted_values < self.MIN_BOUNDARY
+                ):
                     logger.debug(
                         f"Value '{value}' does not match to {self.name} boundaries"
                     )
