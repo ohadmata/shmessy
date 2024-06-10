@@ -31,6 +31,7 @@ from .types.integer import IntegerType
 from .types.ipv4_address import IPv4Type
 from .types.string import StringType
 from .types.unix_timestamp import UnixTimestampType
+from .utils import _get_sampled_data
 
 logger = logging.getLogger(__name__)
 
@@ -159,15 +160,12 @@ class TypesHandler:
         inferred_field: Field,
         fallback_to_string: bool,
         fallback_to_null: bool,
-    ) -> tuple[Any, str]:
+    ) -> Any:
         try:
-            return (
-                self._fix_column(
-                    column=column,
-                    inferred_field=inferred_field,
-                    type_=self.__types_as_dict[inferred_field.inferred_type],
-                ),
-                inferred_field.field_name,
+            return self._fix_column(
+                column=column,
+                inferred_field=inferred_field,
+                type_=self.__types_as_dict[inferred_field.inferred_type],
             )
 
         except FieldCastingException as e:
@@ -175,22 +173,16 @@ class TypesHandler:
 
             if fallback_to_string:
                 logger.debug("Could not cast the field - Apply fallback to string")
-                return (
-                    self._fix_column(
-                        column=column, inferred_field=inferred_field, type_=StringType()
-                    ),
-                    inferred_field.field_name,
+                return self._fix_column(
+                    column=column, inferred_field=inferred_field, type_=StringType()
                 )
 
             if fallback_to_null:
-                return (
-                    self._fix_column(
-                        column=column,
-                        inferred_field=inferred_field,
-                        type_=self.__types_as_dict[inferred_field.inferred_type],
-                        fallback_to_null=True,
-                    ),
-                    inferred_field.field_name,
+                return self._fix_column(
+                    column=column,
+                    inferred_field=inferred_field,
+                    type_=self.__types_as_dict[inferred_field.inferred_type],
+                    fallback_to_null=True,
                 )
             raise e
 
@@ -216,14 +208,23 @@ class TypesHandler:
         column: Series,
         fallback_to_string: bool,
         fallback_to_null: bool,
-    ) -> tuple[Any, str]:
+        sample_size: int,
+        random_sample: bool,
+    ) -> tuple[Any, str, Field]:
         # Used to speed up the process by running in parallel
-
-        return self.fix_field(
-            column=column,
-            inferred_field=self.infer_field(field_name, column.values),
-            fallback_to_string=fallback_to_string,
-            fallback_to_null=fallback_to_null,
+        sampled_column = _get_sampled_data(
+            data=column, sample_size=sample_size, random_sample=random_sample
+        )
+        inferred_field = self.infer_field(field_name, sampled_column.values)
+        return (
+            self.fix_field(
+                column=column,
+                inferred_field=inferred_field,
+                fallback_to_string=fallback_to_string,
+                fallback_to_null=fallback_to_null,
+            ),
+            field_name,
+            inferred_field,
         )
 
 

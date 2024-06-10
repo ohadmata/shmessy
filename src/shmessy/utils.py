@@ -3,7 +3,7 @@ import logging
 import re
 from typing import Any, BinaryIO, Dict, Optional, TextIO, Union
 
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 from .exceptions import TooManyColumnException
 from .schema import ShmessySchema
@@ -40,13 +40,15 @@ def _get_dialect(
         )
 
 
-def _get_sampled_df(df: DataFrame, sample_size: int, random_sample: bool) -> DataFrame:
-    number_of_rows: int = len(df)
+def _get_sampled_data(
+    data: Union[DataFrame, Series], sample_size: int, random_sample: bool
+) -> Union[DataFrame, Series]:
+    number_of_rows: int = len(data)
     if number_of_rows < sample_size:
         sample_size = number_of_rows
     if random_sample:
-        return df.sample(sample_size)
-    return df.head(sample_size)
+        return data.sample(sample_size)
+    return data.head(sample_size)
 
 
 def _fix_column_names(df: DataFrame) -> Dict[str, str]:

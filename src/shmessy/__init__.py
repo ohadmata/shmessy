@@ -16,7 +16,7 @@ from .utils import (
     _fix_column_names,
     _fix_column_names_in_df,
     _get_dialect,
-    _get_sampled_df,
+    _get_sampled_data,
 )
 
 logger = logging.getLogger(__name__)
@@ -61,8 +61,8 @@ class Shmessy:
     def infer_schema(self, df: DataFrame) -> ShmessySchema:
         _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
         start_time = time.time()
-        df = _get_sampled_df(
-            df=df,
+        df = _get_sampled_data(
+            data=df,
             sample_size=self.__sample_size,
             random_sample=self.__use_random_sample,
         )
@@ -80,9 +80,9 @@ class Shmessy:
     def fix_schema(self, df: DataFrame) -> DataFrame:
         try:
             _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
-            # fixed_schema = self.infer_schema(df)
-
+            self.__inferred_schema = ShmessySchema(columns=[])
             futures: list[Future] = []
+
             with concurrent.futures.ThreadPoolExecutor(
                 max_workers=self.__max_number_of_workers
             ) as executor:
@@ -95,34 +95,22 @@ class Shmessy:
                             column=df[column],
                             fallback_to_string=self.__fallback_to_string,
                             fallback_to_null=self.__fallback_to_null,
+                            sample_size=self.__sample_size,
+                            random_sample=self.__use_random_sample,
                         )
                     )
-
-                # for column in fixed_schema.columns:
-                #     futures.append(
-                #         executor.submit(
-                #             self.__types_handler.fix_field,
-                #             column=df[column.field_name],
-                #             inferred_field=column,
-                #             fallback_to_string=self.__fallback_to_string,
-                #             fallback_to_null=self.__fallback_to_null,
-                #         )
-                #     )
 
                 for future in concurrent.futures.as_completed(futures):
                     if e := future.exception():
                         raise e
-                    fixed_data, field_name = future.result()
+                    fixed_data, field_name, inferred_field = future.result()
+                    self.__inferred_schema.columns.append(inferred_field)
                     df[field_name] = fixed_data
 
             if self.__fix_column_names:
                 mapping = _fix_column_names(df)
                 df = _fix_column_names_in_df(input_df=df, mapping=mapping)
-            #     fixed_schema = _fix_column_names_in_shmessy_schema(
-            #         input_schema=fixed_schema, mapping=mapping
-            #     )
-            #
-            # self.__inferred_schema = fixed_schema
+
             return df
         except Exception as e:
             exception_router(e)
