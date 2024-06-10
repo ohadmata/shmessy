@@ -25,8 +25,6 @@ class DatetimeType(BaseType):
     dynamic_patterns: list[str] = [
         "%H:%M",  # 00:00
         "%H:%M:%S",  # 00:00:00
-        "%H:%M:%S %p",  # 00:00:00 AM
-        "%H:%M %p",  # 00:00 AM
         "%H:%M:%S.%f",  # 00:00:00.000
         "%H:%M:%S %Z",  # 00:00:00 UTC
         "%H:%M:%S %z",  # 00:00:00 +00:00
