@@ -40,6 +40,9 @@ def validate(
     data: ndarray, patterns: list[str], inferred_type: str
 ) -> Optional[InferredField]:
 
+    if isinstance(data[0], (datetime64, Timestamp)):
+        return InferredField(inferred_type=inferred_type)
+
     if not __match_date_delimiter(data[0]):
         return None
 
