@@ -82,12 +82,14 @@ class Shmessy:
             _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
             self.__inferred_schema = ShmessySchema(columns=[])
             futures: list[Future] = []
+            columns_order: list[str] = []
 
             with concurrent.futures.ThreadPoolExecutor(
                 max_workers=self.__max_number_of_workers
             ) as executor:
 
                 for column in df:
+                    columns_order.append(column)
                     futures.append(
                         executor.submit(
                             self.__types_handler.infer_and_fix_field,
@@ -106,6 +108,9 @@ class Shmessy:
                     fixed_data, field_name, inferred_field = future.result()
                     self.__inferred_schema.columns.append(inferred_field)
                     df[field_name] = fixed_data
+
+            # Fix the column order (Might change after the parallel execution)
+            df = df[columns_order]
 
             if self.__fix_column_names:
                 mapping = _fix_column_names(df)
