@@ -31,6 +31,7 @@ from .types.integer import IntegerType
 from .types.ipv4_address import IPv4Type
 from .types.string import StringType
 from .types.unix_timestamp import UnixTimestampType
+from .utils import _get_sampled_data
 
 logger = logging.getLogger(__name__)
 
@@ -199,6 +200,31 @@ class TypesHandler:
 
         return Field(
             field_name=field_name, source_type=_numpy_type_shmessy_type(data.dtype)
+        )
+
+    def infer_and_fix_field(
+        self,
+        field_name: str,
+        column: Series,
+        fallback_to_string: bool,
+        fallback_to_null: bool,
+        sample_size: int,
+        random_sample: bool,
+    ) -> tuple[Any, str, Field]:
+        # Used to speed up the process by running in parallel
+        sampled_column = _get_sampled_data(
+            data=column, sample_size=sample_size, random_sample=random_sample
+        )
+        inferred_field = self.infer_field(field_name, sampled_column.values)
+        return (
+            self.fix_field(
+                column=column,
+                inferred_field=inferred_field,
+                fallback_to_string=fallback_to_string,
+                fallback_to_null=fallback_to_null,
+            ),
+            field_name,
+            inferred_field,
         )
 
 
