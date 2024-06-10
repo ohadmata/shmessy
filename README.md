@@ -134,6 +134,7 @@ shmessy = Shmessy(
     fallback_to_null: Optional[bool] = False,  # Fallback to null in case of casting exception
     use_csv_sniffer: Optional[bool] = True,  # Use python sniffer to identify the dialect (seperator / quote-char / etc...)
     fix_column_names: Optional[bool] = False,  # Replace non-alphabetic/numeric chars with underscore
+    max_number_of_workers: Optional[int] = 16,  # Number of threads to run the cast / infer with 
 )
 ```
 

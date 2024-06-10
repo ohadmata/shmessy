@@ -159,12 +159,15 @@ class TypesHandler:
         inferred_field: Field,
         fallback_to_string: bool,
         fallback_to_null: bool,
-    ) -> Any:
+    ) -> tuple[Any, str]:
         try:
-            return self._fix_column(
-                column=column,
-                inferred_field=inferred_field,
-                type_=self.__types_as_dict[inferred_field.inferred_type],
+            return (
+                self._fix_column(
+                    column=column,
+                    inferred_field=inferred_field,
+                    type_=self.__types_as_dict[inferred_field.inferred_type],
+                ),
+                inferred_field.field_name,
             )
 
         except FieldCastingException as e:
@@ -172,16 +175,22 @@ class TypesHandler:
 
             if fallback_to_string:
                 logger.debug("Could not cast the field - Apply fallback to string")
-                return self._fix_column(
-                    column=column, inferred_field=inferred_field, type_=StringType()
+                return (
+                    self._fix_column(
+                        column=column, inferred_field=inferred_field, type_=StringType()
+                    ),
+                    inferred_field.field_name,
                 )
 
             if fallback_to_null:
-                return self._fix_column(
-                    column=column,
-                    inferred_field=inferred_field,
-                    type_=self.__types_as_dict[inferred_field.inferred_type],
-                    fallback_to_null=True,
+                return (
+                    self._fix_column(
+                        column=column,
+                        inferred_field=inferred_field,
+                        type_=self.__types_as_dict[inferred_field.inferred_type],
+                        fallback_to_null=True,
+                    ),
+                    inferred_field.field_name,
                 )
             raise e
 

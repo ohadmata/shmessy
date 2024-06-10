@@ -1,6 +1,8 @@
+import concurrent.futures
 import locale
 import logging
 import time
+from concurrent.futures import Future
 from typing import BinaryIO, List, Optional, TextIO, Union
 
 import pandas as pd
@@ -34,6 +36,7 @@ class Shmessy:
         fallback_to_null: Optional[bool] = False,
         use_csv_sniffer: Optional[bool] = True,
         fix_column_names: Optional[bool] = False,
+        max_number_of_workers: Optional[int] = 16,
     ) -> None:
         self.__types_handler = TypesHandler(types_to_ignore=types_to_ignore)
         self.__sample_size = sample_size
@@ -45,6 +48,7 @@ class Shmessy:
         self.__fallback_to_null = fallback_to_null
         self.__use_csv_sniffer = use_csv_sniffer
         self.__fix_column_names = fix_column_names
+        self.__max_number_of_workers = max_number_of_workers
 
         self.__inferred_schema: Optional[ShmessySchema] = None
 
@@ -79,13 +83,27 @@ class Shmessy:
             _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
             fixed_schema = self.infer_schema(df)
 
-            for column in fixed_schema.columns:
-                df[column.field_name] = self.__types_handler.fix_field(
-                    column=df[column.field_name],
-                    inferred_field=column,
-                    fallback_to_string=self.__fallback_to_string,
-                    fallback_to_null=self.__fallback_to_null,
-                )
+            futures: list[Future] = []
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=self.__max_number_of_workers
+            ) as executor:
+
+                for column in fixed_schema.columns:
+                    futures.append(
+                        executor.submit(
+                            self.__types_handler.fix_field,
+                            column=df[column.field_name],
+                            inferred_field=column,
+                            fallback_to_string=self.__fallback_to_string,
+                            fallback_to_null=self.__fallback_to_null,
+                        )
+                    )
+
+                for future in concurrent.futures.as_completed(futures):
+                    if e := future.exception():
+                        raise e
+                    fixed_data, field_name = future.result()
+                    df[field_name] = fixed_data
 
             if self.__fix_column_names:
                 mapping = _fix_column_names(df)
@@ -117,7 +135,6 @@ class Shmessy:
                 dialect=dialect() if dialect else None,  # noqa
                 encoding=self.__reader_encoding,
             )
-
             return self.fix_schema(df=df)
 
         except Exception as e:
