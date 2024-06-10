@@ -9,12 +9,13 @@ import pandas as pd
 from pandas import DataFrame
 
 from .exceptions import exception_router
-from .schema import ShmessySchema
+from .schema import Field, ShmessySchema
 from .types_handler import TypesHandler
 from .utils import (
     _check_number_of_columns,
     _fix_column_names,
     _fix_column_names_in_df,
+    _fix_column_names_in_shmessy_schema,
     _get_dialect,
     _get_sampled_data,
 )
@@ -80,9 +81,9 @@ class Shmessy:
     def fix_schema(self, df: DataFrame) -> DataFrame:
         try:
             _check_number_of_columns(df=df, max_columns_num=self.__max_columns_num)
-            self.__inferred_schema = ShmessySchema(columns=[])
             futures: list[Future] = []
             columns_order: list[str] = []
+            inferred_columns: dict[str, Field] = {}
 
             with concurrent.futures.ThreadPoolExecutor(
                 max_workers=self.__max_number_of_workers
@@ -106,15 +107,21 @@ class Shmessy:
                     if e := future.exception():
                         raise e
                     fixed_data, field_name, inferred_field = future.result()
-                    self.__inferred_schema.columns.append(inferred_field)
+                    inferred_columns[field_name] = inferred_field
                     df[field_name] = fixed_data
 
             # Fix the column order (Might change after the parallel execution)
             df = df[columns_order]
+            self.__inferred_schema = ShmessySchema(
+                columns=[inferred_columns[column] for column in columns_order]
+            )
 
             if self.__fix_column_names:
                 mapping = _fix_column_names(df)
                 df = _fix_column_names_in_df(input_df=df, mapping=mapping)
+                self.__inferred_schema = _fix_column_names_in_shmessy_schema(
+                    input_schema=self.__inferred_schema, mapping=mapping
+                )
 
             return df
         except Exception as e:
