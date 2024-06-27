@@ -20,6 +20,7 @@ class DatetimeType(BaseType):
         "%Y-%m-%dT%H:%M:%SZ",  # 2022-12-30T00:00:00Z
         "%Y-%m-%d %H:%M:%S.%fZ",  # 2022-12-30 00:00:00.000Z
         "%Y-%m-%dT%H:%M:%S.%fZ",  # 2022-12-30T00:00:00.000Z
+        "%m/%d/%Y %H:%M:%S %p",  # 11/23/2024 00:00:00 AM
     ]
     date_time_delimiters: set[str] = {" ", "T"}
     dynamic_patterns: list[str] = [
