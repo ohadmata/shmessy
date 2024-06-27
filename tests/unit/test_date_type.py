@@ -226,3 +226,16 @@ def test_dynamic_patterns(date: list[str], delimiters: set[str]):
 def test_static_patterns(date: str):
     date_type = DateType()
     assert date in date_type.get_patterns()
+
+
+def test_get_patterns_with_date_only():
+    date_only_patterns: list[str] = [
+        "%Y-%m", "%Y %m", "%Y/%b", "%b %y", "%b.%Y", "%b-%y", "%m/%y"
+    ]
+    date_type = DateType()
+    result_all_patterns = date_type.get_patterns()
+    result_date_only_patterns = date_type.get_patterns(include_date_only_patterns=False)
+
+    for p in date_only_patterns:
+        assert p in result_all_patterns
+        assert p not in result_date_only_patterns

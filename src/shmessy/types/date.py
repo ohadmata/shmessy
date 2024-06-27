@@ -16,9 +16,8 @@ class DateType(BaseType):
     weight = 2
     delimiters: list[str] = {"/", ".", "-", " "}
     static_patterns: list[str] = ["%B %d, %Y"]  # January 23, 2024
-    date_only_patterns: list[
-        list[str]
-    ] = [  # Do not attach time combinations to these patterns
+    date_only_patterns: list[list[str]] = [
+        # Do not attach time combinations to these patterns
         ["%Y", "%m"],  # 2022-07  | 2022 07  | 2022/07  | 2022.07
         ["%Y", "%b"],  # 2022-Jul | 2022 Jul | 2022/Jul | 2022.Jul
         ["%m", "%y"],  # 07-22    | 07 22    | 07/22    | 07.22
@@ -42,7 +41,7 @@ class DateType(BaseType):
         cls, include_date_only_patterns: Optional[bool] = True
     ) -> list[str]:
         # The value returned cannot be set since the order is important!
-        input_patterns: list[list[str]] = cls.dynamic_patterns
+        input_patterns: list[list[str]] = cls.dynamic_patterns.copy()
         if include_date_only_patterns:
             input_patterns += cls.date_only_patterns
 
