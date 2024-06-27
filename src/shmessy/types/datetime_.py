@@ -34,7 +34,7 @@ class DatetimeType(BaseType):
     @classmethod
     def get_patterns(cls) -> list[str]:
         result: list[str] = []
-        for date in DateType.get_patterns():
+        for date in DateType.get_patterns(include_date_only_patterns=False):
             for date_time_delimiter in cls.date_time_delimiters:
                 for dynamic_pattern in cls.dynamic_patterns:
                     result.append(date + date_time_delimiter + dynamic_pattern)
