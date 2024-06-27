@@ -21,6 +21,7 @@ class DatetimeType(BaseType):
         "%Y-%m-%d %H:%M:%S.%fZ",  # 2022-12-30 00:00:00.000Z
         "%Y-%m-%dT%H:%M:%S.%fZ",  # 2022-12-30T00:00:00.000Z
         "%m/%d/%Y %H:%M:%S %p",  # 11/23/2024 00:00:00 AM
+        "%Y-%m-%dT%H:%MZ",  # 2024-01-20T11:30Z
     ]
     date_time_delimiters: set[str] = {" ", "T"}
     dynamic_patterns: list[str] = [
@@ -34,7 +35,9 @@ class DatetimeType(BaseType):
     @classmethod
     def get_patterns(cls) -> list[str]:
         result: list[str] = []
-        for date in DateType.get_patterns(include_date_only_patterns=False):
+        for date in DateType.get_patterns(
+            include_date_only_patterns=False, include_static_date_patterns=False
+        ):
             for date_time_delimiter in cls.date_time_delimiters:
                 for dynamic_pattern in cls.dynamic_patterns:
                     result.append(date + date_time_delimiter + dynamic_pattern)

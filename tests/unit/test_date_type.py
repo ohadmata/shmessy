@@ -239,3 +239,14 @@ def test_get_patterns_with_date_only():
     for p in date_only_patterns:
         assert p in result_all_patterns
         assert p not in result_date_only_patterns
+
+
+def test_include_date_static_patterns():
+    input_static_patterns: list[str] = ["%B %d, %Y"]
+    date_type = DateType()
+    result_all_patterns = date_type.get_patterns()
+    result_without_static_patterns = date_type.get_patterns(include_static_date_patterns=False)
+
+    for p in input_static_patterns:
+        assert p in result_all_patterns
+        assert p not in result_without_static_patterns
