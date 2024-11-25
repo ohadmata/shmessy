@@ -19,4 +19,4 @@ class Field(InferredField, BaseField):
 
 class ShmessySchema(BaseModel):
     columns: List[Field]
-    infer_duration_ms: int
+    infer_duration_ms: Optional[int]
