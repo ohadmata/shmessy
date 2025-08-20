@@ -12,6 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: List tests/data
+        run: ls -R shmessy/tests/data
+
       - name: Install Python
         uses: actions/setup-python@v4
         with:
