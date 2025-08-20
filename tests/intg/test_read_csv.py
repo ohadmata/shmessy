@@ -70,8 +70,3 @@ def test_empty_column_should_identified_as_string(files_folder):
     assert df["col_2"].dtype == np.dtype("O")
     assert schema.columns[0].inferred_type == "String"
     assert schema.columns[1].inferred_type == "String"
-
-
-def test_hebrew(files_folder):
-    df = Shmessy(fix_column_names=False).read_csv(files_folder.as_posix() + "/hebrew_test.csv")
-    print(df.columns)
