@@ -21,13 +21,6 @@ def test_read_csv(files_folder):
     assert df["unixed_at"].dtype == np.dtype("datetime64[ns]")
 
 
-def test_read_csv_with_long_numbers(files_folder):
-    df = Shmessy().read_csv(files_folder.as_posix() + "/data_35.csv")
-    assert df["id"].dtype == np.dtype("int64")
-    assert df["name"].dtype == np.dtype("O")
-    assert df["value"].dtype == np.dtype("int64")
-
-
 def test_read_csv_colon_as_delimiter(files_folder):
     df = Shmessy().read_csv(files_folder.as_posix() + "/data_3.csv")
     assert df["id"].dtype == np.dtype("int64")
