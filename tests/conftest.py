@@ -1,3 +1,4 @@
+import os
 import shutil
 from pathlib import Path
 
@@ -17,10 +18,14 @@ def test_cleaner():
 
 
 @pytest.fixture
-def files_folder() -> Path:
-    folder_path = Path(__file__).parent / 'data'
-    assert folder_path.exists()
-    return folder_path
+def files_folder(tests_root) -> Path:
+    return tests_root / 'data'
+
+
+@pytest.fixture
+def tests_root() -> Path:
+    workspace = Path(os.environ.get("GITHUB_WORKSPACE", Path(__file__).parent.parent.parent))
+    return workspace / "tests"
 
 
 @pytest.fixture
