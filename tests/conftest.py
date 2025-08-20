@@ -29,8 +29,8 @@ def tests_root() -> Path:
 
 
 @pytest.fixture
-def tmp_files_folder(test_cleaner) -> Path:
-    folder_path = Path(__file__).parent / 'tmp_folder_for_tests'
+def tmp_files_folder(test_cleaner, tests_root) -> Path:
+    folder_path = tests_root / 'tmp_folder_for_tests'
     if folder_path.exists():
         shutil.rmtree(folder_path)
     folder_path.mkdir()
