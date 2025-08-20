@@ -43,7 +43,7 @@ class DatetimeType(BaseType):
                     result.append(date + date_time_delimiter + dynamic_pattern)
         return result + cls.static_patterns
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         return validate(
             data=data, patterns=self.get_patterns(), inferred_type=self.name
         )

@@ -34,8 +34,8 @@ class Shmessy:
         fallback_to_null: Optional[bool] = False,
         use_csv_sniffer: Optional[bool] = True,
         fix_column_names: Optional[bool] = False,
+        numeric_types_max_length: Optional[int] = 20,
     ) -> None:
-        self.__types_handler = TypesHandler(types_to_ignore=types_to_ignore)
         self.__sample_size = sample_size
         self.__reader_encoding = reader_encoding
         self.__locale_formatter = locale_formatter
@@ -45,6 +45,11 @@ class Shmessy:
         self.__fallback_to_null = fallback_to_null
         self.__use_csv_sniffer = use_csv_sniffer
         self.__fix_column_names = fix_column_names
+
+        self.__types_handler = TypesHandler(
+            types_to_ignore=types_to_ignore,
+            numeric_types_max_length=numeric_types_max_length,
+        )
 
         self.__inferred_schema: Optional[ShmessySchema] = None
 

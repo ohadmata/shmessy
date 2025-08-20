@@ -18,9 +18,13 @@ class IntegerType(BaseType):
     MAX_BOUNDARY: int = 9223372036854775807  # BIGINT max value
     MIN_BOUNDARY: int = -9223372036854775807  # BIGINT min value
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         for value in data:
             try:
+                if kwargs.get("numeric_types_max_length") and len(
+                    str(value)
+                ) > kwargs.get("numeric_types_max_length"):
+                    return None
                 casted_values = self.cast_value(value)
                 if (
                     casted_values > self.MAX_BOUNDARY

@@ -65,7 +65,7 @@ class UnixTimestampType(BaseType):
                 return True
         return False
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         self.resolution = None
         try:
             for value in data:

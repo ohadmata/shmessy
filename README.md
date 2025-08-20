@@ -134,6 +134,7 @@ shmessy = Shmessy(
     fallback_to_null: Optional[bool] = False,  # Fallback to null in case of casting exception
     use_csv_sniffer: Optional[bool] = True,  # Use python sniffer to identify the dialect (seperator / quote-char / etc...)
     fix_column_names: Optional[bool] = False,  # Replace non-alphabetic/numeric chars with underscore
+    numeric_types_max_length: Optional[int] = 20,  # Fallback to string for numeric values with many digits
 )
 ```
 

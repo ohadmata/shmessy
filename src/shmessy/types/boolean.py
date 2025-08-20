@@ -37,7 +37,7 @@ class BooleanType(BaseType):
             return True
         return False
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         if data.dtype == np.dtype("bool"):
             return InferredField(inferred_type=self.name)
         for pattern in self.patterns:
