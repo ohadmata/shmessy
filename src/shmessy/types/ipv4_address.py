@@ -20,7 +20,7 @@ class Model(BaseModel):
 class IPv4Type(BaseType):
     weight = 6
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         for value in data:
             try:
                 if not isinstance(value, str):

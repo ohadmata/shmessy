@@ -19,7 +19,7 @@ class Model(BaseModel):
 class EmailType(BaseType):
     weight = 5
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         for value in data:
             try:
                 Model(email=value)

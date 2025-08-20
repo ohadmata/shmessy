@@ -39,9 +39,10 @@ class TypesHandler:
     PACKAGE_NAME: str = "shmessy"
     TYPES_DIR: str = "types"
 
-    def __init__(self, types_to_ignore: List[str]):
+    def __init__(self, types_to_ignore: List[str], **kwargs):
         self.__types = self._discover_types(types_to_ignore=types_to_ignore)
         self.__types_as_dict: Dict[str, BaseType] = self._types_as_dict(self.__types)
+        self.__kwargs = kwargs
 
     @classmethod
     def _types_as_dict(cls, __types: List[BaseType]) -> Dict[str, BaseType]:
@@ -188,7 +189,7 @@ class TypesHandler:
     def infer_field(self, field_name: str, data: ndarray) -> Field:
         for type_ in self.__types:
             logger.debug(f"Trying to match column {field_name} to type {type_.name}")
-            inferred = type_.validate(data)
+            inferred = type_.validate(data=data, **self.__kwargs)
             if inferred:
                 return Field(
                     field_name=field_name,

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class StringType(BaseType):
     weight = 9
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         for value in data:
             try:
                 str(value)

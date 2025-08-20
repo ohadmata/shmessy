@@ -60,7 +60,7 @@ class DateType(BaseType):
             return results + cls.static_patterns
         return results
 
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         return validate(
             data=data, patterns=self.get_patterns(), inferred_type=self.name
         )

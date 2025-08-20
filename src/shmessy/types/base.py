@@ -15,7 +15,7 @@ class BaseType(ABC):
     weight: int = 0
 
     @abstractmethod
-    def validate(self, data: ndarray) -> Optional[InferredField]:
+    def validate(self, data: ndarray, **kwargs) -> Optional[InferredField]:
         pass
 
     @abstractmethod

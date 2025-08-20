@@ -89,6 +89,35 @@ def test_numeric_type(df_data, expected_shmessy_type, expected_numpy_type):
     assert fixed_df["test_column"].dtype.type == expected_numpy_type.type
 
 
+@Parametrization.autodetect_parameters()
+@Parametrization.case(
+    name="Base case",
+    df_data={
+        "test_column": [15, 1230, 1, 154, 330, 1, 53451, 344, 166, 123]
+    },
+    expected_shmessy_type="Integer",
+    expected_numpy_type=np.dtype('int64'),
+    numeric_types_max_length=20,
+)
+@Parametrization.case(
+    name="Fallback to string",
+    df_data={
+        "test_column": [15, 1230, 1, 154, 330, 1, 53451, 344, 166, 123]
+    },
+    expected_shmessy_type="String",
+    expected_numpy_type=np.dtype('object'),
+    numeric_types_max_length=2,
+)
+def test_numeric_type_max_length(df_data, expected_shmessy_type, expected_numpy_type, numeric_types_max_length):
+    shmessy = Shmessy(numeric_types_max_length=numeric_types_max_length)
+    df = pd.DataFrame(df_data)
+    inferred_schema = shmessy.infer_schema(df=df)
+    fixed_df = shmessy.fix_schema(df)
+
+    assert inferred_schema.columns[0].inferred_type == expected_shmessy_type
+    assert fixed_df["test_column"].dtype.type == expected_numpy_type.type
+
+
 def test_dataframe_with_10k_numeric_records_and_single_string():
     bad_value = "string value"
     shmessy = Shmessy(sample_size=10)

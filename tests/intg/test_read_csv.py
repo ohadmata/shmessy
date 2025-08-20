@@ -21,6 +21,13 @@ def test_read_csv(files_folder):
     assert df["unixed_at"].dtype == np.dtype("datetime64[ns]")
 
 
+def test_read_csv_with_long_numbers(files_folder):
+    df = Shmessy().read_csv(files_folder.as_posix() + "/data_35.csv")
+    assert df["id"].dtype == np.dtype("int64")
+    assert df["name"].dtype == np.dtype("O")
+    assert df["value"].dtype == np.dtype("int64")
+
+
 def test_read_csv_colon_as_delimiter(files_folder):
     df = Shmessy().read_csv(files_folder.as_posix() + "/data_3.csv")
     assert df["id"].dtype == np.dtype("int64")
@@ -70,3 +77,8 @@ def test_empty_column_should_identified_as_string(files_folder):
     assert df["col_2"].dtype == np.dtype("O")
     assert schema.columns[0].inferred_type == "String"
     assert schema.columns[1].inferred_type == "String"
+
+
+def test_hebrew(files_folder):
+    df = Shmessy(fix_column_names=False).read_csv(files_folder.as_posix() + "/hebrew_test.csv")
+    print(df.columns)
