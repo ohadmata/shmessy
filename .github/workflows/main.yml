@@ -37,17 +37,10 @@ jobs:
       - name: Unit Tests with Coverage
         run: poetry run pytest tests/unit -v --cov=shmessy --cov-report=term-missing --cov-report=html
 
-      - name: generate random hash
-        id: hash
-        run: |
-          # Generate an 8-character random hash
-          HASH=$(date +%s | sha1sum | cut -c1-8)
-          echo "hash=$HASH" >> $GITHUB_OUTPUT
-
       - name: Save coverage report as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-${{ steps.hash.outputs.hash }}
+          name: coverage-report-${{ github.job }}-${{ matrix.os }}-${{ github.run_id }}
           path: ./htmlcov
 
       - name: Integration Tests
