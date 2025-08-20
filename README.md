@@ -1,6 +1,6 @@
 # Shmessy
 [![PyPI version](https://img.shields.io/pypi/v/shmessy)](https://img.shields.io/pypi/v/shmessy)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/shmessy)](https://pypi.org/project/shmessy/)
+[![Downloads](https://static.pepy.tech/badge/shmessy/month)](https://pepy.tech/project/shmessy)
 ![Coverage report](https://raw.githubusercontent.com/ohadmata/shmessy/main/assets/coverage.svg)
 [![CI](https://github.com/ohadmata/shmessy/actions/workflows/main.yml/badge.svg)](https://github.com/ohadmata/shmessy/actions/workflows/main.yml)
 [![License](https://img.shields.io/:license-MIT-blue.svg)](https://opensource.org/license/mit/)
